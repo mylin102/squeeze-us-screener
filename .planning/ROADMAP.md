@@ -28,22 +28,32 @@
 ## Phase 3: Reporting & Visualization
 **Goal**: Generate user-friendly outputs and charts.
 **Plans:** 3 plans
-- [ ] 03-01-PLAN.md — Implement CSV/JSON/MD report generation.
-- [ ] 03-02-PLAN.md — Implement automated chart generation for top picks.
-- [ ] 03-03-PLAN.md — CLI integration for exports and plotting.
+- [x] 03-01-PLAN.md — Implement CSV/JSON/MD report generation.
+- [x] 03-02-PLAN.md — Implement automated chart generation for top picks.
+- [x] 03-03-PLAN.md — CLI integration for exports and plotting.
 
-- [ ] 3.1 Implement CSV/JSON report generation.
-- [ ] 3.2 Implement automated chart generation for top picks using `mplfinance`.
-- [ ] 3.3 Create a CLI command to run specific screens (e.g., `--pattern houyi`).
+- [x] 3.1 Implement CSV/JSON report generation.
+- [x] 3.2 Implement automated chart generation for top picks using `mplfinance`.
+- [x] 3.3 Create a CLI command to run specific screens (e.g., `--pattern houyi`).
 
 ## Phase 4: Automation & Deployment
 **Goal**: Set up scheduled runs and historical tracking.
-- [ ] 4.1 Configure GitHub Actions workflow for daily execution.
-- [ ] 4.2 Implement historical result persistence.
-- [ ] 4.3 (Optional) Integration with Line Bot for notifications (from Phase 3 logic).
+**Plans:** 2 plans
+- [x] 04-01-PLAN.md — Notification logic and CLI enhancements.
+- [x] 04-02-PLAN.md — GitHub Actions and Integration testing.
+
+- [x] 4.1 Configure GitHub Actions workflow for daily execution.
+- [x] 4.2 Implement historical result persistence.
+- [x] 4.3 Integration with Line Bot for notifications (from Phase 3 logic).
 
 ## Phase 5: Refinement & Fundamentals
-**Goal**: Add advanced filtering and improve reliability.
+**Goal**: Add advanced filtering and improve reliability for v1.0.
+**Plans:** 4 plans
+- [ ] 05-01-PLAN.md — Reliability & Fundamentals Data.
+- [ ] 05-02-PLAN.md — Ranking Logic & Integration.
+- [ ] 05-03-PLAN.md — CLI Filters & Integration Tests.
+- [ ] 05-04-PLAN.md — Documentation & Polish.
+
 - [ ] 5.1 Integrate fundamental data filtering (e.g., volume thresholds, price filters).
 - [ ] 5.2 Improve error handling and retry logic for data providers.
 - [ ] 5.3 Final documentation and user guide.
