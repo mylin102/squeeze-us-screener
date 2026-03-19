@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import pytest
-from src.squeeze.engine.patterns import detect_houyi_shooting_sun, detect_whale_trading
+from squeeze.engine.patterns import detect_houyi_shooting_sun, detect_whale_trading
 
 def create_base_df(days=100, price=100.0, volatility=2.0):
     """

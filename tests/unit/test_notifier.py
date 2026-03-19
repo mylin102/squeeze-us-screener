@@ -1,7 +1,7 @@
 import os
 import pytest
 from unittest.mock import MagicMock, patch
-from src.squeeze.report.notifier import LineNotifier
+from squeeze.report.notifier import LineNotifier
 
 @pytest.fixture
 def mock_env(monkeypatch):
@@ -18,9 +18,9 @@ def test_line_notifier_init_explicit():
     assert notifier.access_token == "explicit_token"
     assert notifier.user_id == "explicit_user"
 
-@patch('src.squeeze.report.notifier.MessagingApi')
-@patch('src.squeeze.report.notifier.ApiClient')
-@patch('src.squeeze.report.notifier.Configuration')
+@patch('squeeze.report.notifier.MessagingApi')
+@patch('squeeze.report.notifier.ApiClient')
+@patch('squeeze.report.notifier.Configuration')
 def test_send_summary_success(mock_config, mock_api_client, mock_messaging_api, mock_env):
     # Setup mocks
     mock_instance = mock_messaging_api.return_value

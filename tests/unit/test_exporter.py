@@ -2,7 +2,7 @@ import json
 import csv
 from pathlib import Path
 import pytest
-from src.squeeze.report.exporter import ReportExporter
+from squeeze.report.exporter import ReportExporter
 
 @pytest.fixture
 def mock_results():
