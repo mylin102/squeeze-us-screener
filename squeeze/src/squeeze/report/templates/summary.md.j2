@@ -24,18 +24,18 @@
 {% endfor %}
 {% else %}
 ## 今日無符合買入條件的標的
-目前的市場掃描中，尚無個股符合「強烈買入」或「買入」之動能條件。建議繼續觀察。
+目前的市場掃描中，尚無個股符合「強烈買入」、「買入」或「觀察」之動能條件。建議繼續觀察。
 {% endif %}
 
-{% if perf_results %}
+{% if active_tracking %}
 ---
-## 📈 一週前推薦回顧 (7天績效)
-以下是 7 天前推薦之標的目前的表現：
+## 📊 持續績效追蹤清單 (14天)
+目前所有追蹤中標的的即時表現：
 
-| 推薦日期 | 代碼 | 名稱 | 當時價格 | 目前價格 | 報酬率 (%) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-{% for perf in perf_results %}
-| {{ perf.date }} | **{{ perf.ticker }}** | {{ perf.name }} | {{ "%.2f"|format(perf.entry) }} | {{ "%.2f"|format(perf.current) }} | **{{ "%.2f"|format(perf.return) }}%** |
+| 進場日期 | 代碼 | 名稱 | 當時價格 | 目前價格 | 天數 | 目前報酬 (%) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+{% for perf in active_tracking %}
+| {{ perf.date }} | **{{ perf.ticker }}** | {{ perf.name }} | {{ "%.2f"|format(perf.entry_price) }} | {{ "%.2f"|format(perf.current_price) }} | {{ perf.days_tracked }} | **{{ "%.2f"|format(perf.return_pct) }}%** |
 {% endfor %}
 {% endif %}
 

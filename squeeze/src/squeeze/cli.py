@@ -203,16 +203,15 @@ def scan(
                     console.print(f"  [red]✘[/red] Error plotting {ticker}: {str(e)}")
 
     # Handle Performance Tracking
-    perf_results = []
+    active_tracking = []
     try:
         tracker = PerformanceTracker(Path("recommendations.csv"))
-        # 1. Evaluate past performance (7 days ago)
-        perf_results = tracker.evaluate_performance(days=7)
-        if perf_results:
-            console.print(f"[green]Evaluated performance for {len(perf_results)} past recommendations.[/green]")
+        # 1. Update performance for all active tracking items
+        tracker.update_daily_performance()
+        active_tracking = tracker.get_active_tracking_list()
         
         # 2. Record today's recommendations
-        buy_signals = ["強烈買入 (爆發)", "買入 (動能增強)"]
+        buy_signals = ["強烈買入 (爆發)", "買入 (動能增強)", "觀察 (跌勢收斂)"]
         today_buys = [r for r in matched if r.get('Signal') in buy_signals]
         tracker.record_recommendations(today_buys)
     except Exception as e:
@@ -236,13 +235,10 @@ def scan(
                 msg += f" (Value: {top['value_score']:.2f})"
         
         # Append performance brief to LINE if exists
-        if perf_results:
-            win_rate = len([p for p in perf_results if p['return'] > 0]) / len(perf_results) * 100
-            avg_return = sum([p['return'] for p in perf_results]) / len(perf_results)
-            msg += f"\n\n📈 7D Performance Review:"
-            msg += f"\nMatches: {len(perf_results)}"
-            msg += f"\nWin Rate: {win_rate:.1f}%"
-            msg += f"\nAvg Return: {avg_return:.2f}%"
+        if active_tracking:
+            profitable = len([p for p in active_tracking if p['return_pct'] > 0])
+            msg += f"\n\n📊 Tracking {len(active_tracking)} stocks"
+            msg += f"\nProfitable: {profitable}/{len(active_tracking)}"
         
         if notifier.send_summary(msg):
             console.print("[green]LINE notification sent successfully.[/green]")
@@ -258,7 +254,7 @@ def scan(
         report_matched = [r for r in matched if r.get('Signal') in buy_signals]
         console.print(f"[yellow]Filtering for email: {len(report_matched)} potential signals found.[/yellow]")
         
-        report_content = exporter.render_summary(report_matched, perf_results=perf_results)
+        report_content = exporter.render_summary(report_matched, active_tracking=active_tracking)
         subject = f"Squeeze 掃描報告 ({pattern}) - {pd.Timestamp.now().strftime('%Y-%m-%d')}"
         
         if email_notifier.send_email(subject, report_content):

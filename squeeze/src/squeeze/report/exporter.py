@@ -90,28 +90,30 @@ class ReportExporter:
         with open(path, 'w', encoding='utf-8') as f:
             f.write(content)
 
-    def render_summary(self, results: List[Dict[str, Any]], perf_results: Optional[List[Dict[str, Any]]] = None) -> str:
+    def render_summary(self, results: List[Dict[str, Any]], 
+                       perf_results: Optional[List[Dict[str, Any]]] = None,
+                       active_tracking: Optional[List[Dict[str, Any]]] = None) -> str:
         """Renders the summary content as a string, filtering for Buy signals."""
         template = self.jinja_env.get_template("summary.md.j2")
-        
+
         # Define targeted buy signals
-        buy_signals = ["強烈買入 (爆發)", "買入 (動能增強)"]
-        
+        buy_signals = ["強烈買入 (爆發)", "買入 (動能增強)", "觀察 (跌勢收斂)"]
+
         # Filter results: only those with specific buy signals
         filtered_results = [r for r in results if r.get('Signal') in buy_signals]
-        # Sort by momentum or energy for top picks
         filtered_results = sorted(filtered_results, key=lambda x: x.get('momentum', 0), reverse=True)
-        
+
         top_picks = filtered_results[:10] if len(filtered_results) > 10 else filtered_results
-            
+
         render_data = {
             "date": self._get_taiwan_now().strftime("%Y-%m-%d %H:%M:%S") + " (TST)",
             "results": [self._format_result(r) for r in filtered_results],
             "top_picks": [self._format_result(r) for r in top_picks],
             "count": len(filtered_results),
-            "perf_results": perf_results or []
+            "perf_results": perf_results or [],
+            "active_tracking": active_tracking or []
         }
-        
+
         return template.render(**render_data)
 
     def _format_result(self, r: Dict[str, Any]) -> Dict[str, Any]:
