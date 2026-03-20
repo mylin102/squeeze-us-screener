@@ -1,8 +1,8 @@
 import os
 import pytest
 import pandas as pd
-from src.squeeze.report.visualizer import plot_ticker
-from src.squeeze.engine.indicators import calculate_squeeze_indicators
+from squeeze.report.visualizer import plot_ticker
+from squeeze.engine.indicators import calculate_squeeze_indicators
 
 def test_plot_ticker_generates_file(sample_ohlcv_df, tmp_path):
     """

@@ -32,7 +32,7 @@ def plot_ticker(ticker_df: pd.DataFrame, ticker_symbol: str, output_path: str):
     # Ensure Squeeze indicators exist
     if 'Momentum' not in df.columns or 'Squeeze_On' not in df.columns:
         # Avoid circular import if possible, but for simplicity:
-        from src.squeeze.engine.indicators import calculate_squeeze_indicators
+        from squeeze.engine.indicators import calculate_squeeze_indicators
         df = calculate_squeeze_indicators(df)
 
     plots = [

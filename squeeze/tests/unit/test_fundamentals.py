@@ -1,6 +1,6 @@
 import pytest
 import pandas as pd
-from src.squeeze.data.fundamentals import get_fundamentals
+from squeeze.data.fundamentals import get_fundamentals
 from unittest.mock import MagicMock, patch
 
 @patch("yfinance.Tickers")
@@ -40,7 +40,7 @@ def test_get_fundamentals_error_handling(mock_tickers):
     instance.tickers["INVALID"].info = {} # Simulating missing info or error
     
     # Let's mock the loop to fail
-    with patch("src.squeeze.data.fundamentals.logger") as mock_logger:
+    with patch("squeeze.data.fundamentals.logger") as mock_logger:
         df = get_fundamentals(["INVALID"])
         assert "ticker" in df.columns
         # Depending on how the loop is implemented, it might have NaN or empty values

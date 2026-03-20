@@ -13,6 +13,7 @@ from squeeze.engine.patterns import detect_squeeze, detect_houyi_shooting_sun, d
 from squeeze.engine.scanner import MarketScanner
 from squeeze.report.exporter import ReportExporter
 from squeeze.report.visualizer import plot_ticker
+from squeeze.report.notifier import LineNotifier
 
 app = typer.Typer(help="Squeeze Stock Screener for Taiwan Market")
 console = Console()
@@ -193,19 +194,23 @@ def scan(
 
     # Handle Notifications
     if notify:
-        from squeeze.report.notifier import LineNotifier
+        console.print("[yellow]Sending LINE notification...[/yellow]")
         notifier = LineNotifier()
-        msg = f"Squeeze Scan Complete!\nPattern: {pattern}\nMatches: {len(matched)}"
+        msg = f"Squeeze Scan Complete: {pattern}\nFound {len(matched)} matches"
         if matched:
-            top_ticker = matched[0]['ticker']
+            top = matched[0]
+            top_ticker = top['ticker']
             msg += f"\nTop Pick: {top_ticker}"
-            if 'value_score' in matched[0]:
-                msg += f" (Value: {matched[0]['value_score']:.2f})"
+            
+            if pattern == "houyi" and 'rally_pct' in top:
+                msg += f" (Rally: {top['rally_pct']*100:.1f}%)"
+            elif 'value_score' in top:
+                msg += f" (Value: {top['value_score']:.2f})"
         
         if notifier.send_summary(msg):
-            console.print("[green]Notification sent successfully.[/green]")
+            console.print("[green]LINE notification sent successfully.[/green]")
         else:
-            console.print("[red]Failed to send notification.[/red]")
+            console.print("[red]Failed to send LINE notification.[/red]")
 
 @app.command(name="fetch-tickers")
 def fetch_tickers():

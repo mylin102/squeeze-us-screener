@@ -2,7 +2,7 @@ import pandas as pd
 import yfinance as yf
 import logging
 from typing import List, Dict, Any
-from src.squeeze.core.session import get_robust_session
+from squeeze.core.session import get_robust_session
 
 logger = logging.getLogger(__name__)
 

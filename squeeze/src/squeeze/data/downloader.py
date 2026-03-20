@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 import yfinance as yf
-from src.squeeze.core.session import get_robust_session
+from squeeze.core.session import get_robust_session
 
 # Configure logging
 logger = logging.getLogger(__name__)

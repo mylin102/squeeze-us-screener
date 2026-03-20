@@ -1,6 +1,6 @@
 import pytest
 import requests
-from src.squeeze.core.session import get_robust_session, robust_request, HTTPError
+from squeeze.core.session import get_robust_session, robust_request, HTTPError
 from unittest.mock import MagicMock, patch
 
 def test_get_robust_session_headers():
@@ -31,7 +31,7 @@ def test_robust_request_retry_on_429(mock_request):
     mock_request.side_effect = [fail_response, success_response]
     
     # We need to speed up the test by reducing wait time
-    with patch("src.squeeze.core.session.wait_exponential_jitter", return_value=lambda x: 0):
+    with patch("squeeze.core.session.wait_exponential_jitter", return_value=lambda x: 0):
         response = robust_request("GET", "https://example.com")
         assert response.status_code == 200
         assert mock_request.call_count == 2
@@ -43,7 +43,7 @@ def test_robust_request_fail_after_max_attempts(mock_request):
     fail_response.reason = "Internal Server Error"
     mock_request.return_value = fail_response
     
-    with patch("src.squeeze.core.session.wait_exponential_jitter", return_value=lambda x: 0):
+    with patch("squeeze.core.session.wait_exponential_jitter", return_value=lambda x: 0):
         with pytest.raises(Exception): # tenacity raises RetryError or the last exception
             robust_request("GET", "https://example.com")
     

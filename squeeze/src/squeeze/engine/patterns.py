@@ -1,5 +1,5 @@
 import pandas as pd
-from src.squeeze.engine.indicators import calculate_squeeze_indicators
+from squeeze.engine.indicators import calculate_squeeze_indicators
 
 def detect_squeeze(df: pd.DataFrame) -> dict:
     """

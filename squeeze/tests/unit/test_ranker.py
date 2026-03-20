@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.squeeze.engine.ranker import calculate_value_score
+from squeeze.engine.ranker import calculate_value_score
 
 def test_calculate_value_score_logic():
     data = {

@@ -2,8 +2,8 @@ import pytest
 from unittest.mock import MagicMock, patch
 import pandas as pd
 import numpy as np
-from src.squeeze.engine.scanner import MarketScanner
-from src.squeeze.engine.patterns import detect_squeeze
+from squeeze.engine.scanner import MarketScanner
+from squeeze.engine.patterns import detect_squeeze
 
 @pytest.fixture
 def mock_fundamentals_df():
@@ -58,7 +58,7 @@ def test_scanner_fundamental_filtering(mock_fundamentals_df):
 
 def test_cli_help_includes_filters():
     from typer.testing import CliRunner
-    from src.squeeze.cli import app
+    from squeeze.cli import app
     runner = CliRunner()
     result = runner.invoke(app, ["scan", "--help"])
     assert result.exit_code == 0
