@@ -45,7 +45,7 @@ def scan(
     pattern_map = {
         "squeeze": {
             "fn": detect_squeeze,
-            "filter": lambda r: r.get('is_squeezed'),
+            "filter": lambda r: r.get('is_squeezed') or r.get('fired'),
             "title": "Squeeze Scan Results",
             "sort_key": lambda x: x.get('energy_level', 0)
         },
