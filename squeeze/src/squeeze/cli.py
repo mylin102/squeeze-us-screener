@@ -14,6 +14,7 @@ from squeeze.engine.scanner import MarketScanner
 from squeeze.report.exporter import ReportExporter
 from squeeze.report.visualizer import plot_ticker
 from squeeze.report.notifier import LineNotifier, EmailNotifier
+from squeeze.report.performance import PerformanceTracker
 
 app = typer.Typer(help="Squeeze Stock Screener for Taiwan Market")
 console = Console()
@@ -201,6 +202,22 @@ def scan(
                 except Exception as e:
                     console.print(f"  [red]✘[/red] Error plotting {ticker}: {str(e)}")
 
+    # Handle Performance Tracking
+    perf_results = []
+    try:
+        tracker = PerformanceTracker(Path("recommendations.csv"))
+        # 1. Evaluate past performance (7 days ago)
+        perf_results = tracker.evaluate_performance(days=7)
+        if perf_results:
+            console.print(f"[green]Evaluated performance for {len(perf_results)} past recommendations.[/green]")
+        
+        # 2. Record today's recommendations
+        buy_signals = ["強烈買入 (爆發)", "買入 (動能增強)"]
+        today_buys = [r for r in matched if r.get('Signal') in buy_signals]
+        tracker.record_recommendations(today_buys)
+    except Exception as e:
+        console.print(f"[red]Error during performance tracking: {str(e)}[/red]")
+
     # Handle Notifications
     if notify:
         console.print("[yellow]Sending notifications...[/yellow]")
@@ -218,6 +235,15 @@ def scan(
             elif 'value_score' in top:
                 msg += f" (Value: {top['value_score']:.2f})"
         
+        # Append performance brief to LINE if exists
+        if perf_results:
+            win_rate = len([p for p in perf_results if p['return'] > 0]) / len(perf_results) * 100
+            avg_return = sum([p['return'] for p in perf_results]) / len(perf_results)
+            msg += f"\n\n📈 7D Performance Review:"
+            msg += f"\nMatches: {len(perf_results)}"
+            msg += f"\nWin Rate: {win_rate:.1f}%"
+            msg += f"\nAvg Return: {avg_return:.2f}%"
+        
         if notifier.send_summary(msg):
             console.print("[green]LINE notification sent successfully.[/green]")
         else:
@@ -226,7 +252,7 @@ def scan(
         # 2. Email Notification (Full Markdown Report)
         email_notifier = EmailNotifier()
         exporter = ReportExporter()
-        report_content = exporter.render_summary(matched)
+        report_content = exporter.render_summary(matched, perf_results=perf_results)
         subject = f"Squeeze 掃描報告 ({pattern}) - {pd.Timestamp.now().strftime('%Y-%m-%d')}"
         
         if email_notifier.send_email(subject, report_content):

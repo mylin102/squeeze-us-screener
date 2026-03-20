@@ -90,7 +90,7 @@ class ReportExporter:
         with open(path, 'w', encoding='utf-8') as f:
             f.write(content)
 
-    def render_summary(self, results: List[Dict[str, Any]]) -> str:
+    def render_summary(self, results: List[Dict[str, Any]], perf_results: Optional[List[Dict[str, Any]]] = None) -> str:
         """Renders the summary content as a string, filtering for Buy signals."""
         template = self.jinja_env.get_template("summary.md.j2")
         
@@ -108,7 +108,8 @@ class ReportExporter:
             "date": self._get_taiwan_now().strftime("%Y-%m-%d %H:%M:%S") + " (TST)",
             "results": [self._format_result(r) for r in filtered_results],
             "top_picks": [self._format_result(r) for r in top_picks],
-            "count": len(filtered_results)
+            "count": len(filtered_results),
+            "perf_results": perf_results or []
         }
         
         return template.render(**render_data)
