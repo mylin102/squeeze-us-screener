@@ -91,19 +91,24 @@ class ReportExporter:
             f.write(content)
 
     def render_summary(self, results: List[Dict[str, Any]]) -> str:
-        """Renders the summary content as a string."""
+        """Renders the summary content as a string, filtering for Buy signals."""
         template = self.jinja_env.get_template("summary.md.j2")
         
-        # Prepare data for template
-        top_picks = [r for r in results if r.get('is_squeezed') or r.get('is_houyi') or r.get('is_whale')]
-        if not top_picks:
-            top_picks = results[:5] if len(results) > 5 else results
+        # Define targeted buy signals
+        buy_signals = ["強烈買入 (爆發)", "買入 (動能增強)"]
+        
+        # Filter results: only those with specific buy signals
+        filtered_results = [r for r in results if r.get('Signal') in buy_signals]
+        # Sort by momentum or energy for top picks
+        filtered_results = sorted(filtered_results, key=lambda x: x.get('momentum', 0), reverse=True)
+        
+        top_picks = filtered_results[:10] if len(filtered_results) > 10 else filtered_results
             
         render_data = {
             "date": self._get_taiwan_now().strftime("%Y-%m-%d %H:%M:%S") + " (TST)",
-            "results": [self._format_result(r) for r in results],
+            "results": [self._format_result(r) for r in filtered_results],
             "top_picks": [self._format_result(r) for r in top_picks],
-            "count": len(results)
+            "count": len(filtered_results)
         }
         
         return template.render(**render_data)

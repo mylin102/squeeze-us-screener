@@ -82,6 +82,11 @@ def test_to_json(exporter, mock_results, tmp_path):
         assert data["results"][0]["ticker"] == "AAPL"
 
 def test_to_markdown(exporter, mock_results, tmp_path):
+    # Add Signal to mock results to match new logic
+    for r in mock_results:
+        r['Signal'] = "買入 (動能增強)"
+        r['is_squeezed'] = True
+        
     md_path = tmp_path / "test.md"
     exporter.to_markdown(mock_results, md_path)
     
@@ -91,11 +96,9 @@ def test_to_markdown(exporter, mock_results, tmp_path):
         content = f.read()
         
         assert "# Squeeze 技術指標掃描 - 每日摘要" in content
+        assert "符合 **買入** 篩選條件" in content
         assert "AAPL" in content
-        assert "MSFT" in content
-        assert "GOOGL" in content
-        assert "活躍" in content
-        assert "否" in content
+        assert "買入 (動能增強)" in content
 
 def test_export_empty_results(exporter, tmp_path):
     csv_path = tmp_path / "empty.csv"
