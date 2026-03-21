@@ -5,15 +5,39 @@ import pandas_ta as ta
 def calculate_squeeze_indicators(df: pd.DataFrame) -> pd.DataFrame:
     """
     Calculate PowerSqueeze indicators and explicit Buy/Sell signals.
-    
-    Args:
-        df: DataFrame with OHLCV data.
-        
-    Returns:
-        pd.DataFrame: Original DataFrame with added squeeze indicators and signals.
     """
     if df.empty:
         raise ValueError("Input DataFrame is empty")
+
+    # Handle MultiIndex if necessary (e.g., from yfinance MultiTicker download)
+    if isinstance(df.columns, pd.MultiIndex):
+        # If it has ticker at level 0 and OHLCV at level 1, and only one ticker
+        if len(df.columns.get_level_values(0).unique()) == 1:
+            df = df.xs(df.columns.get_level_values(0).unique()[0], axis=1)
+        else:
+            # Flatten or just take standard names
+            df.columns = df.columns.get_level_values(-1)
+
+    # Ensure required columns are present and case-insensitive
+    # If columns are just the ticker name (yfinance single ticker behavior)
+    if all(c.lower() == df.columns[0].lower() for c in df.columns) and len(df.columns) == 5:
+        df.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+    elif all(c.lower() == df.columns[0].lower() for c in df.columns) and len(df.columns) == 6:
+        df.columns = ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+    
+    df.columns = [c.capitalize() for c in df.columns]
+    required = ['Open', 'High', 'Low', 'Close', 'Volume']
+    for req in required:
+        if req not in df.columns:
+            # Try to find it by substring if exact match fails
+            found = False
+            for c in df.columns:
+                if req.lower() in c.lower():
+                    df = df.rename(columns={c: req})
+                    found = True
+                    break
+            if not found:
+                raise ValueError(f"Missing required column: {req}. Found: {list(df.columns)}")
 
     # 1. Standard TTM Squeeze using pandas-ta
     sqz = df.ta.squeeze(bb_length=20, bb_std=2.0, kc_length=20, kc_scalar=1.5, lazy=True)

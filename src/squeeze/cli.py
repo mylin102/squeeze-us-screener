@@ -193,13 +193,15 @@ def scan(
                 ticker = matched[i]['ticker']
                 try:
                     # Extract ticker data from scanner's downloaded data
-                    if len(all_tickers) == 1:
-                        ticker_data = scanner.data
-                    else:
+                    if isinstance(scanner.data.columns, pd.MultiIndex):
                         ticker_data = scanner.data[ticker].dropna(subset=['Close'])
-                    
-                    chart_path = charts_dir / f"{ticker.split('.')[0]}.png"
+                    else:
+                        ticker_data = scanner.data.dropna(subset=['Close'])
+
+                    # Use full ticker symbol for filename
+                    chart_path = charts_dir / f"{ticker}.png"
                     plot_ticker(ticker_data, ticker, str(chart_path))
+
                     console.print(f"  [green]✔[/green] Generated chart for {ticker}")
                 except Exception as e:
                     console.print(f"  [red]✘[/red] Error plotting {ticker}: {str(e)}")
