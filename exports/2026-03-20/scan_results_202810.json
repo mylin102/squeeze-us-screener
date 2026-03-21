@@ -1,0 +1,108 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-20T20:28:10.508682-05:00",
+    "count": 10
+  },
+  "results": [
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -6.68500010172526,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-20 00:00:00",
+      "ticker": "ACN",
+      "name": "Accenture"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -1.7300033569335938,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-20 00:00:00",
+      "ticker": "AEP",
+      "name": "American Electric Power"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -1.1526629130045571,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-20 00:00:00",
+      "ticker": "AEE",
+      "name": "Ameren"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -2.341664632161458,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-20 00:00:00",
+      "ticker": "AMD",
+      "name": "Advanced Micro Devices"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -11.954991658528645,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-20 00:00:00",
+      "ticker": "ALNY",
+      "name": "Alnylam Pharmaceuticals"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.6483357747395834,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-20 00:00:00",
+      "ticker": "AMZN",
+      "name": "Amazon"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -6.028330485026041,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-20 00:00:00",
+      "ticker": "AMT",
+      "name": "American Tower"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 3.361670176188151,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-20 00:00:00",
+      "ticker": "ANET",
+      "name": "Arista Networks"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 0.28333282470703125,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-20 00:00:00",
+      "ticker": "ATO",
+      "name": "Atmos Energy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -1.5133310953776042,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-20 00:00:00",
+      "ticker": "AVGO",
+      "name": "Broadcom"
+    }
+  ]
+}

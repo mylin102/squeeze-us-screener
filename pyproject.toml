@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "squeeze"
+version = "1.0.0"
+authors = [
+  { name = "GSD Executor" },
+]
+description = "US stock screener based on Squeeze Momentum logic"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "yfinance",
+    "pandas",
+    "pandas-ta",
+    "typer",
+    "requests",
+    "rich",
+    "mplfinance",
+    "jinja2",
+    "line-bot-sdk",
+    "tenacity",
+    "scipy",
+    "lxml",
+    "html5lib",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[project.scripts]
+squeeze = "squeeze.cli:app"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["squeeze*"]
+
+[tool.setuptools.package-data]
+"squeeze.report.templates" = ["*.j2"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"

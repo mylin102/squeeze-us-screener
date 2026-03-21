@@ -2,8 +2,8 @@ name: Daily Stock Scan
 
 on:
   schedule:
-    # 07:30 UTC is 15:30 Taiwan Time (TST)
-    - cron: '30 7 * * 1-5'
+    # 21:00 UTC is 16:00/17:00 US Eastern Time (ET)
+    - cron: '0 21 * * 1-5'
   workflow_dispatch:
 
 jobs:

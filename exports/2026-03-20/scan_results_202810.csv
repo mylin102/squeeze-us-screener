@@ -1,0 +1,11 @@
+is_squeezed,energy_level,momentum,fired,Signal,timestamp,ticker,name
+True,0,-6.68500010172526,False,賣出 (動能轉弱),2026-03-20 00:00:00,ACN,Accenture
+False,0,-1.7300033569335938,True,強烈賣出 (跌破),2026-03-20 00:00:00,AEP,American Electric Power
+True,0,-1.1526629130045571,False,賣出 (動能轉弱),2026-03-20 00:00:00,AEE,Ameren
+True,0,-2.341664632161458,False,觀察 (跌勢收斂),2026-03-20 00:00:00,AMD,Advanced Micro Devices
+True,0,-11.954991658528645,False,觀察 (跌勢收斂),2026-03-20 00:00:00,ALNY,Alnylam Pharmaceuticals
+True,0,-0.6483357747395834,False,賣出 (動能轉弱),2026-03-20 00:00:00,AMZN,Amazon
+False,0,-6.028330485026041,True,強烈賣出 (跌破),2026-03-20 00:00:00,AMT,American Tower
+True,0,3.361670176188151,False,觀望 (動能減弱),2026-03-20 00:00:00,ANET,Arista Networks
+True,0,0.28333282470703125,False,觀望 (動能減弱),2026-03-20 00:00:00,ATO,Atmos Energy
+True,0,-1.5133310953776042,False,賣出 (動能轉弱),2026-03-20 00:00:00,AVGO,Broadcom
