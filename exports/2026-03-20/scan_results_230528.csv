@@ -1,0 +1,112 @@
+is_squeezed,energy_level,momentum,fired,Signal,timestamp,ticker,name
+True,1,-0.9449996948242186,False,賣出 (動能轉弱),2026-03-20 00:00:00,CSCO,Cisco
+True,1,-3.7616653442382812,False,賣出 (動能轉弱),2026-03-20 00:00:00,DVA,DaVita
+True,1,0.4649810791015625,False,觀望 (動能減弱),2026-03-20 00:00:00,EXE,Expand Energy
+True,1,0.03875923156738281,False,觀望 (動能減弱),2026-03-20 00:00:00,HPQ,HP Inc.
+True,1,-0.2433338165283203,False,賣出 (動能轉弱),2026-03-20 00:00:00,INTC,Intel
+True,1,-0.33148193359375,False,賣出 (動能轉弱),2026-03-20 00:00:00,KIM,Kimco Realty
+True,1,-0.4399998982747396,False,觀察 (跌勢收斂),2026-03-20 00:00:00,MTCH,Match Group
+True,1,0.006666501363118506,False,買入 (動能增強),2026-03-20 00:00:00,PFE,Pfizer
+True,1,2.013346354166667,False,觀望 (動能減弱),2026-03-20 00:00:00,PWR,Quanta Services
+True,1,5.501759847005207,False,觀望 (動能減弱),2026-03-20 00:00:00,TPL,Texas Pacific Land Corporation
+True,0,-1.1526629130045571,False,賣出 (動能轉弱),2026-03-20 00:00:00,AEE,Ameren
+False,0,-1.7300033569335938,True,強烈賣出 (跌破),2026-03-20 00:00:00,AEP,American Electric Power
+True,0,-11.954991658528645,False,觀察 (跌勢收斂),2026-03-20 00:00:00,ALNY,Alnylam Pharmaceuticals
+True,0,-2.341664632161458,False,觀察 (跌勢收斂),2026-03-20 00:00:00,AMD,Advanced Micro Devices
+True,0,-0.6483357747395834,False,賣出 (動能轉弱),2026-03-20 00:00:00,AMZN,Amazon
+True,0,3.361670176188151,False,觀望 (動能減弱),2026-03-20 00:00:00,ANET,Arista Networks
+False,0,-6.028330485026041,True,強烈賣出 (跌破),2026-03-20 00:00:00,AMT,American Tower
+True,0,0.28333282470703125,False,觀望 (動能減弱),2026-03-20 00:00:00,ATO,Atmos Energy
+True,0,-6.68500010172526,False,賣出 (動能轉弱),2026-03-20 00:00:00,ACN,Accenture
+True,0,-1.5133310953776042,False,賣出 (動能轉弱),2026-03-20 00:00:00,AVGO,Broadcom
+True,0,2.4083302815755205,False,觀望 (動能減弱),2026-03-20 00:00:00,AWK,American Water Works
+True,0,-0.6883335113525391,False,賣出 (動能轉弱),2026-03-20 00:00:00,BBY,Best Buy
+True,0,-4.109998067220052,False,賣出 (動能轉弱),2026-03-20 00:00:00,BK,BNY Mellon
+True,0,-4.243334452311197,False,觀察 (跌勢收斂),2026-03-20 00:00:00,C,Citigroup
+True,0,-4.433333079020182,False,觀察 (跌勢收斂),2026-03-20 00:00:00,BX,Blackstone Inc.
+True,0,-12.63666280110677,False,賣出 (動能轉弱),2026-03-20 00:00:00,CDNS,Cadence Design Systems
+False,0,-1.846881866455078,True,強烈賣出 (跌破),2026-03-20 00:00:00,CCI,Crown Castle
+True,0,-5.5366668701171875,False,觀察 (跌勢收斂),2026-03-20 00:00:00,CDW,CDW Corporation
+True,0,-0.3283348083496094,False,賣出 (動能轉弱),2026-03-20 00:00:00,CMS,CMS Energy
+True,0,-0.7836100260416665,False,賣出 (動能轉弱),2026-03-20 00:00:00,CME,CME Group
+True,0,-0.023333231608072907,False,賣出 (動能轉弱),2026-03-20 00:00:00,CNP,CenterPoint Energy
+True,0,-12.70167032877604,False,賣出 (動能轉弱),2026-03-20 00:00:00,COST,Costco
+True,0,0.5166676839192708,False,觀望 (動能減弱),2026-03-20 00:00:00,CRM,Salesforce
+True,0,-0.08140436808268231,False,賣出 (動能轉弱),2026-03-20 00:00:00,CTVA,Corteva
+True,0,-0.7936134338378906,False,賣出 (動能轉弱),2026-03-20 00:00:00,D,Dominion Energy
+True,0,-0.1486781438191732,False,賣出 (動能轉弱),2026-03-20 00:00:00,DOC,Healthpeak Properties
+True,0,1.3322931925455728,False,觀望 (動能減弱),2026-03-20 00:00:00,DLR,Digital Realty
+True,0,0.4852778116861979,False,觀望 (動能減弱),2026-03-20 00:00:00,DTE,DTE Energy
+True,0,-1.0399983723958333,False,觀察 (跌勢收斂),2026-03-20 00:00:00,EA,Electronic Arts
+True,0,1.453333536783854,False,觀望 (動能減弱),2026-03-20 00:00:00,ED,Consolidated Edison
+True,0,8.128336588541666,False,觀望 (動能減弱),2026-03-20 00:00:00,EQIX,Equinix
+False,0,-3.027547200520833,True,強烈賣出 (跌破),2026-03-20 00:00:00,ES,Eversource Energy
+False,0,-2.300000508626302,True,強烈賣出 (跌破),2026-03-20 00:00:00,EPAM,EPAM Systems
+True,0,-2.0183321634928384,False,賣出 (動能轉弱),2026-03-20 00:00:00,ETR,Entergy
+True,0,-1.335253397623698,False,賣出 (動能轉弱),2026-03-20 00:00:00,EVRG,Evergy
+True,0,-7.77093505859375,False,觀察 (跌勢收斂),2026-03-20 00:00:00,ETN,Eaton Corporation
+True,0,-2.706668853759765,False,賣出 (動能轉弱),2026-03-20 00:00:00,EW,Edwards Lifesciences
+True,0,-0.904998779296875,False,賣出 (動能轉弱),2026-03-20 00:00:00,EXPD,Expeditors International
+False,0,-0.823333740234375,True,強烈賣出 (跌破),2026-03-20 00:00:00,FAST,Fastenal
+True,0,-0.2950000762939453,False,賣出 (動能轉弱),2026-03-20 00:00:00,FE,FirstEnergy
+True,0,7.126673380533854,False,觀望 (動能減弱),2026-03-20 00:00:00,FFIV,"F5, Inc."
+True,0,-0.038444519042968764,False,賣出 (動能轉弱),2026-03-20 00:00:00,FIS,Fidelity National Information Services
+True,0,-24.212727864583332,False,觀察 (跌勢收斂),2026-03-20 00:00:00,FIX,Comfort Systems USA
+False,0,-4.451199849446614,True,強烈賣出 (跌破),2026-03-20 00:00:00,GILD,Gilead Sciences
+True,0,-20.833282470703125,False,觀察 (跌勢收斂),2026-03-20 00:00:00,GEV,GE Vernova
+True,0,-2.928522745768229,False,觀察 (跌勢收斂),2026-03-20 00:00:00,GOOG,Alphabet Inc. (Class C)
+True,0,0.2315343221028646,False,買入 (動能增強),2026-03-20 00:00:00,HAL,Halliburton
+True,0,-1.5653177897135417,False,觀察 (跌勢收斂),2026-03-20 00:00:00,GOOGL,Alphabet Inc. (Class A)
+True,0,-3.9816652933756504,False,賣出 (動能轉弱),2026-03-20 00:00:00,HOOD,Robinhood Markets
+True,0,0.3633343378702799,False,觀望 (動能減弱),2026-03-20 00:00:00,HPE,Hewlett Packard Enterprise
+False,0,-3.0606320699055987,True,強烈賣出 (跌破),2026-03-20 00:00:00,IRM,Iron Mountain
+False,0,-7.43499755859375,True,強烈賣出 (跌破),2026-03-20 00:00:00,JNJ,Johnson & Johnson
+True,0,-6.07666269938151,False,觀察 (跌勢收斂),2026-03-20 00:00:00,JBL,Jabil
+True,0,-36.16168212890625,False,觀察 (跌勢收斂),2026-03-20 00:00:00,KLAC,KLA Corporation
+True,0,-0.3349997202555338,False,賣出 (動能轉弱),2026-03-20 00:00:00,KMI,Kinder Morgan
+True,0,-3.44833501180013,False,觀察 (跌勢收斂),2026-03-20 00:00:00,KKR,KKR & Co.
+False,0,-3.5966657002766924,True,強烈賣出 (跌破),2026-03-20 00:00:00,L,Loews Corporation
+True,0,-0.27833429972330737,False,賣出 (動能轉弱),2026-03-20 00:00:00,LNT,Alliant Energy
+True,0,-18.54194132486979,False,賣出 (動能轉弱),2026-03-20 00:00:00,LMT,Lockheed Martin
+True,0,-2.2383333841959634,False,賣出 (動能轉弱),2026-03-20 00:00:00,LVS,Las Vegas Sands
+False,0,-5.238332112630208,True,強烈賣出 (跌破),2026-03-20 00:00:00,LYV,Live Nation Entertainment
+True,0,0.018332799275716183,False,觀望 (動能減弱),2026-03-20 00:00:00,MGM,MGM Resorts
+True,0,-0.19583257039388036,False,賣出 (動能轉弱),2026-03-20 00:00:00,MRNA,Moderna
+True,0,-3.8883285522460938,False,賣出 (動能轉弱),2026-03-20 00:00:00,MOH,Molina Healthcare
+True,0,-1.0838101704915364,False,觀察 (跌勢收斂),2026-03-20 00:00:00,NEE,NextEra Energy
+True,0,-0.23833401997884113,False,賣出 (動能轉弱),2026-03-20 00:00:00,NI,NiSource
+True,0,1.5416653951009114,False,買入 (動能增強),2026-03-20 00:00:00,NTAP,NetApp
+True,0,2.7166671752929688,False,買入 (動能增強),2026-03-20 00:00:00,OKE,Oneok
+True,0,0.15320905049641925,False,觀望 (動能減弱),2026-03-20 00:00:00,NWSA,News Corp (Class A)
+True,0,4.94000244140625,False,觀望 (動能減弱),2026-03-20 00:00:00,ORCL,Oracle Corporation
+False,0,-1.0686658223470051,True,強烈賣出 (跌破),2026-03-20 00:00:00,PEG,Public Service Enterprise Group
+True,0,0.28333282470703125,False,觀望 (動能減弱),2026-03-20 00:00:00,PNW,Pinnacle West Capital
+True,0,-0.29638544718424475,False,賣出 (動能轉弱),2026-03-20 00:00:00,PPL,PPL Corporation
+True,0,-1.3137505849202473,False,賣出 (動能轉弱),2026-03-20 00:00:00,PYPL,PayPal
+True,0,-1.7281506856282551,False,賣出 (動能轉弱),2026-03-20 00:00:00,REG,Regency Centers
+True,0,-1.0616683959960935,False,賣出 (動能轉弱),2026-03-20 00:00:00,RTX,RTX Corporation
+False,0,-34.25666300455729,True,強烈賣出 (跌破),2026-03-20 00:00:00,REGN,Regeneron Pharmaceuticals
+False,0,0.3933347066243489,True,強烈買入 (爆發),2026-03-20 00:00:00,SHOP,Shopify
+True,0,-2.0483322143554688,False,觀察 (跌勢收斂),2026-03-20 00:00:00,SCHW,Charles Schwab Corporation
+False,0,-2.9399992624918614,True,強烈賣出 (跌破),2026-03-20 00:00:00,SMCI,Supermicro
+False,0,-1.506665547688802,True,強烈賣出 (跌破),2026-03-20 00:00:00,SBUX,Starbucks
+True,0,-0.345343271891276,False,賣出 (動能轉弱),2026-03-20 00:00:00,SRE,Sempra
+True,0,-4.0149993896484375,False,觀察 (跌勢收斂),2026-03-20 00:00:00,SNPS,Synopsys
+False,0,0.041667938232421875,True,強烈買入 (爆發),2026-03-20 00:00:00,SO,Southern Company
+False,0,-0.8566665649414062,True,強烈賣出 (跌破),2026-03-20 00:00:00,TGT,Target Corporation
+True,0,-1.4416656494140623,False,賣出 (動能轉弱),2026-03-20 00:00:00,TEAM,Atlassian
+True,0,-4.6983388264973955,False,賣出 (動能轉弱),2026-03-20 00:00:00,TJX,TJX Companies
+False,0,-1.9416694641113281,True,強烈賣出 (跌破),2026-03-20 00:00:00,TRMB,Trimble Inc.
+True,0,1.1833318074544268,False,觀望 (動能減弱),2026-03-20 00:00:00,TRGP,Targa Resources
+True,0,-6.739344278971354,False,賣出 (動能轉弱),2026-03-20 00:00:00,TRV,Travelers Companies (The)
+False,0,-17.18500264485677,True,強烈賣出 (跌破),2026-03-20 00:00:00,TSLA,"Tesla, Inc."
+True,0,-5.21588134765625,False,賣出 (動能轉弱),2026-03-20 00:00:00,UNH,UnitedHealth Group
+True,0,-0.056666056315104185,False,賣出 (動能轉弱),2026-03-20 00:00:00,UBER,Uber
+True,0,-0.19833501180013013,False,賣出 (動能轉弱),2026-03-20 00:00:00,VTR,Ventas
+False,0,-8.056668599446613,True,強烈賣出 (跌破),2026-03-20 00:00:00,VST,Vistra Corp.
+True,0,0.2683340708414713,False,觀望 (動能減弱),2026-03-20 00:00:00,VZ,Verizon
+True,0,-1.0716654459635415,False,賣出 (動能轉弱),2026-03-20 00:00:00,WELL,Welltower
+True,0,-0.37500127156575525,False,賣出 (動能轉弱),2026-03-20 00:00:00,WEC,WEC Energy Group
+True,0,-1.326131184895833,False,賣出 (動能轉弱),2026-03-20 00:00:00,WMB,Williams Companies
+False,0,-3.543333689371744,True,強烈賣出 (跌破),2026-03-20 00:00:00,WMT,Walmart
+True,0,-0.5333353678385415,False,賣出 (動能轉弱),2026-03-20 00:00:00,ZS,Zscaler
