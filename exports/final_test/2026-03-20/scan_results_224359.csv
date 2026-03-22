@@ -1,4 +1,0 @@
-is_squeezed,energy_level,momentum,fired,Signal,timestamp,ticker,name
-True,0,-1.1526629130045571,False,賣出 (動能轉弱),2026-03-20 00:00:00,AEE,Ameren
-False,0,-1.7300033569335938,True,強烈賣出 (跌破),2026-03-20 00:00:00,AEP,American Electric Power
-True,0,-6.68500010172526,False,賣出 (動能轉弱),2026-03-20 00:00:00,ACN,Accenture
