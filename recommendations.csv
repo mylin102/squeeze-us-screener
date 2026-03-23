@@ -1,52 +1,72 @@
 date,ticker,name,entry_price,signal,exit_price,return_pct,evaluated,type,current_price,days_tracked,last_updated,status
-2026-03-21,ACN,Accenture,,賣出 (動能轉弱),,,,sell,199.9900054931641,1.0,2026-03-22,tracking
-2026-03-21,AEP,American Electric Power,,強烈賣出 (跌破),,,,sell,125.66000366210938,1.0,2026-03-22,tracking
-2026-03-21,AEE,Ameren,,賣出 (動能轉弱),,,,sell,106.05999755859376,1.0,2026-03-22,tracking
-2026-03-21,AAPL,Apple Inc.,150.0,買入 (動能增強),,65.32667032877603,,buy,247.9900054931641,1.0,2026-03-22,tracking
-2026-03-20,AAPL,Apple Inc.,150.0,買入 (動能增強),,65.32667032877603,,buy,247.9900054931641,2.0,2026-03-22,tracking
-2026-03-20,AMD,Advanced Micro Devices,,觀察 (跌勢收斂),,,,buy,201.3300018310547,2.0,2026-03-22,tracking
-2026-03-20,ALNY,Alnylam Pharmaceuticals,,觀察 (跌勢收斂),,,,buy,312.1700134277344,2.0,2026-03-22,tracking
-2026-03-20,AVGO,Broadcom,,賣出 (動能轉弱),,,,sell,310.510009765625,2.0,2026-03-22,tracking
-2026-03-20,AMZN,Amazon,,賣出 (動能轉弱),,,,sell,205.3699951171875,2.0,2026-03-22,tracking
-2026-03-20,AEP,American Electric Power,,強烈賣出 (跌破),,,,sell,125.66000366210938,2.0,2026-03-22,tracking
-2026-03-20,AEE,Ameren,,賣出 (動能轉弱),,,,sell,106.05999755859376,2.0,2026-03-22,tracking
-2026-03-20,OKE,Oneok,,買入 (動能增強),,,,buy,89.20999908447266,2.0,2026-03-22,tracking
-2026-03-20,NTAP,NetApp,,買入 (動能增強),,,,buy,101.11000061035156,2.0,2026-03-22,tracking
-2026-03-20,SHOP,Shopify,,強烈買入 (爆發),,,,buy,116.77999877929688,2.0,2026-03-22,tracking
-2026-03-20,HAL,Halliburton,,買入 (動能增強),,,,buy,36.52999877929688,2.0,2026-03-22,tracking
-2026-03-20,SO,Southern Company,,強烈買入 (爆發),,,,buy,93.38999938964844,2.0,2026-03-22,tracking
-2026-03-20,PFE,Pfizer,,買入 (動能增強),,,,buy,26.96999931335449,2.0,2026-03-22,tracking
-2026-03-20,MTCH,Match Group,,觀察 (跌勢收斂),,,,buy,31.059999465942383,2.0,2026-03-22,tracking
-2026-03-20,EA,Electronic Arts,,觀察 (跌勢收斂),,,,buy,200.509994506836,2.0,2026-03-22,tracking
-2026-03-20,NEE,NextEra Energy,,觀察 (跌勢收斂),,,,buy,89.5,2.0,2026-03-22,tracking
-2026-03-20,GOOGL,Alphabet Inc. (Class A),,觀察 (跌勢收斂),,,,buy,301.0,2.0,2026-03-22,tracking
-2026-03-20,REGN,Regeneron Pharmaceuticals,,強烈賣出 (跌破),,,,sell,732.8699951171875,2.0,2026-03-22,tracking
-2026-03-20,LMT,Lockheed Martin,,賣出 (動能轉弱),,,,sell,627.4299926757812,2.0,2026-03-22,tracking
-2026-03-20,TSLA,"Tesla, Inc.",,強烈賣出 (跌破),,,,sell,367.9599914550781,2.0,2026-03-22,tracking
-2026-03-20,COST,Costco,,賣出 (動能轉弱),,,,sell,972.3300170898438,2.0,2026-03-22,tracking
-2026-03-20,CDNS,Cadence Design Systems,,賣出 (動能轉弱),,,,sell,283.8999938964844,2.0,2026-03-22,tracking
-2026-03-20,VST,Vistra Corp.,,強烈賣出 (跌破),,,,sell,146.02000427246094,2.0,2026-03-22,tracking
-2026-03-20,JNJ,Johnson & Johnson,,強烈賣出 (跌破),,,,sell,235.3699951171875,2.0,2026-03-22,tracking
-2026-03-20,TRV,Travelers Companies (The),,賣出 (動能轉弱),,,,sell,296.6000061035156,2.0,2026-03-22,tracking
-2026-03-20,ACN,Accenture,,賣出 (動能轉弱),,,,sell,199.9900054931641,2.0,2026-03-22,tracking
-2026-03-20,AMT,American Tower,,強烈賣出 (跌破),,,,sell,176.7899932861328,2.0,2026-03-22,tracking
-2026-03-22,OKE,Oneok,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-22,tracking
-2026-03-22,NTAP,NetApp,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-22,tracking
-2026-03-22,SHOP,Shopify,,強烈買入 (爆發),,0.0,,buy,,0.0,2026-03-22,tracking
-2026-03-22,HAL,Halliburton,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-22,tracking
-2026-03-22,SO,Southern Company,,強烈買入 (爆發),,0.0,,buy,,0.0,2026-03-22,tracking
-2026-03-22,PFE,Pfizer,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-22,tracking
-2026-03-22,MTCH,Match Group,,觀察 (跌勢收斂),,0.0,,buy,,0.0,2026-03-22,tracking
-2026-03-22,EA,Electronic Arts,,觀察 (跌勢收斂),,0.0,,buy,,0.0,2026-03-22,tracking
-2026-03-22,NEE,NextEra Energy,,觀察 (跌勢收斂),,0.0,,buy,,0.0,2026-03-22,tracking
-2026-03-22,GOOGL,Alphabet Inc. (Class A),,觀察 (跌勢收斂),,0.0,,buy,,0.0,2026-03-22,tracking
-2026-03-22,REGN,Regeneron Pharmaceuticals,,強烈賣出 (跌破),,0.0,,sell,,0.0,2026-03-22,tracking
-2026-03-22,LMT,Lockheed Martin,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-22,tracking
-2026-03-22,TSLA,"Tesla, Inc.",,強烈賣出 (跌破),,0.0,,sell,,0.0,2026-03-22,tracking
-2026-03-22,COST,Costco,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-22,tracking
-2026-03-22,CDNS,Cadence Design Systems,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-22,tracking
-2026-03-22,VST,Vistra Corp.,,強烈賣出 (跌破),,0.0,,sell,,0.0,2026-03-22,tracking
-2026-03-22,JNJ,Johnson & Johnson,,強烈賣出 (跌破),,0.0,,sell,,0.0,2026-03-22,tracking
-2026-03-22,TRV,Travelers Companies (The),,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-22,tracking
-2026-03-22,ACN,Accenture,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-22,tracking
-2026-03-22,AMT,American Tower,,強烈賣出 (跌破),,0.0,,sell,,0.0,2026-03-22,tracking
+2026-03-21,ACN,Accenture,,賣出 (動能轉弱),,,,sell,200.0200042724609,2.0,2026-03-23,tracking
+2026-03-21,AEP,American Electric Power,,強烈賣出 (跌破),,,,sell,127.91999816894533,2.0,2026-03-23,tracking
+2026-03-21,AEE,Ameren,,賣出 (動能轉弱),,,,sell,106.9000015258789,2.0,2026-03-23,tracking
+2026-03-21,AAPL,Apple Inc.,150.0,買入 (動能增強),,67.66000366210938,,buy,251.4900054931641,2.0,2026-03-23,tracking
+2026-03-20,AAPL,Apple Inc.,150.0,買入 (動能增強),,67.66000366210938,,buy,251.4900054931641,3.0,2026-03-23,tracking
+2026-03-20,AMD,Advanced Micro Devices,,觀察 (跌勢收斂),,,,buy,202.67999267578125,3.0,2026-03-23,tracking
+2026-03-20,ALNY,Alnylam Pharmaceuticals,,觀察 (跌勢收斂),,,,buy,306.6600036621094,3.0,2026-03-23,tracking
+2026-03-20,AVGO,Broadcom,,賣出 (動能轉弱),,,,sell,322.510009765625,3.0,2026-03-23,tracking
+2026-03-20,AMZN,Amazon,,賣出 (動能轉弱),,,,sell,210.13999938964844,3.0,2026-03-23,tracking
+2026-03-20,AEP,American Electric Power,,強烈賣出 (跌破),,,,sell,127.91999816894533,3.0,2026-03-23,tracking
+2026-03-20,AEE,Ameren,,賣出 (動能轉弱),,,,sell,106.9000015258789,3.0,2026-03-23,tracking
+2026-03-20,OKE,Oneok,,買入 (動能增強),,,,buy,89.91999816894531,3.0,2026-03-23,tracking
+2026-03-20,NTAP,NetApp,,買入 (動能增強),,,,buy,101.3000030517578,3.0,2026-03-23,tracking
+2026-03-20,SHOP,Shopify,,強烈買入 (爆發),,,,buy,121.0999984741211,3.0,2026-03-23,tracking
+2026-03-20,HAL,Halliburton,,買入 (動能增強),,,,buy,37.5099983215332,3.0,2026-03-23,tracking
+2026-03-20,SO,Southern Company,,強烈買入 (爆發),,,,buy,93.75,3.0,2026-03-23,tracking
+2026-03-20,PFE,Pfizer,,買入 (動能增強),,,,buy,26.770000457763672,3.0,2026-03-23,tracking
+2026-03-20,MTCH,Match Group,,觀察 (跌勢收斂),,,,buy,31.200000762939453,3.0,2026-03-23,tracking
+2026-03-20,EA,Electronic Arts,,觀察 (跌勢收斂),,,,buy,201.1300048828125,3.0,2026-03-23,tracking
+2026-03-20,NEE,NextEra Energy,,觀察 (跌勢收斂),,,,buy,90.2300033569336,3.0,2026-03-23,tracking
+2026-03-20,GOOGL,Alphabet Inc. (Class A),,觀察 (跌勢收斂),,,,buy,302.0599975585937,3.0,2026-03-23,tracking
+2026-03-20,REGN,Regeneron Pharmaceuticals,,強烈賣出 (跌破),,,,sell,736.530029296875,3.0,2026-03-23,tracking
+2026-03-20,LMT,Lockheed Martin,,賣出 (動能轉弱),,,,sell,616.25,3.0,2026-03-23,tracking
+2026-03-20,TSLA,"Tesla, Inc.",,強烈賣出 (跌破),,,,sell,380.8500061035156,3.0,2026-03-23,tracking
+2026-03-20,COST,Costco,,賣出 (動能轉弱),,,,sell,965.72998046875,3.0,2026-03-23,tracking
+2026-03-20,CDNS,Cadence Design Systems,,賣出 (動能轉弱),,,,sell,292.5199890136719,3.0,2026-03-23,tracking
+2026-03-20,VST,Vistra Corp.,,強烈賣出 (跌破),,,,sell,151.2899932861328,3.0,2026-03-23,tracking
+2026-03-20,JNJ,Johnson & Johnson,,強烈賣出 (跌破),,,,sell,235.4199981689453,3.0,2026-03-23,tracking
+2026-03-20,TRV,Travelers Companies (The),,賣出 (動能轉弱),,,,sell,295.5199890136719,3.0,2026-03-23,tracking
+2026-03-20,ACN,Accenture,,賣出 (動能轉弱),,,,sell,200.0200042724609,3.0,2026-03-23,tracking
+2026-03-20,AMT,American Tower,,強烈賣出 (跌破),,,,sell,176.5,3.0,2026-03-23,tracking
+2026-03-22,OKE,Oneok,,買入 (動能增強),,,,buy,89.91999816894531,1.0,2026-03-23,tracking
+2026-03-22,NTAP,NetApp,,買入 (動能增強),,,,buy,101.3000030517578,1.0,2026-03-23,tracking
+2026-03-22,SHOP,Shopify,,強烈買入 (爆發),,,,buy,121.0999984741211,1.0,2026-03-23,tracking
+2026-03-22,HAL,Halliburton,,買入 (動能增強),,,,buy,37.5099983215332,1.0,2026-03-23,tracking
+2026-03-22,SO,Southern Company,,強烈買入 (爆發),,,,buy,93.75,1.0,2026-03-23,tracking
+2026-03-22,PFE,Pfizer,,買入 (動能增強),,,,buy,26.770000457763672,1.0,2026-03-23,tracking
+2026-03-22,MTCH,Match Group,,觀察 (跌勢收斂),,,,buy,31.200000762939453,1.0,2026-03-23,tracking
+2026-03-22,EA,Electronic Arts,,觀察 (跌勢收斂),,,,buy,201.1300048828125,1.0,2026-03-23,tracking
+2026-03-22,NEE,NextEra Energy,,觀察 (跌勢收斂),,,,buy,90.2300033569336,1.0,2026-03-23,tracking
+2026-03-22,GOOGL,Alphabet Inc. (Class A),,觀察 (跌勢收斂),,,,buy,302.0599975585937,1.0,2026-03-23,tracking
+2026-03-22,REGN,Regeneron Pharmaceuticals,,強烈賣出 (跌破),,,,sell,736.530029296875,1.0,2026-03-23,tracking
+2026-03-22,LMT,Lockheed Martin,,賣出 (動能轉弱),,,,sell,616.25,1.0,2026-03-23,tracking
+2026-03-22,TSLA,"Tesla, Inc.",,強烈賣出 (跌破),,,,sell,380.8500061035156,1.0,2026-03-23,tracking
+2026-03-22,COST,Costco,,賣出 (動能轉弱),,,,sell,965.72998046875,1.0,2026-03-23,tracking
+2026-03-22,CDNS,Cadence Design Systems,,賣出 (動能轉弱),,,,sell,292.5199890136719,1.0,2026-03-23,tracking
+2026-03-22,VST,Vistra Corp.,,強烈賣出 (跌破),,,,sell,151.2899932861328,1.0,2026-03-23,tracking
+2026-03-22,JNJ,Johnson & Johnson,,強烈賣出 (跌破),,,,sell,235.4199981689453,1.0,2026-03-23,tracking
+2026-03-22,TRV,Travelers Companies (The),,賣出 (動能轉弱),,,,sell,295.5199890136719,1.0,2026-03-23,tracking
+2026-03-22,ACN,Accenture,,賣出 (動能轉弱),,,,sell,200.0200042724609,1.0,2026-03-23,tracking
+2026-03-22,AMT,American Tower,,強烈賣出 (跌破),,,,sell,176.5,1.0,2026-03-23,tracking
+2026-03-23,EQIX,Equinix,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-23,tracking
+2026-03-23,PWR,Quanta Services,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-23,tracking
+2026-03-23,OKE,Oneok,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-23,tracking
+2026-03-23,GEV,GE Vernova,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-23,tracking
+2026-03-23,NTAP,NetApp,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-23,tracking
+2026-03-23,AMD,Advanced Micro Devices,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-23,tracking
+2026-03-23,HAL,Halliburton,,強烈買入 (爆發),,0.0,,buy,,0.0,2026-03-23,tracking
+2026-03-23,JBL,Jabil,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-23,tracking
+2026-03-23,ED,Consolidated Edison,,強烈買入 (爆發),,0.0,,buy,,0.0,2026-03-23,tracking
+2026-03-23,SNPS,Synopsys,,買入 (動能增強),,0.0,,buy,,0.0,2026-03-23,tracking
+2026-03-23,LMT,Lockheed Martin,,強烈賣出 (跌破),,0.0,,sell,,0.0,2026-03-23,tracking
+2026-03-23,COST,Costco,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-23,tracking
+2026-03-23,MSCI,MSCI Inc.,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-23,tracking
+2026-03-23,ACN,Accenture,,強烈賣出 (跌破),,0.0,,sell,,0.0,2026-03-23,tracking
+2026-03-23,TRV,Travelers Companies (The),,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-23,tracking
+2026-03-23,UNH,UnitedHealth Group,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-23,tracking
+2026-03-23,ALL,Allstate,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-23,tracking
+2026-03-23,MOH,Molina Healthcare,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-23,tracking
+2026-03-23,TJX,TJX Companies,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-23,tracking
+2026-03-23,EPAM,EPAM Systems,,賣出 (動能轉弱),,0.0,,sell,,0.0,2026-03-23,tracking

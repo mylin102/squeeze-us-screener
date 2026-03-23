@@ -1,0 +1,988 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-23T16:29:34.992341-05:00",
+    "count": 98
+  },
+  "results": [
+    {
+      "is_squeezed": true,
+      "energy_level": 2,
+      "momentum": 2.692759195963541,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "TPL",
+      "name": "Texas Pacific Land Corporation"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": -0.698333740234375,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "CRM",
+      "name": "Salesforce"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": -1.0116666158040366,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "CSCO",
+      "name": "Cisco"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": 0.7824732462565102,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "DLR",
+      "name": "Digital Realty"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": -3.584999084472656,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "DVA",
+      "name": "DaVita"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": 0.36899439493815106,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "EXE",
+      "name": "Expand Energy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": -0.27629979451497394,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "FIS",
+      "name": "Fidelity National Information Services"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": -0.21323394775390625,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "HPQ",
+      "name": "HP Inc."
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": -0.38166745503743493,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "INTC",
+      "name": "Intel"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": -0.397798220316569,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "KIM",
+      "name": "Kimco Realty"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": -0.19833374023437497,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "MGM",
+      "name": "MGM Resorts"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": -0.35999997456868493,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "MTCH",
+      "name": "Match Group"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": 0.11833318074544272,
+      "fired": false,
+      "Signal": "買入 (動能增強)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "PFE",
+      "name": "Pfizer"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": 5.676686604817709,
+      "fired": false,
+      "Signal": "買入 (動能增強)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "PWR",
+      "name": "Quanta Services"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 1,
+      "momentum": -1.4151776631673176,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "WMB",
+      "name": "Williams Companies"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -4.411664326985677,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ABNB",
+      "name": "Airbnb"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -9.873331705729166,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ACN",
+      "name": "Accenture"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -2.004362742106119,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "AEE",
+      "name": "Ameren"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -6.731473286946614,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ALL",
+      "name": "Allstate"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -11.938329060872395,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ALNY",
+      "name": "Alnylam Pharmaceuticals"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 1.1083348592122395,
+      "fired": false,
+      "Signal": "買入 (動能增強)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "AMD",
+      "name": "Advanced Micro Devices"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -1.620002746582031,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "AMZN",
+      "name": "Amazon"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 2.6616706848144536,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ANET",
+      "name": "Arista Networks"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -1.5283355712890625,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ATO",
+      "name": "Atmos Energy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -1.5316619873046873,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "AVGO",
+      "name": "Broadcom"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 1.6799952189127603,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "AWK",
+      "name": "American Water Works"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -0.9966659545898438,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "BBY",
+      "name": "Best Buy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -5.0933380126953125,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "BIIB",
+      "name": "Biogen"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -3.478331247965494,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "BK",
+      "name": "BNY Mellon"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -3.5600001017252607,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "BX",
+      "name": "Blackstone Inc."
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -2.3533350626627603,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "C",
+      "name": "Citigroup"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -11.388331095377604,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "CDNS",
+      "name": "Cadence Design Systems"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -5.324999491373697,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "CDW",
+      "name": "CDW Corporation"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -3.128504435221354,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "CME",
+      "name": "CME Group"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -0.9650014241536458,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "CMS",
+      "name": "CMS Energy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.4333337148030598,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "CNP",
+      "name": "CenterPoint Energy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -17.786671956380207,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "COST",
+      "name": "Costco"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.17215220133463544,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "CTVA",
+      "name": "Corteva"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -1.3753331502278645,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "D",
+      "name": "Dominion Energy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.08381462097167969,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "DOC",
+      "name": "Healthpeak Properties"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -0.9671554565429684,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "DTE",
+      "name": "DTE Energy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.5216649373372395,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "EA",
+      "name": "Electronic Arts"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": 0.5400009155273436,
+      "fired": true,
+      "Signal": "強烈買入 (爆發)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ED",
+      "name": "Consolidated Edison"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -4.7866668701171875,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "EPAM",
+      "name": "EPAM Systems"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 8.891672770182291,
+      "fired": false,
+      "Signal": "買入 (動能增強)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "EQIX",
+      "name": "Equinix"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -3.933980305989584,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ETN",
+      "name": "Eaton Corporation"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -2.5949999491373696,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ETR",
+      "name": "Entergy"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -1.8884455362955728,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "EVRG",
+      "name": "Evergy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -2.753335316975911,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "EW",
+      "name": "Edwards Lifesciences"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -2.048334757486979,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "EXPD",
+      "name": "Expeditors International"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -0.6400000254313151,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "FE",
+      "name": "FirstEnergy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 6.351669311523437,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "FFIV",
+      "name": "F5, Inc."
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.0065714518229160745,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "FIX",
+      "name": "Comfort Systems USA"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.15457344055175778,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "FOX",
+      "name": "Fox Corporation (Class B)"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 0.4882666269938151,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "FOXA",
+      "name": "Fox Corporation (Class A)"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 2.344991048177084,
+      "fired": false,
+      "Signal": "買入 (動能增強)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "GEV",
+      "name": "GE Vernova"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -1.3166097005208333,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "GOOG",
+      "name": "Alphabet Inc. (Class C)"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 0.39993794759114587,
+      "fired": false,
+      "Signal": "買入 (動能增強)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "GOOGL",
+      "name": "Alphabet Inc. (Class A)"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": 1.0248597462972004,
+      "fired": true,
+      "Signal": "強烈買入 (爆發)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "HAL",
+      "name": "Halliburton"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 0.34666760762532545,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "HPE",
+      "name": "Hewlett Packard Enterprise"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -4.636665344238281,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "HOOD",
+      "name": "Robinhood Markets"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 0.7516733805338547,
+      "fired": false,
+      "Signal": "買入 (動能增強)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "JBL",
+      "name": "Jabil"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -16.743336995442707,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "KEYS",
+      "name": "Keysight Technologies"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -2.4566688537597656,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "KKR",
+      "name": "KKR & Co."
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -1.1433308919270786,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "KLAC",
+      "name": "KLA Corporation"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.3849995930989583,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "KMI",
+      "name": "Kinder Morgan"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -0.8950004577636718,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "LNT",
+      "name": "Alliant Energy"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -25.316029866536457,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "LMT",
+      "name": "Lockheed Martin"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -2.196666717529297,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "LVS",
+      "name": "Las Vegas Sands"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -6.574994405110678,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "MOH",
+      "name": "Molina Healthcare"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.8191668192545574,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "MRNA",
+      "name": "Moderna"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -15.850016276041666,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "MSCI",
+      "name": "MSCI Inc."
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 5.163337707519531,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "MSTR",
+      "name": "MicroStrategy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.9528299967447915,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "NEE",
+      "name": "NextEra Energy"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.6433340708414713,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "NI",
+      "name": "NiSource"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 1.9433314005533855,
+      "fired": false,
+      "Signal": "買入 (動能增強)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "NTAP",
+      "name": "NetApp"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 0.13036092122395831,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "NWSA",
+      "name": "News Corp (Class A)"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 2.9233334859212237,
+      "fired": false,
+      "Signal": "買入 (動能增強)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "OKE",
+      "name": "Oneok"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 3.6616694132486978,
+      "fired": false,
+      "Signal": "觀望 (動能減弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ORCL",
+      "name": "Oracle Corporation"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -0.9383341471354167,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "PNW",
+      "name": "Pinnacle West Capital"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.5117816925048828,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "PPL",
+      "name": "PPL Corporation"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -1.2925567626953125,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "PYPL",
+      "name": "PayPal"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -2.2775955200195312,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "REG",
+      "name": "Regency Centers"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -3.991668701171874,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "RTX",
+      "name": "RTX Corporation"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -1.6849988301595051,
+      "fired": false,
+      "Signal": "觀察 (跌勢收斂)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "SCHW",
+      "name": "Charles Schwab Corporation"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": 0.4383392333984377,
+      "fired": false,
+      "Signal": "買入 (動能增強)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "SNPS",
+      "name": "Synopsys"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.41790898640950513,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "SRE",
+      "name": "Sempra"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -3.1283315022786455,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "TEAM",
+      "name": "Atlassian"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -5.371668497721354,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "TJX",
+      "name": "TJX Companies"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.316668192545573,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "TRGP",
+      "name": "Targa Resources"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -8.213205973307291,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "TRV",
+      "name": "Travelers Companies (The)"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.19333267211914057,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "UBER",
+      "name": "Uber"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -8.063334147135416,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "UNH",
+      "name": "UnitedHealth Group"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -0.7416674296061198,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "VTR",
+      "name": "Ventas"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -0.189999262491862,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "VZ",
+      "name": "Verizon"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -1.370000203450521,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "WEC",
+      "name": "WEC Energy Group"
+    },
+    {
+      "is_squeezed": false,
+      "energy_level": 0,
+      "momentum": -2.675000508626302,
+      "fired": true,
+      "Signal": "強烈賣出 (跌破)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "WELL",
+      "name": "Welltower"
+    },
+    {
+      "is_squeezed": true,
+      "energy_level": 0,
+      "momentum": -1.9033355712890623,
+      "fired": false,
+      "Signal": "賣出 (動能轉弱)",
+      "timestamp": "2026-03-23 00:00:00",
+      "ticker": "ZS",
+      "name": "Zscaler"
+    }
+  ]
+}
