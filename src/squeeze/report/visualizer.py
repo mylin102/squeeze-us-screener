@@ -7,7 +7,7 @@ import os
 def plot_ticker(ticker_df: pd.DataFrame, ticker_symbol: str, output_path: str):
     """
     Generates a candlestick chart with technical indicators for a given ticker.
-    Optimized: 6-month view, separate Squeeze State Panel for high visibility.
+    Optimized: 1-year view, separate Squeeze State Panel for high visibility.
     """
     # 1. Ensure index is DatetimeIndex and sorted
     if not isinstance(ticker_df.index, pd.DatetimeIndex):
@@ -28,8 +28,8 @@ def plot_ticker(ticker_df: pd.DataFrame, ticker_symbol: str, output_path: str):
     df['KC_Upper'] = kc.filter(like='KCU').iloc[:, 0]
     df['KC_Lower'] = kc.filter(like='KCL').iloc[:, 0]
 
-    # 4. Slice to last 6 months (approx 130 bars)
-    plot_df = df.tail(130).copy()
+    # 4. Slice to last 1 year (approx 252 trading days)
+    plot_df = df.tail(252).copy()
     
     # 5. Prepare indicator plots
     plots = [
@@ -54,28 +54,23 @@ def plot_ticker(ticker_df: pd.DataFrame, ticker_symbol: str, output_path: str):
     plots.append(mpf.make_addplot(plot_df['Momentum'], type='bar', panel=1, color=hist_colors, 
                                   secondary_y=False, ylabel='Momentum'))
     
-    # 7. Panel 2: CRITICAL - Squeeze Status Ribbon (High Visibility)
-    # We use a constant value bar to create a "status ribbon" at the bottom
+    # 7. Panel 2: Squeeze Status Ribbon (High Visibility)
     squeeze_on = plot_df['Squeeze_On']
-    energy = plot_df['Energy_Level']
     
-    # Create a status series: 1 for Squeeze On, 0.5 for Squeeze Off (Fired)
-    status_val = np.where(squeeze_on, 1.0, 0.3)
-    # Colors: Red for On, Lime for Off
-    status_colors = np.where(squeeze_on, 'red', 'lime')
+    # Create a status series: 1.0 for visualization height
+    status_val = np.full(len(plot_df), 1.0)
+    # Colors: Black for Squeeze ON, Gray for Squeeze OFF
+    status_colors = np.where(squeeze_on, 'black', '#cccccc')
     
-    # Marker-based approach for absolute clarity on a separate panel
-    # We use large squares to form a solid line
     plots.append(mpf.make_addplot(status_val, type='bar', panel=2, color=status_colors, 
-                                  width=0.8, secondary_y=False, ylabel='SQZ'))
+                                  width=1.0, secondary_y=False, ylabel='SQZ'))
 
     # Ensure output directory exists
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
     
-    # 8. Generate Final Plot with 3 Panels
-    # Ratios: 6 (Price) : 2 (Momentum) : 1 (Squeeze Status)
+    # 8. Generate Final Plot
     mpf.plot(plot_df, type='candle', style='charles', addplot=plots, 
-             title=f"\n{ticker_symbol} - Squeeze Analysis (6mo)", 
+             title=f"\n{ticker_symbol} - Squeeze Analysis (1yr)", 
              savefig=output_path, volume=True, 
              panel_ratios=(6, 2, 1), 
              datetime_format='%Y-%m',
