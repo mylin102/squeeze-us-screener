@@ -1,26 +1,8 @@
-date,ticker,name,entry_price,signal,exit_price,return_pct,evaluated,type,current_price,days_tracked,last_updated,status
-2026-03-25,ASML,ASML Holding,,觀察 (跌勢收斂),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,ABNB,Airbnb,,觀察 (跌勢收斂),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,IT,Gartner,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,ZS,Zscaler,,強烈賣出 (跌破),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,SNPS,Synopsys,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,ROP,Roper Technologies,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,LHX,L3Harris,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,CDNS,Cadence Design Systems,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,TYL,Tyler Technologies,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,COST,Costco,,強烈賣出 (跌破),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,MELI,Mercado Libre,,強烈賣出 (跌破),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,C,Citigroup,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,ATO,Atmos Energy,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,ALNY,Alnylam Pharmaceuticals,,觀察 (跌勢收斂),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,AMZN,Amazon,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,FIX,Comfort Systems USA,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,GEV,GE Vernova,,強烈買入 (爆發),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,EME,Emcor,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,EQIX,Equinix,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,ETN,Eaton Corporation,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,AMD,Advanced Micro Devices,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,TER,Teradyne,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,RMBS,Rambus,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,NTAP,NetApp,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
-2026-03-25,AVGO,Broadcom,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
+date,ticker,name,entry_price,signal,current_price,return_pct,days_tracked,last_updated,status,type
+2026-03-25,AMD,Advanced Micro Devices,220.27000427246097,買入 (動能增強),220.27000427246097,0.0,0,2026-03-25,tracking,buy
+2026-03-25,ASML,ASML Holding,1393.8900146484375,觀察 (跌勢收斂),1393.8900146484375,0.0,0,2026-03-25,tracking,buy
+2026-03-25,ABNB,Airbnb,131.80999755859375,觀察 (跌勢收斂),131.80999755859375,0.0,0,2026-03-25,tracking,buy
+2026-03-25,ALNY,Alnylam Pharmaceuticals,328.70001220703125,觀察 (跌勢收斂),328.70001220703125,0.0,0,2026-03-25,tracking,buy
+2026-03-25,AVGO,Broadcom,318.80999755859375,強烈賣出 (跌破),318.80999755859375,0.0,0,2026-03-25,tracking,sell
+2026-03-25,AMZN,Amazon,211.7100067138672,賣出 (動能轉弱),211.7100067138672,0.0,0,2026-03-25,tracking,sell
+2026-03-25,ATO,Atmos Energy,181.5500030517578,賣出 (動能轉弱),181.5500030517578,0.0,0,2026-03-25,tracking,sell
