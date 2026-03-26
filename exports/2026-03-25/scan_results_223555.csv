@@ -1,0 +1,10 @@
+is_squeezed,energy_level,momentum,fired,Signal,timestamp,ticker,name
+True,0,-3.351664225260416,False,觀察 (跌勢收斂),2026-03-25 00:00:00,ABNB,Airbnb
+True,0,-9.049997965494793,False,觀察 (跌勢收斂),2026-03-25 00:00:00,ALNY,Alnylam Pharmaceuticals
+True,0,8.030003865559895,False,買入 (動能增強),2026-03-25 00:00:00,AMD,Advanced Micro Devices
+True,0,1.1750017801920574,False,觀望 (動能減弱),2026-03-25 00:00:00,ANET,Arista Networks
+True,0,2.4450009663899737,False,觀望 (動能減弱),2026-03-25 00:00:00,APO,Apollo Global Management
+True,0,-4.415003458658854,False,賣出 (動能轉弱),2026-03-25 00:00:00,AMZN,Amazon
+True,0,-0.11499023437500266,False,觀察 (跌勢收斂),2026-03-25 00:00:00,ASML,ASML Holding
+True,0,-3.4516677856445312,False,賣出 (動能轉弱),2026-03-25 00:00:00,ATO,Atmos Energy
+False,0,-8.883331298828123,True,強烈賣出 (跌破),2026-03-25 00:00:00,AVGO,Broadcom

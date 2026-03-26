@@ -1,8 +1,26 @@
 date,ticker,name,entry_price,signal,exit_price,return_pct,evaluated,type,current_price,days_tracked,last_updated,status
-2026-03-25,AMD,Advanced Micro Devices,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
 2026-03-25,ASML,ASML Holding,,觀察 (跌勢收斂),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,NTAP,NetApp,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,IT,Gartner,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
+2026-03-25,ZS,Zscaler,,強烈賣出 (跌破),,0.0,,sell,,0,2026-03-25,tracking
+2026-03-25,SNPS,Synopsys,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
+2026-03-25,ROP,Roper Technologies,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
+2026-03-25,LHX,L3Harris,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
+2026-03-25,CDNS,Cadence Design Systems,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
+2026-03-25,TYL,Tyler Technologies,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
+2026-03-25,COST,Costco,,強烈賣出 (跌破),,0.0,,sell,,0,2026-03-25,tracking
+2026-03-25,MELI,Mercado Libre,,強烈賣出 (跌破),,0.0,,sell,,0,2026-03-25,tracking
+2026-03-25,C,Citigroup,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,RMBS,Rambus,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
 2026-03-25,ABNB,Airbnb,,觀察 (跌勢收斂),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,TER,Teradyne,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,AMD,Advanced Micro Devices,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,ETN,Eaton Corporation,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,EQIX,Equinix,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,EME,Emcor,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,GEV,GE Vernova,,強烈買入 (爆發),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,FIX,Comfort Systems USA,,買入 (動能增強),,0.0,,buy,,0,2026-03-25,tracking
+2026-03-25,ATO,Atmos Energy,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
+2026-03-25,AMZN,Amazon,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
 2026-03-25,ALNY,Alnylam Pharmaceuticals,,觀察 (跌勢收斂),,0.0,,buy,,0,2026-03-25,tracking
 2026-03-25,AVGO,Broadcom,,強烈賣出 (跌破),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,AMZN,Amazon,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
-2026-03-25,ATO,Atmos Energy,,賣出 (動能轉弱),,0.0,,sell,,0,2026-03-25,tracking
