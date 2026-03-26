@@ -29,7 +29,6 @@ def scan(
     top: int = typer.Option(10, "--top", help="Number of top picks to plot"),
     output_dir: Optional[Path] = typer.Option(None, "--output-dir", "-o", help="Output directory for reports and charts"),
     notify: bool = typer.Option(False, "--notify", help="Send notification summary (e.g., via LINE)"),
-    # New Fundamental Filters
     min_mkt_cap: Optional[float] = typer.Option(None, "--min-mkt-cap", help="Minimum market capitalization (in billion USD)"),
     min_volume: Optional[float] = typer.Option(None, "--min-volume", help="Minimum average daily volume"),
     min_score: Optional[float] = typer.Option(None, "--min-score", help="Minimum Value Score (0.0 - 1.0)"),
@@ -41,7 +40,6 @@ def scan(
     """
     console.print(f"[yellow]Scanning for {pattern} pattern in US Market...[/yellow]")
     
-    # Map pattern names to functions and result filters
     pattern_map = {
         "squeeze": {
             "fn": detect_squeeze,
@@ -64,12 +62,11 @@ def scan(
     }
     
     if pattern not in pattern_map:
-        console.print(f"[red]Unknown pattern: {pattern}. Available patterns: {list(pattern_map.keys())}[/red]")
+        console.print(f"[red]Unknown pattern: {pattern}.[/red]")
         return
 
     config = pattern_map[pattern]
-    
-    console.print("[yellow]Discovering US market tickers (S&P 500 & NASDAQ 100)...[/yellow]")
+    console.print("[yellow]Discovering US market tickers...[/yellow]")
     ticker_map = fetch_tickers_with_names()
     all_tickers = sorted(list(ticker_map.keys()))
     
@@ -78,39 +75,28 @@ def scan(
         console.print(f"[yellow]Limiting scan to {limit} tickers.[/yellow]")
     
     console.print(f"[green]Scanning {len(all_tickers)} tickers...[/green]")
-    
     scanner = MarketScanner(all_tickers, ticker_names=ticker_map)
     
-    # Fetch fundamentals if any filters are set or if we want value scores
     has_fund_filters = any([min_mkt_cap, min_volume, min_score])
     if has_fund_filters:
-        with console.status("[bold green]Fetching fundamental data...[/bold green]"):
+        with console.status("[bold green]Fetching fundamentals...[/bold green]"):
             scanner.fetch_fundamentals()
             
     with console.status("[bold green]Downloading market data...[/bold green]"):
         scanner.fetch_data(period=period)
         
     with console.status("[bold green]Analyzing patterns...[/bold green]"):
-        # Convert billion USD to absolute value if needed by logic
         mkt_cap_val = min_mkt_cap * 1e9 if min_mkt_cap else None
-        results = scanner.scan(
-            config['fn'],
-            min_mkt_cap=mkt_cap_val,
-            min_avg_volume=min_volume,
-            min_score=min_score
-        )
+        results = scanner.scan(config['fn'], min_mkt_cap=mkt_cap_val, min_avg_volume=min_volume, min_score=min_score)
     
-    # 4. Apply Price Filters (Done after scan to use current Close price)
     if min_price is not None:
         results = [r for r in results if r.get('Close', 0) >= min_price]
     if max_price is not None:
         results = [r for r in results if r.get('Close', 0) <= max_price]
 
-    # Filter results for pattern match
     matched = [r for r in results if config['filter'](r)]
     matched = sorted(matched, key=config['sort_key'], reverse=True)
     
-    # Create the result table
     table = Table(title=f"{config['title']} ({len(matched)} matches)")
     table.add_column("Ticker", style="cyan")
     table.add_column("Name", style="magenta")
@@ -124,224 +110,70 @@ def scan(
             energy_stars = "★" * r.get('energy_level', 0)
             momentum_color = "green" if r.get('momentum', 0) > 0 else "red"
             val_score = f"{r.get('value_score', 0):.2f}" if 'value_score' in r else "N/A"
-            table.add_row(
-                r['ticker'],
-                r.get('name', '未知'),
-                r.get('Signal', '觀望'),
-                f"{r['energy_level']} {energy_stars}",
-                f"[{momentum_color}]{r['momentum']:.4f}[/{momentum_color}]",
-                val_score
-            )
-    elif pattern == "houyi":
-        table.add_column("Rally %", style="yellow")
-        table.add_column("Fib Level", style="magenta")
-        table.add_column("Score", style="blue")
-        for r in matched:
-            val_score = f"{r.get('value_score', 0):.2f}" if 'value_score' in r else "N/A"
-            table.add_row(
-                r['ticker'],
-                r.get('name', '未知'),
-                r.get('Signal', '觀望'),
-                f"{r['rally_pct']*100:.1f}%",
-                f"{r['fib_level']:.2f}",
-                val_score
-            )
-    elif pattern == "whale":
-        table.add_column("D-Sq", style="yellow")
-        table.add_column("W-Sq", style="magenta")
-        table.add_column("Score", style="blue")
-        for r in matched:
-            val_score = f"{r.get('value_score', 0):.2f}" if 'value_score' in r else "N/A"
-            table.add_row(
-                r['ticker'],
-                r.get('name', '未知'),
-                r.get('Signal', '觀望'),
-                "YES" if r.get('daily_squeeze') else "no",
-                "YES" if r.get('weekly_squeeze') else "no",
-                val_score
-            )
+            table.add_row(r['ticker'], r.get('name', 'Unknown'), r.get('Signal', '觀望'), f"{r['energy_level']} {energy_stars}", f"[{momentum_color}]{r['momentum']:.4f}[/{momentum_color}]", val_score)
     
     console.print(table)
     
-    if not matched:
-        console.print(f"[yellow]No stocks currently matched the {pattern} pattern.[/yellow]")
-        return
-
-    # Handle Exports and Plotting
+    chart_paths = []
     if export or plot:
         base_dir = output_dir or Path("exports")
-        
         if export:
-            console.print(f"[yellow]Exporting results to {base_dir}...[/yellow]")
+            console.print(f"[yellow]Exporting results...[/yellow]")
             exporter = ReportExporter()
             paths = exporter.export(matched, base_dir)
-            for fmt, path in paths.items():
-                console.print(f"[green]Exported {fmt}: {path}[/green]")
         
         if plot:
             plot_count = min(len(matched), top)
             console.print(f"[yellow]Generating charts for top {plot_count} picks...[/yellow]")
-            
-            # Create charts subdirectory in the date folder (align with exporter timezone)
             exporter = ReportExporter()
             now = exporter._get_market_now()
-            date_str = now.strftime("%Y-%m-%d")
-            charts_dir = base_dir / date_str / "charts"
+            charts_dir = base_dir / now.strftime("%Y-%m-%d") / "charts"
             charts_dir.mkdir(parents=True, exist_ok=True)
             
             for i in range(plot_count):
                 ticker = matched[i]['ticker']
                 try:
-                    # Extract ticker data from scanner's downloaded data
-                    if isinstance(scanner.data.columns, pd.MultiIndex):
-                        ticker_data = scanner.data[ticker].dropna(subset=['Close'])
-                    else:
-                        ticker_data = scanner.data.dropna(subset=['Close'])
-
-                    # Use full ticker symbol for filename
+                    ticker_data = scanner.data[ticker].dropna(subset=['Close']) if isinstance(scanner.data.columns, pd.MultiIndex) else scanner.data.dropna(subset=['Close'])
                     chart_path = charts_dir / f"{ticker}.png"
                     plot_ticker(ticker_data, ticker, str(chart_path))
-
+                    chart_paths.append(chart_path)
                     console.print(f"  [green]✔[/green] Generated chart for {ticker}")
                 except Exception as e:
                     console.print(f"  [red]✘[/red] Error plotting {ticker}: {str(e)}")
 
-    # Handle Performance Tracking
     tracking_buys = []
     tracking_sells = []
     try:
         tracker = PerformanceTracker(Path("recommendations.csv"))
-        # 1. Update performance for all active tracking items
         tracker.update_daily_performance()
         tracking_buys = tracker.get_active_tracking_list(rec_type='buy')
         tracking_sells = tracker.get_active_tracking_list(rec_type='sell')
         
-        # 2. Record today's recommendations (Top 10 only)
         buy_signals = ["強烈買入 (爆發)", "買入 (動能增強)", "觀察 (跌勢收斂)"]
         sell_signals = ["強烈賣出 (跌破)", "賣出 (動能轉弱)"]
-        
         today_buys = [r for r in matched if r.get('Signal') in buy_signals]
         today_sells = [r for r in matched if r.get('Signal') in sell_signals]
         
         tracker.record_recommendations(today_buys, rec_type='buy')
         tracker.record_recommendations(today_sells, rec_type='sell')
     except Exception as e:
-        console.print(f"[red]Error during performance tracking: {str(e)}[/red]")
+        console.print(f"[red]Error during tracking: {str(e)}[/red]")
 
-    # Handle Notifications
     if notify:
         console.print("[yellow]Sending notifications...[/yellow]")
-        
-        # 1. LINE Notification (Short Summary)
         notifier = LineNotifier()
-        msg = f"Squeeze Scan Complete: {pattern}\nBuy: {len(today_buys)} | Sell: {len(today_sells)}"
-        if today_buys:
-            msg += f"\nTop Buy: {today_buys[0]['ticker']} ({today_buys[0].get('name', 'N/A')})"
-        
-        # Append performance brief to LINE
-        total_tracking = len(tracking_buys) + len(tracking_sells)
-        if total_tracking > 0:
-            profitable_buys = len([p for p in tracking_buys if p['return_pct'] > 0])
-            successful_sells = len([p for p in tracking_sells if p['return_pct'] < 0])
-            msg += f"\n\n📊 Tracking {total_tracking} stocks"
-            msg += f"\nCorrect: {profitable_buys + successful_sells}/{total_tracking}"
-        
-        if notifier.send_summary(msg):
-            console.print("[green]LINE notification sent successfully.[/green]")
-        else:
-            console.print("[red]Failed to send LINE notification.[/red]")
+        msg = f"Squeeze Scan Complete (US): {pattern}\nBuy: {len(today_buys)} | Sell: {len(today_sells)}"
+        notifier.send_summary(msg)
 
-        # 2. Email Notification (Full Markdown Report)
         email_notifier = EmailNotifier()
         exporter = ReportExporter()
+        html_report = exporter.render_html_summary(buy_results=today_buys, sell_results=today_sells, tracking_buys=tracking_buys, tracking_sells=tracking_sells)
+        subject = f"Squeeze Scan Report (US - {pattern}) - {pd.Timestamp.now().strftime('%Y-%m-%d')}"
         
-        report_content = exporter.render_summary(
-            buy_results=today_buys, 
-            sell_results=today_sells,
-            tracking_buys=tracking_buys,
-            tracking_sells=tracking_sells
-        )
-        subject = f"Squeeze 掃描報告 ({pattern}) - {pd.Timestamp.now().strftime('%Y-%m-%d')}"
-        
-        if email_notifier.send_email(subject, report_content):
-            console.print("[green]Email notification sent successfully.[/green]")
+        if email_notifier.send_email(subject, html_report, is_html=True, attachments=chart_paths):
+            console.print("[green]Email sent successfully with HTML and attachments.[/green]")
         else:
-            console.print("[red]Failed to send email notification.[/red]")
-
-@app.command(name="fetch-tickers")
-def fetch_tickers():
-    """
-    Fetch US market tickers (S&P 500, NASDAQ 100) and update the ticker database.
-    """
-    console.print("[yellow]Fetching US tickers...[/yellow]")
-    from squeeze.data.tickers import fetch_tickers as do_fetch_tickers
-    tickers = do_fetch_tickers()
-    console.print(f"[green]Successfully discovered {len(tickers)} US tickers![/green]")
-
-@app.command(name="download")
-def download(
-    ticker: str = typer.Option(..., "--ticker", "-t", help="Ticker symbol (e.g., AAPL, MSFT)"),
-    period: str = typer.Option("1y", "--period", "-p", help="Data period (e.g., 1y, 6mo)")
-):
-    """
-    Download historical data for a specific ticker.
-    """
-    console.print(f"[yellow]Downloading data for {ticker}...[/yellow]")
-    df = download_market_data([ticker], period=period)
-    
-    if df.empty:
-        console.print("[red]No data found.[/red]")
-    else:
-        console.print(f"[green]Downloaded {len(df)} rows.[/green]")
-        console.print(f"Columns: {list(df.columns)}")
-
-@app.command(name="analyze")
-def analyze(
-    ticker: str = typer.Option(..., "--ticker", "-t", help="Ticker symbol (e.g., AAPL, MSFT)"),
-    period: str = typer.Option("1y", "--period", "-p", help="Data period (e.g., 1y, 6mo)")
-):
-    """
-    Download data and calculate Squeeze indicators for a specific ticker.
-    """
-    console.print(f"[yellow]Analyzing {ticker}...[/yellow]")
-    df = download_market_data([ticker], period=period)
-    
-    if df.empty:
-        console.print("[red]No data found.[/red]")
-        return
-
-    # If df is MultiIndex from bulk download, select the ticker
-    if isinstance(df.columns, pd.MultiIndex):
-        try:
-            ticker_data = df[ticker].copy()
-        except KeyError:
-            console.print(f"[red]Ticker {ticker} not found in downloaded data.[/red]")
-            return
-    else:
-        ticker_data = df.copy()
-
-    try:
-        results = calculate_squeeze_indicators(ticker_data)
-        latest = results.iloc[-1]
-        
-        console.print(f"\n[bold underline]Latest Analysis for {ticker}[/bold underline]")
-        
-        status_color = "red" if latest['Squeeze_On'] else "green"
-        status_text = "SQUEEZE ON" if latest['Squeeze_On'] else "NO SQUEEZE"
-        console.print(f"Status: [{status_color}]{status_text}[/{status_color}]")
-        
-        if latest['Fired']:
-            console.print("[bold cyan]*** SQUEEZE FIRED! ***[/bold cyan]")
-            
-        console.print(f"Energy Level: [bold]{latest['Energy_Level']}/3[/bold]")
-        
-        momentum_color = "green" if latest['Momentum'] > 0 else "red"
-        console.print(f"Momentum: [{momentum_color}]{latest['Momentum']:.4f}[/{momentum_color}]")
-        
-        console.print(f"Close: {latest['Close']:.2f}")
-        
-    except Exception as e:
-        console.print(f"[red]Error during calculation: {str(e)}[/red]")
+            console.print("[red]Failed to send email.[/red]")
 
 if __name__ == "__main__":
     app()

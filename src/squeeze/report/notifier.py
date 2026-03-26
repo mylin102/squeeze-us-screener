@@ -3,7 +3,9 @@ import logging
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
 from typing import Optional, List
+from pathlib import Path
 
 try:
     from linebot.v3.messaging import (
@@ -60,7 +62,7 @@ class LineNotifier:
 class EmailNotifier:
     """
     A class to send notifications via Email (SMTP).
-    Supports multiple recipients via comma-separated string.
+    Supports multiple recipients via comma-separated string and image attachments.
     """
     def __init__(
         self, 
@@ -82,9 +84,9 @@ class EmailNotifier:
             return []
         return [r.strip() for r in self.recipient_str.split(',') if r.strip()]
 
-    def send_email(self, subject: str, body: str, is_html: bool = False) -> bool:
+    def send_email(self, subject: str, body: str, is_html: bool = False, attachments: Optional[List[Path]] = None) -> bool:
         """
-        Send an email notification to one or more recipients.
+        Send an email notification to one or more recipients with optional attachments.
         """
         recipients = self._get_recipient_list()
         if not all([self.username, self.password]) or not recipients:
@@ -97,7 +99,17 @@ class EmailNotifier:
             msg['To'] = ", ".join(recipients)
             msg['Subject'] = subject
 
+            # Attach body
             msg.attach(MIMEText(body, 'html' if is_html else 'plain'))
+
+            # Attach files
+            if attachments:
+                for path in attachments:
+                    if path.exists():
+                        with open(path, 'rb') as f:
+                            img_data = f.read()
+                            image = MIMEImage(img_data, name=path.name)
+                            msg.attach(image)
 
             server = smtplib.SMTP(self.smtp_server, self.smtp_port)
             server.starttls()
@@ -105,7 +117,7 @@ class EmailNotifier:
             server.sendmail(self.username, recipients, msg.as_string())
             server.quit()
             
-            logger.info(f"Email sent successfully to {len(recipients)} recipient(s).")
+            logger.info(f"Email sent successfully to {len(recipients)} recipient(s) with {len(attachments) if attachments else 0} attachments.")
             return True
         except Exception as e:
             logger.error(f"Failed to send email: {e}")
