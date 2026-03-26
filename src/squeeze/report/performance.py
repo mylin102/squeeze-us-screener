@@ -72,8 +72,18 @@ class PerformanceTracker:
             
         # Avoid duplicate entries for same day/ticker
         df_combined = pd.concat([df_old, df_new]).drop_duplicates(subset=['date', 'ticker'], keep='last')
+        
+        # Limit total tracking list to 25 items (keep most recent)
+        # Sort by date descending so newest are at top
+        df_combined['date_dt'] = pd.to_datetime(df_combined['date'])
+        df_combined = df_combined.sort_values(by=['date_dt'], ascending=False).drop(columns=['date_dt'])
+        
+        # Separate active and non-active to apply limit only to active tracking items if desired,
+        # but here we simply keep the top 25 records overall to keep the file clean.
+        df_combined = df_combined.head(25)
+        
         df_combined.to_csv(self.db_path, index=False)
-        logger.info(f"Recorded {len(new_records)} {rec_type} signals to {self.db_path}")
+        logger.info(f"Recorded {len(new_records)} {rec_type} signals to {self.db_path} (Limited to 25 total)")
 
     def update_daily_performance(self) -> List[Dict[str, Any]]:
         """
