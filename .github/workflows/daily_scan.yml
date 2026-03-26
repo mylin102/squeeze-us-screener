@@ -34,8 +34,7 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           SMTP_RECIPIENT: ${{ secrets.SMTP_RECIPIENT }}
         run: |
-          # 執行掃描、產生圖表並寄送通知
-          python -m squeeze.cli scan --export --plot --notify --output-dir exports
+          python -m squeeze scan --export --plot --notify
 
       - name: Commit and push results
         uses: stefanzweifel/git-auto-commit-action@v5
