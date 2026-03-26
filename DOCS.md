@@ -1,49 +1,50 @@
-# Squeeze Stock Screener - User Guide (v1.0)
+# Squeeze Stock Screener Technical Documentation v1.2.1 (US Market)
 
 ## Overview
-The Squeeze Stock Screener is a professional-grade tool designed to identify high-potential trading entries in the US Stock Market (S&P 500 & NASDAQ 100). It combines John Carter's "Squeeze" logic with advanced pattern recognition and fundamental value analysis.
+This project is a Python-based automated stock scanning system designed to identify high-potential trading opportunities using the Squeeze Momentum indicator and advanced pattern recognition. It covers S&P 500, NASDAQ 100, DJI, and SOX constituents.
 
-## Core Patterns
+## Technical Indicators
 
-### 1. TTM Squeeze
-Identifies periods of price consolidation (energy accumulation).
-- **Squeeze ON**: Bollinger Bands are within Keltner Channels.
-- **Squeeze OFF**: Bands have expanded, indicating a momentum breakout.
+### 1. Squeeze Momentum (TTM Squeeze)
+*   **Squeeze ON**: Triggered when Bollinger Bands (20, 2.0) are completely inside Keltner Channels (20, 1.5). This indicates low volatility and energy accumulation.
+*   **Squeeze Fired**: Triggered when Bollinger Bands break out of Keltner Channels, indicating the start of a trend.
+*   **Energy Level**: 
+    *   Formula: `(KC_Width - BB_Width) / KC_Width`
+    *   Levels: 0 (No Squeeze) to 3 (Extreme Squeeze ★★★).
 
-### 2. Houyi Shooting the Sun
-A high-conviction momentum pattern.
-- **Criteria**: >20% rally followed by a 50-61.8% Fibonacci retracement into a Squeeze, ending with a "Shooting Star" candlestick.
+### 2. Momentum Histogram
+*   **Cyan**: Upward trend + increasing strength.
+*   **Blue**: Upward trend + decreasing strength.
+*   **Red**: Downward trend + increasing strength.
+*   **Maroon**: Downward trend + decreasing strength.
 
-### 3. Whale Trading
-Multi-timeframe institutional alignment.
-- **Criteria**: Concurrent Squeezes on both **Daily** and **Weekly** charts with positive momentum.
+## Pattern Recognition Logic
 
-## Fundamental Filtering
-Filter the market for quality and value before applying technical analysis:
-- `--min-mkt-cap`: Minimum market capitalization (in billion USD).
-- `--min-volume`: Minimum 20-day average volume.
-- `--min-score`: Minimum **Value Score** (0.0 - 1.0).
+### 1. Houyi Shooting Sun
+Designed for "Strong Stock Pullbacks":
+*   Previous rally > 20%.
+*   Retracement to 0.5 - 0.618 Fibonacci support zone.
+*   Appearance of a "Shooting Star" wick combined with Squeeze ON status.
 
-### What is the Value Score?
-A percentile-based ranking calculated across the scanned US market:
-- **Lower P/E**: Higher score.
-- **Lower P/B**: Higher score.
-- **Higher Dividend Yield**: Higher score.
+### 2. Whale Trading
+Multi-timeframe alignment:
+*   Both Daily and Weekly charts are in Squeeze ON status.
+*   Both timeframes have positive momentum (> 0).
 
-## CLI Usage
+## Visualization and Reporting
 
-### Basic Scan
-```bash
-squeeze scan --limit 100
-```
+### Chart Markers
+*   **Black Square (⬛)**: Plotted below the zero line on the indicator panel, representing **Squeeze ON**.
+*   **Light Gray Square (⬜)**: Represents **Squeeze OFF**.
+*   **Positioning**: Fixed below the zero axis to avoid overlap with the momentum histogram.
 
-### Advanced Scan with Filters and Charts
-```bash
-squeeze scan --pattern whale --min-mkt-cap 50 --min-score 0.7 --plot --export
-```
+### Notification System
+*   **HTML Email**: Formatted tables with color-coded signals (Green for Buy / Red for Sell).
+*   **Attachments**: Automatically includes PNG charts for the top 15 candidates.
+*   **LINE Notification**: Real-time summary of scan results and tracking performance.
 
-## Automation
-The project includes a pre-configured GitHub Actions workflow in `.github/workflows/daily_scan.yml`. It runs every weekday at 16:30 ET, saves reports to the `exports/` folder, and sends a summary to your LINE Bot.
-
----
-*Disclaimer: This tool is for informational purposes only. Trading stocks involves high risk.*
+## Project Structure
+*   `src/squeeze/data/`: Data acquisition (yfinance, Wikipedia scrapers).
+*   `src/squeeze/engine/`: Core analytics (Indicators, Patterns).
+*   `src/squeeze/report/`: Reporting and Notifications (Jinja2, SMTP, LINE).
+*   `recommendations.csv`: Tracking database (limited to latest 25 picks).
