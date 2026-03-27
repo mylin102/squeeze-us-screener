@@ -1,5 +1,6 @@
 import csv
 import json
+import tomllib
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import List, Dict, Any, Optional
@@ -14,6 +15,14 @@ class ReportExporter:
 
     def _get_market_now(self) -> datetime:
         return datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=-5)))
+
+    def _get_app_version(self) -> str:
+        pyproject_path = Path(__file__).resolve().parents[3] / "pyproject.toml"
+        try:
+            with open(pyproject_path, "rb") as f:
+                return tomllib.load(f)["project"]["version"]
+        except Exception:
+            return "unknown"
 
     def export(self, results: List[Dict[str, Any]], output_base_dir: Path, extra_sections: Optional[Dict[str, List[Dict[str, Any]]]] = None) -> Dict[str, Path]:
         now = self._get_market_now()
@@ -59,7 +68,7 @@ class ReportExporter:
         top_priority = sorted(extra_sections.get("priority", []), key=lambda x: (x.get('composite_score', 0), x.get('momentum', 0)), reverse=True)[:10]
         top_houyi = sorted(extra_sections.get("houyi", []), key=lambda x: x.get('rally_pct', 0), reverse=True)[:10]
         top_whale = sorted(extra_sections.get("whale", []), key=lambda x: x.get('weekly_momentum', 0), reverse=True)[:10]
-        render_data = {"date": self._get_market_now().strftime("%Y-%m-%d %H:%M:%S") + " (ET)", "buy_results": [self._format_result(r) for r in top_buys], "buy_count": len(buy_results or []), "sell_results": [self._format_result(r) for r in top_sells], "sell_count": len(sell_results or []), "tracking_buys": tracking_buys or [], "tracking_sells": tracking_sells or [], "priority_results": [self._format_result(r) for r in top_priority], "priority_count": len(extra_sections.get("priority", [])), "houyi_results": [self._format_result(r) for r in top_houyi], "houyi_count": len(extra_sections.get("houyi", [])), "whale_results": [self._format_result(r) for r in top_whale], "whale_count": len(extra_sections.get("whale", []))}
+        render_data = {"date": self._get_market_now().strftime("%Y-%m-%d %H:%M:%S") + " (ET)", "app_version": self._get_app_version(), "buy_results": [self._format_result(r) for r in top_buys], "buy_count": len(buy_results or []), "sell_results": [self._format_result(r) for r in top_sells], "sell_count": len(sell_results or []), "tracking_buys": tracking_buys or [], "tracking_sells": tracking_sells or [], "priority_results": [self._format_result(r) for r in top_priority], "priority_count": len(extra_sections.get("priority", [])), "houyi_results": [self._format_result(r) for r in top_houyi], "houyi_count": len(extra_sections.get("houyi", [])), "whale_results": [self._format_result(r) for r in top_whale], "whale_count": len(extra_sections.get("whale", []))}
         return template.render(**render_data)
 
     def render_html_summary(self, buy_results=None, sell_results=None, tracking_buys=None, tracking_sells=None, extra_sections: Optional[Dict[str, List[Dict[str, Any]]]] = None) -> str:
@@ -70,7 +79,7 @@ class ReportExporter:
         top_priority = sorted(extra_sections.get("priority", []), key=lambda x: (x.get('composite_score', 0), x.get('momentum', 0)), reverse=True)[:10]
         top_houyi = sorted(extra_sections.get("houyi", []), key=lambda x: x.get('rally_pct', 0), reverse=True)[:10]
         top_whale = sorted(extra_sections.get("whale", []), key=lambda x: x.get('weekly_momentum', 0), reverse=True)[:10]
-        render_data = {"date": self._get_market_now().strftime("%Y-%m-%d %H:%M:%S") + " (ET)", "buy_results": [self._format_result(r) for r in top_buys], "buy_count": len(buy_results or []), "sell_results": [self._format_result(r) for r in top_sells], "sell_count": len(sell_results or []), "tracking_buys": tracking_buys or [], "tracking_sells": tracking_sells or [], "priority_results": [self._format_result(r) for r in top_priority], "priority_count": len(extra_sections.get("priority", [])), "houyi_results": [self._format_result(r) for r in top_houyi], "houyi_count": len(extra_sections.get("houyi", [])), "whale_results": [self._format_result(r) for r in top_whale], "whale_count": len(extra_sections.get("whale", []))}
+        render_data = {"date": self._get_market_now().strftime("%Y-%m-%d %H:%M:%S") + " (ET)", "app_version": self._get_app_version(), "buy_results": [self._format_result(r) for r in top_buys], "buy_count": len(buy_results or []), "sell_results": [self._format_result(r) for r in top_sells], "sell_count": len(sell_results or []), "tracking_buys": tracking_buys or [], "tracking_sells": tracking_sells or [], "priority_results": [self._format_result(r) for r in top_priority], "priority_count": len(extra_sections.get("priority", [])), "houyi_results": [self._format_result(r) for r in top_houyi], "houyi_count": len(extra_sections.get("houyi", [])), "whale_results": [self._format_result(r) for r in top_whale], "whale_count": len(extra_sections.get("whale", []))}
         return template.render(**render_data)
 
     def _format_result(self, r: Dict[str, Any]) -> Dict[str, Any]:
