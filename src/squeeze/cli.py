@@ -129,6 +129,41 @@ def analyze(
 
     console.print(table)
 
+
+@app.command(name="plot")
+def plot(
+    ticker: str = typer.Option(..., "--ticker", help="Single US ticker to plot."),
+    period: str = typer.Option("2y", "--period", "-p", help="Data period (e.g., 2y, 1y, 6mo)"),
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Output PNG path."),
+):
+    """Generate a chart for a single US ticker."""
+    from squeeze.engine.scanner import MarketScanner
+    from squeeze.report.visualizer import plot_ticker
+
+    normalized_ticker = ticker.strip().upper()
+    ticker_map = fetch_tickers_with_names()
+    scanner = MarketScanner([normalized_ticker], ticker_names=ticker_map)
+
+    with console.status(f"[bold green]Downloading market data for {normalized_ticker}...[/bold green]"):
+        scanner.fetch_data(period=period)
+
+    if scanner.data.empty:
+        console.print(f"[red]No market data available for {normalized_ticker}.[/red]")
+        raise typer.Exit(code=1)
+
+    if isinstance(scanner.data.columns, pd.MultiIndex):
+        ticker_df = scanner.data[normalized_ticker].dropna(subset=["Close"])
+    else:
+        ticker_df = scanner.data.dropna(subset=["Close"])
+
+    if ticker_df.empty:
+        console.print(f"[red]No plottable data available for {normalized_ticker}.[/red]")
+        raise typer.Exit(code=1)
+
+    chart_path = output or Path("exports") / "single" / f"{normalized_ticker}.png"
+    plot_ticker(ticker_df, normalized_ticker, str(chart_path))
+    console.print(f"[green]Saved chart:[/green] {chart_path}")
+
 @app.command(name="scan")
 def scan(
     pattern: str = typer.Option("squeeze", "--pattern", "-P", help="Pattern to scan for (squeeze, houyi, whale)"),
