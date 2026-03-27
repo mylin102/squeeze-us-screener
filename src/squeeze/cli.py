@@ -4,20 +4,25 @@ from rich.console import Console
 from rich.table import Table
 from pathlib import Path
 
-from typing import List, Optional, Dict, Any
+from typing import Optional
 
 from squeeze.data.tickers import fetch_tickers_with_names
-from squeeze.data.downloader import download_market_data
-from squeeze.engine.indicators import calculate_squeeze_indicators
-from squeeze.engine.patterns import detect_squeeze, detect_houyi_shooting_sun, detect_whale_trading
-from squeeze.engine.scanner import MarketScanner
 from squeeze.report.exporter import ReportExporter
-from squeeze.report.visualizer import plot_ticker
 from squeeze.report.notifier import LineNotifier, EmailNotifier
 from squeeze.report.performance import PerformanceTracker
+from squeeze.report.tracking_analysis import build_tracking_report, format_tracking_report, load_tracking_frame
 
 app = typer.Typer(help="Squeeze Stock Screener for US Market")
 console = Console()
+
+
+@app.command(name="analyze-tracking")
+def analyze_tracking(
+    csv_path: Path = typer.Option(Path("recommendations.csv"), "--csv", help="Tracking CSV to analyze."),
+):
+    """Analyze completed tracking history and summarize strategy health."""
+    report = build_tracking_report(load_tracking_frame(str(csv_path)))
+    console.print(format_tracking_report(report))
 
 @app.command(name="scan")
 def scan(
@@ -38,6 +43,10 @@ def scan(
     """
     Scan all US stocks for specific technical patterns and fundamental filters.
     """
+    from squeeze.engine.patterns import detect_squeeze, detect_houyi_shooting_sun, detect_whale_trading
+    from squeeze.engine.scanner import MarketScanner
+    from squeeze.report.visualizer import plot_ticker
+
     console.print(f"[yellow]Scanning for {pattern} pattern in US Market...[/yellow]")
     
     pattern_map = {
@@ -154,8 +163,10 @@ def scan(
         today_buys = [r for r in matched if r.get('Signal') in buy_signals]
         today_sells = [r for r in matched if r.get('Signal') in sell_signals]
         
-        tracker.record_recommendations(today_buys, rec_type='buy')
-        tracker.record_recommendations(today_sells, rec_type='sell')
+        market_context = tracker._infer_market_context()
+        market_context['pattern'] = pattern
+        tracker.record_recommendations(today_buys, rec_type='buy', market_context=market_context)
+        tracker.record_recommendations(today_sells, rec_type='sell', market_context=market_context)
     except Exception as e:
         console.print(f"[red]Error during tracking: {str(e)}[/red]")
 

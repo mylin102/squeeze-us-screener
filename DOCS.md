@@ -43,6 +43,30 @@ Multi-timeframe alignment:
 *   **Attachments**: Automatically includes PNG charts for the top 15 candidates.
 *   **LINE Notification**: Real-time summary of scan results and tracking performance.
 
+## Tracking and Strategy Review
+
+### Stored Tracking Context
+`recommendations.csv` now stores not only price progress but also the entry context needed for strategy review:
+*   `pattern`
+*   `momentum`
+*   `prev_momentum`
+*   `energy_level`
+*   `squeeze_on`
+*   `fired`
+*   `market_regime`
+*   `benchmark_ticker`
+*   `strategy_return_pct` (buy/sell normalized return)
+
+### Retention Rules
+*   Active tracking rows are still capped at 25 for operational reporting.
+*   Completed rows are preserved for longer-term analysis so the strategy can be reviewed over time.
+
+### Analysis Commands
+```bash
+python3 scripts/analyze_tracking.py --csv recommendations.csv
+PYTHONPATH=src python3 -m squeeze.cli analyze-tracking --csv recommendations.csv
+```
+
 ## Project Structure
 *   `src/squeeze/data/`: Data acquisition (yfinance, Wikipedia scrapers).
 *   `src/squeeze/engine/`: Core analytics (Indicators, Patterns).

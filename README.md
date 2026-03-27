@@ -10,6 +10,7 @@
 - **自動化通知**：整合 LINE Bot 與 Email (SMTP) 通知，支援多收件人設定。
 - **績效追蹤**：每日自動追蹤推薦標的的表現，資料庫自動維持在最新的 25 檔以內。
 - **雲端視覺化**：每日自動生成專業的 K 線圖並附帶技術指標疊加。
+- **策略檢視**：保留完成追蹤的歷史資料，並可用分析命令檢查各類訊號、持有天數與市場 regime 的表現差異。
 
 ## 快速開始
 
@@ -22,6 +23,15 @@ pip install ./squeeze
 ```bash
 # 掃描目前的擠壓動能標的，並生成圖表與發送通知
 squeeze scan --export --plot --notify
+```
+
+### 檢視策略績效
+```bash
+# 直接分析 recommendations.csv
+python3 scripts/analyze_tracking.py --csv recommendations.csv
+
+# 或用 CLI 命令
+PYTHONPATH=src python3 -m squeeze.cli analyze-tracking --csv recommendations.csv
 ```
 
 ## 自動化設定 (GitHub Actions)
