@@ -91,10 +91,11 @@
         <table>
             <thead>
                 <tr>
-                    <th>Entry Date</th>
+                    <th>Latest Entry</th>
+                    <th>Entries</th>
                     <th>Ticker</th>
                     <th>Name</th>
-                    <th>Entry Price</th>
+                    <th>Avg Entry Price</th>
                     <th>Current Price</th>
                     <th>Days</th>
                     <th>Return (%)</th>
@@ -103,10 +104,11 @@
             <tbody>
                 {% for perf in tracking_buys %}
                 <tr>
-                    <td>{{ perf.date }}</td>
+                    <td>{{ perf.latest_entry_date }}</td>
+                    <td>{{ perf.entries }}</td>
                     <td><strong>{{ perf.ticker }}</strong></td>
                     <td>{{ perf.name }}</td>
-                    <td>${{ "%.2f"|format(perf.entry_price) }}</td>
+                    <td>${{ "%.2f"|format(perf.avg_entry_price) }}</td>
                     <td>${{ "%.2f"|format(perf.current_price) }}</td>
                     <td>{{ perf.days_tracked }}</td>
                     <td class="{{ 'positive' if perf.return_pct > 0 else 'negative' }}">
