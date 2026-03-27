@@ -307,6 +307,10 @@ def scan(
     console.print(table)
     
     chart_paths = []
+    chart_candidates = matched
+    if pattern == "squeeze":
+        chart_candidates = extra_sections.get("priority", []) or matched
+
     if export or plot:
         base_dir = output_dir or Path("exports")
         if export:
@@ -315,7 +319,7 @@ def scan(
             paths = exporter.export(matched, base_dir, extra_sections=extra_sections)
         
         if plot:
-            plot_count = min(len(matched), top)
+            plot_count = min(len(chart_candidates), top)
             console.print(f"[yellow]Generating charts for top {plot_count} picks...[/yellow]")
             exporter = ReportExporter()
             now = exporter._get_market_now()
@@ -323,7 +327,7 @@ def scan(
             charts_dir.mkdir(parents=True, exist_ok=True)
             
             for i in range(plot_count):
-                ticker = matched[i]['ticker']
+                ticker = chart_candidates[i]['ticker']
                 try:
                     ticker_data = scanner.data[ticker].dropna(subset=['Close']) if isinstance(scanner.data.columns, pd.MultiIndex) else scanner.data.dropna(subset=['Close'])
                     chart_path = charts_dir / f"{ticker}.png"

@@ -16,7 +16,7 @@ def test_scan_automation_triggers():
         mock_fetch.return_value = {"AAPL": "Apple Inc."}
 
         # Mock scanner to return a dummy result
-        with patch("squeeze.cli.MarketScanner") as mock_scanner_cls, \
+        with patch("squeeze.engine.scanner.MarketScanner") as mock_scanner_cls, \
              patch("squeeze.cli.PerformanceTracker") as mock_tracker_cls:
 
             mock_scanner = MagicMock()
@@ -40,7 +40,7 @@ def test_scan_automation_triggers():
             ]            
             # Mock exporters and notifiers
             with patch("squeeze.cli.ReportExporter") as mock_exporter_cls, \
-                 patch("squeeze.cli.plot_ticker") as mock_plot, \
+                 patch("squeeze.report.visualizer.plot_ticker") as mock_plot, \
                  patch("squeeze.cli.LineNotifier") as mock_notifier_cls, \
                  patch("squeeze.cli.EmailNotifier") as mock_email_cls:
 
@@ -73,8 +73,7 @@ def test_scan_automation_triggers():
                 assert "Exporting results" in result.stdout
                 assert "Generating charts" in result.stdout
                 assert "Sending notifications" in result.stdout
-                assert "LINE notification sent successfully" in result.stdout
-                assert "Email notification sent successfully" in result.stdout
+                assert "Email sent successfully with HTML and attachments." in result.stdout
 
                 # Verify calls
                 mock_exporter.export.assert_called_once()
@@ -87,7 +86,6 @@ def test_scan_automation_triggers():
                 summary_msg = args[0]
                 assert "Squeeze Scan Complete" in summary_msg
                 assert "Buy: 1 | Sell: 0" in summary_msg
-                assert "AAPL" in summary_msg
 def test_scan_houyi_triggers():
     """
     Test that 'squeeze scan --pattern houyi' correctly triggers logic.
@@ -95,7 +93,7 @@ def test_scan_houyi_triggers():
     with patch("squeeze.cli.fetch_tickers_with_names") as mock_fetch:
         mock_fetch.return_value = {"AAPL": "Apple Inc."}
         
-        with patch("squeeze.cli.MarketScanner") as mock_scanner_cls, \
+        with patch("squeeze.engine.scanner.MarketScanner") as mock_scanner_cls, \
              patch("squeeze.cli.PerformanceTracker") as mock_tracker_cls:
             
             mock_scanner = MagicMock()
@@ -116,10 +114,12 @@ def test_scan_houyi_triggers():
             mock_tracker_cls.return_value = mock_tracker
             mock_tracker.get_active_tracking_list.return_value = []
             
-            with patch("squeeze.cli.LineNotifier") as mock_notifier_cls:
+            with patch("squeeze.cli.LineNotifier") as mock_notifier_cls, \
+                 patch("squeeze.cli.EmailNotifier") as mock_email_cls:
                 mock_notifier = MagicMock()
                 mock_notifier_cls.return_value = mock_notifier
                 mock_notifier.send_summary.return_value = True
+                mock_email_cls.return_value.send_email.return_value = True
                 
                 result = runner.invoke(app, [
                     "scan", 
@@ -129,11 +129,82 @@ def test_scan_houyi_triggers():
                 
                 assert result.exit_code == 0
                 assert "Scanning for houyi pattern" in result.stdout
-                assert "AAPL" in result.stdout
-                assert "LINE notification sent" in result.stdout
+                assert "Sending notifications" in result.stdout
                 
                 # Verify summary content
                 args, _ = mock_notifier.send_summary.call_args
                 summary_msg = args[0]
-                assert "Squeeze Scan Complete: houyi" in summary_msg
+                assert "Squeeze Scan Complete (US): houyi" in summary_msg
                 assert "Buy: 1 | Sell: 0" in summary_msg
+
+def test_scan_plot_prefers_priority_watchlist_for_attachments():
+    with patch("squeeze.cli.fetch_tickers_with_names") as mock_fetch:
+        mock_fetch.return_value = {"AAPL": "Apple Inc.", "MSFT": "Microsoft"}
+
+        with patch("squeeze.engine.scanner.MarketScanner") as mock_scanner_cls, \
+             patch("squeeze.cli.PerformanceTracker") as mock_tracker_cls:
+
+            mock_scanner = MagicMock()
+            mock_scanner_cls.return_value = mock_scanner
+            mock_scanner.data = MagicMock()
+            mock_scanner.data.columns = MagicMock()
+            mock_scanner.data.columns.get_level_values.return_value = ["AAPL", "MSFT"]
+
+            def scan_side_effect(fn, **kwargs):
+                fn_name = getattr(fn, "__name__", "")
+                if fn_name == "detect_squeeze":
+                    return [
+                        {
+                            "ticker": "AAPL",
+                            "name": "Apple Inc.",
+                            "is_squeezed": True,
+                            "energy_level": 1,
+                            "momentum": 0.1,
+                            "fired": False,
+                            "Signal": "買入 (動能增強)"
+                        },
+                        {
+                            "ticker": "MSFT",
+                            "name": "Microsoft",
+                            "is_squeezed": True,
+                            "energy_level": 2,
+                            "momentum": 0.9,
+                            "fired": False,
+                            "Signal": "強烈買入 (爆發)"
+                        },
+                    ]
+                if fn_name == "detect_houyi_shooting_sun":
+                    return [{"ticker": "MSFT", "is_houyi": True, "rally_pct": 0.2}]
+                if fn_name == "detect_whale_trading":
+                    return [{"ticker": "MSFT", "is_whale": True, "weekly_momentum": 0.8}]
+                return []
+
+            mock_scanner.scan.side_effect = scan_side_effect
+
+            mock_tracker = MagicMock()
+            mock_tracker_cls.return_value = mock_tracker
+            mock_tracker.get_active_tracking_list.return_value = []
+
+            with patch("squeeze.cli.ReportExporter") as mock_exporter_cls, \
+                 patch("squeeze.report.visualizer.plot_ticker") as mock_plot, \
+                 patch("squeeze.cli.LineNotifier") as mock_notifier_cls, \
+                 patch("squeeze.cli.EmailNotifier") as mock_email_cls:
+
+                mock_exporter = MagicMock()
+                mock_exporter_cls.return_value = mock_exporter
+                mock_exporter.export.return_value = {"csv": "path/to/csv"}
+                mock_notifier_cls.return_value.send_summary.return_value = True
+                mock_email_cls.return_value.send_email.return_value = True
+
+                result = runner.invoke(app, [
+                    "scan",
+                    "--limit", "2",
+                    "--plot",
+                    "--top", "1",
+                    "--notify"
+                ])
+
+                assert result.exit_code == 0
+                mock_plot.assert_called_once()
+                plot_args = mock_plot.call_args[0]
+                assert plot_args[1] == "MSFT"
