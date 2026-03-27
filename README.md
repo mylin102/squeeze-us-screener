@@ -25,6 +25,19 @@ pip install ./squeeze
 squeeze scan --export --plot --notify
 ```
 
+### 分析單一個股
+```bash
+PYTHONPATH=src python3 -m squeeze.cli analyze --ticker UUUU
+```
+
+### 繪製單一個股圖表
+```bash
+PYTHONPATH=src python3 -m squeeze.cli plot --ticker UUUU
+
+# 指定輸出路徑
+PYTHONPATH=src python3 -m squeeze.cli plot --ticker UUUU --output exports/uuuu.png
+```
+
 ### 檢視策略績效
 ```bash
 # 直接分析 recommendations.csv

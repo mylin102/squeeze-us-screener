@@ -67,6 +67,12 @@ python3 scripts/analyze_tracking.py --csv recommendations.csv
 PYTHONPATH=src python3 -m squeeze.cli analyze-tracking --csv recommendations.csv
 ```
 
+### Single Ticker Commands
+```bash
+PYTHONPATH=src python3 -m squeeze.cli analyze --ticker UUUU
+PYTHONPATH=src python3 -m squeeze.cli plot --ticker UUUU
+```
+
 ## Project Structure
 *   `src/squeeze/data/`: Data acquisition (yfinance, Wikipedia scrapers).
 *   `src/squeeze/engine/`: Core analytics (Indicators, Patterns).
