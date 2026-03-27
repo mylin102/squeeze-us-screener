@@ -73,6 +73,82 @@
         </table>
         {% endif %}
 
+        {% if priority_count > 0 %}
+        <h2>⭐ Priority Watchlist (Top 10)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Name</th>
+                    <th>Signal</th>
+                    <th>Houyi</th>
+                    <th>Whale</th>
+                    <th>Priority Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in priority_results %}
+                <tr>
+                    <td><strong>{{ item.ticker }}</strong></td>
+                    <td>{{ item.name }}</td>
+                    <td class="buy">{{ item.signal }}</td>
+                    <td>{{ 'Yes' if item.has_houyi else 'No' }}</td>
+                    <td>{{ 'Yes' if item.has_whale else 'No' }}</td>
+                    <td>{{ item.composite_score }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        {% if houyi_count > 0 %}
+        <h2>🎯 Houyi Matches (Top 10)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Name</th>
+                    <th>Signal</th>
+                    <th>Momentum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in houyi_results %}
+                <tr>
+                    <td><strong>{{ item.ticker }}</strong></td>
+                    <td>{{ item.name }}</td>
+                    <td class="buy">{{ item.signal }}</td>
+                    <td>{{ "%.4f"|format(item.momentum) if item.momentum else 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        {% if whale_count > 0 %}
+        <h2>🐋 Whale Matches (Top 10)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Name</th>
+                    <th>Signal</th>
+                    <th>Momentum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in whale_results %}
+                <tr>
+                    <td><strong>{{ item.ticker }}</strong></td>
+                    <td>{{ item.name }}</td>
+                    <td class="buy">{{ item.signal }}</td>
+                    <td>{{ "%.4f"|format(item.momentum) if item.momentum else 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
         {% if tracking_buys %}
         <h2>📈 Performance Tracking (Buy)</h2>
         <table>

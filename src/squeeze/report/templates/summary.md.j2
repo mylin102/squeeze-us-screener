@@ -27,6 +27,42 @@
 {% endfor %}
 {% endif %}
 
+{% if priority_count > 0 %}
+---
+## ⭐ 高優先級名單 (Top 10)
+以下名單會綜合原始 Signal、Houyi、Whale 條件排序，越高分代表越值得優先檢查：
+
+| 股票代碼 | 名稱 | 操作建議 | Houyi | Whale | Priority Score |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+{% for item in priority_results %}
+| **{{ item.ticker }}** | {{ item.name }} | **{{ item.signal }}** | {{ 'Yes' if item.has_houyi else 'No' }} | {{ 'Yes' if item.has_whale else 'No' }} | {{ item.composite_score }} |
+{% endfor %}
+{% endif %}
+
+{% if houyi_count > 0 %}
+---
+## 🎯 Houyi 條件命中名單 (Top 10)
+以下個股符合強勢回檔 + Fibonacci 區 + Shooting Star 的 Houyi 條件：
+
+| 股票代碼 | 名稱 | 操作建議 | 動能 (Momentum) |
+| :--- | :--- | :--- | :--- |
+{% for item in houyi_results %}
+| **{{ item.ticker }}** | {{ item.name }} | **{{ item.signal }}** | {{ "%.4f"|format(item.momentum) if item.momentum else 'N/A' }} |
+{% endfor %}
+{% endif %}
+
+{% if whale_count > 0 %}
+---
+## 🐋 Whale 條件命中名單 (Top 10)
+以下個股符合日線/週線共振的 Whale 條件：
+
+| 股票代碼 | 名稱 | 操作建議 | 動能 (Momentum) |
+| :--- | :--- | :--- | :--- |
+{% for item in whale_results %}
+| **{{ item.ticker }}** | {{ item.name }} | **{{ item.signal }}** | {{ "%.4f"|format(item.momentum) if item.momentum else 'N/A' }} |
+{% endfor %}
+{% endif %}
+
 {% if tracking_buys %}
 ---
 ## 📈 買入標的績效追蹤 (14天)

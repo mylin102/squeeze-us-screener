@@ -15,7 +15,7 @@ class ReportExporter:
     def _get_market_now(self) -> datetime:
         return datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=-5)))
 
-    def export(self, results: List[Dict[str, Any]], output_base_dir: Path) -> Dict[str, Path]:
+    def export(self, results: List[Dict[str, Any]], output_base_dir: Path, extra_sections: Optional[Dict[str, List[Dict[str, Any]]]] = None) -> Dict[str, Path]:
         now = self._get_market_now()
         date_str = now.strftime("%Y-%m-%d")
         export_dir = output_base_dir / date_str
@@ -26,7 +26,7 @@ class ReportExporter:
         md_path = export_dir / f"scan_summary_{timestamp}.md"
         self.to_csv(results, csv_path)
         self.to_json(results, json_path)
-        self.to_markdown(results, md_path)
+        self.to_markdown(results, md_path, extra_sections=extra_sections)
         return {"csv": csv_path, "json": json_path, "markdown": md_path}
 
     def to_csv(self, results: List[Dict[str, Any]], path: Path) -> None:
@@ -42,28 +42,36 @@ class ReportExporter:
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
-    def to_markdown(self, results: List[Dict[str, Any]], path: Path) -> None:
+    def to_markdown(self, results: List[Dict[str, Any]], path: Path, extra_sections: Optional[Dict[str, List[Dict[str, Any]]]] = None) -> None:
         buy_signals = ["強烈買入 (爆發)", "買入 (動能增強)", "觀察 (跌勢收斂)"]
         sell_signals = ["強烈賣出 (跌破)", "賣出 (動能轉弱)"]
         buy_results = [r for r in results if r.get('Signal') in buy_signals]
         sell_results = [r for r in results if r.get('Signal') in sell_signals]
-        content = self.render_summary(buy_results, sell_results)
+        content = self.render_summary(buy_results, sell_results, extra_sections=extra_sections)
         with open(path, 'w', encoding='utf-8') as f:
             f.write(content)
 
-    def render_summary(self, buy_results=None, sell_results=None, tracking_buys=None, tracking_sells=None) -> str:
+    def render_summary(self, buy_results=None, sell_results=None, tracking_buys=None, tracking_sells=None, extra_sections: Optional[Dict[str, List[Dict[str, Any]]]] = None) -> str:
         template = self.jinja_env.get_template("summary.md.j2")
         top_buys = sorted(buy_results or [], key=lambda x: x.get('momentum', 0), reverse=True)[:10]
         top_sells = sorted(sell_results or [], key=lambda x: x.get('momentum', 0), reverse=False)[:10]
-        render_data = {"date": self._get_market_now().strftime("%Y-%m-%d %H:%M:%S") + " (ET)", "buy_results": [self._format_result(r) for r in top_buys], "buy_count": len(buy_results or []), "sell_results": [self._format_result(r) for r in top_sells], "sell_count": len(sell_results or []), "tracking_buys": tracking_buys or [], "tracking_sells": tracking_sells or []}
+        extra_sections = extra_sections or {}
+        top_priority = sorted(extra_sections.get("priority", []), key=lambda x: (x.get('composite_score', 0), x.get('momentum', 0)), reverse=True)[:10]
+        top_houyi = sorted(extra_sections.get("houyi", []), key=lambda x: x.get('rally_pct', 0), reverse=True)[:10]
+        top_whale = sorted(extra_sections.get("whale", []), key=lambda x: x.get('weekly_momentum', 0), reverse=True)[:10]
+        render_data = {"date": self._get_market_now().strftime("%Y-%m-%d %H:%M:%S") + " (ET)", "buy_results": [self._format_result(r) for r in top_buys], "buy_count": len(buy_results or []), "sell_results": [self._format_result(r) for r in top_sells], "sell_count": len(sell_results or []), "tracking_buys": tracking_buys or [], "tracking_sells": tracking_sells or [], "priority_results": [self._format_result(r) for r in top_priority], "priority_count": len(extra_sections.get("priority", [])), "houyi_results": [self._format_result(r) for r in top_houyi], "houyi_count": len(extra_sections.get("houyi", [])), "whale_results": [self._format_result(r) for r in top_whale], "whale_count": len(extra_sections.get("whale", []))}
         return template.render(**render_data)
 
-    def render_html_summary(self, buy_results=None, sell_results=None, tracking_buys=None, tracking_sells=None) -> str:
+    def render_html_summary(self, buy_results=None, sell_results=None, tracking_buys=None, tracking_sells=None, extra_sections: Optional[Dict[str, List[Dict[str, Any]]]] = None) -> str:
         template = self.jinja_env.get_template("summary.html.j2")
         top_buys = sorted(buy_results or [], key=lambda x: x.get('momentum', 0), reverse=True)[:10]
         top_sells = sorted(sell_results or [], key=lambda x: x.get('momentum', 0), reverse=False)[:10]
-        render_data = {"date": self._get_market_now().strftime("%Y-%m-%d %H:%M:%S") + " (ET)", "buy_results": [self._format_result(r) for r in top_buys], "buy_count": len(buy_results or []), "sell_results": [self._format_result(r) for r in top_sells], "sell_count": len(sell_results or []), "tracking_buys": tracking_buys or [], "tracking_sells": tracking_sells or []}
+        extra_sections = extra_sections or {}
+        top_priority = sorted(extra_sections.get("priority", []), key=lambda x: (x.get('composite_score', 0), x.get('momentum', 0)), reverse=True)[:10]
+        top_houyi = sorted(extra_sections.get("houyi", []), key=lambda x: x.get('rally_pct', 0), reverse=True)[:10]
+        top_whale = sorted(extra_sections.get("whale", []), key=lambda x: x.get('weekly_momentum', 0), reverse=True)[:10]
+        render_data = {"date": self._get_market_now().strftime("%Y-%m-%d %H:%M:%S") + " (ET)", "buy_results": [self._format_result(r) for r in top_buys], "buy_count": len(buy_results or []), "sell_results": [self._format_result(r) for r in top_sells], "sell_count": len(sell_results or []), "tracking_buys": tracking_buys or [], "tracking_sells": tracking_sells or [], "priority_results": [self._format_result(r) for r in top_priority], "priority_count": len(extra_sections.get("priority", [])), "houyi_results": [self._format_result(r) for r in top_houyi], "houyi_count": len(extra_sections.get("houyi", [])), "whale_results": [self._format_result(r) for r in top_whale], "whale_count": len(extra_sections.get("whale", []))}
         return template.render(**render_data)
 
     def _format_result(self, r: Dict[str, Any]) -> Dict[str, Any]:
-        return {"ticker": r.get('ticker'), "name": r.get('name', 'Unknown'), "close": f"{r.get('Close', 0):.2f}", "momentum": r.get('momentum', 0), "energy": r.get('energy_level', 0), "squeeze_active": r.get('is_squeezed', False), "signal": r.get('Signal', 'Neutral')}
+        return {"ticker": r.get('ticker'), "name": r.get('name', 'Unknown'), "close": f"{r.get('Close', 0):.2f}", "momentum": r.get('momentum', 0), "energy": r.get('energy_level', 0), "squeeze_active": r.get('is_squeezed', False), "signal": r.get('Signal', 'Neutral'), "has_houyi": r.get('has_houyi', False), "has_whale": r.get('has_whale', False), "composite_score": r.get('composite_score', 0)}
