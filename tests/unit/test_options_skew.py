@@ -260,6 +260,8 @@ class TestAttachSkewToResult:
             "skew_score": 0.5,
             "total_volume": 500,
             "avg_spread_pct": 0.05,
+            "otm_call_distance": 0.05,
+            "otm_put_distance": 0.05,
         }
         enriched = attach_skew_to_result(result, skew_data)
 
@@ -307,6 +309,8 @@ class TestAttachSkewToResult:
             "skew_score": -0.3,
             "total_volume": 300,
             "avg_spread_pct": 0.10,
+            "otm_call_distance": 0.03,
+            "otm_put_distance": 0.03,
         }
         enriched = attach_skew_to_result(result, skew_data)
 
@@ -399,11 +403,75 @@ class TestAttachSkewToResult:
             "skew_score": 0.5,
             "total_volume": 500,
             "avg_spread_pct": 0.05,
+            "otm_call_distance": 0.05,
+            "otm_put_distance": 0.05,
         }
         enriched = attach_skew_to_result(result, skew_data)
         assert enriched["final_score_v2"] == 95  # 85+10, no penalty
         assert enriched["final_action"] == "HIGH_CONVICTION"
         assert "IV" not in enriched["reason"]
+
+    # ── Protection 4: OTM strike distance guard ───────────────────────
+
+    def test_otm_call_distance_too_large(self):
+        result = {"ticker": "WIDE", "Signal": "強烈買入 (爆發)", "composite_score": 75}
+        skew_data = {
+            "atm_iv": 0.30,
+            "call_skew": 0.03,
+            "put_skew": -0.01,
+            "risk_reversal": 0.04,
+            "skew_bias": "bullish",
+            "skew_score": 0.4,
+            "total_volume": 500,
+            "avg_spread_pct": 0.05,
+            "otm_call_distance": 0.15,  # > 0.10
+            "otm_put_distance": 0.05,
+        }
+        enriched = attach_skew_to_result(result, skew_data)
+        assert enriched["skew_score_v2"] == 0
+        assert enriched["score_delta"] == 0
+        assert enriched["final_score_v2"] == 75  # base unchanged
+        assert enriched["final_action"] == "NO_SKEW_DATA"
+        assert "otm_call_dist" in enriched["reason"]
+
+    def test_otm_put_distance_too_large(self):
+        result = {"ticker": "DEEP", "Signal": "買入 (動能增強)", "composite_score": 80}
+        skew_data = {
+            "atm_iv": 0.25,
+            "call_skew": 0.02,
+            "put_skew": -0.01,
+            "risk_reversal": 0.03,
+            "skew_bias": "bullish",
+            "skew_score": 0.3,
+            "total_volume": 300,
+            "avg_spread_pct": 0.08,
+            "otm_call_distance": 0.02,
+            "otm_put_distance": 0.12,  # > 0.10
+        }
+        enriched = attach_skew_to_result(result, skew_data)
+        assert enriched["skew_score_v2"] == 0
+        assert enriched["score_delta"] == 0
+        assert enriched["final_action"] == "NO_SKEW_DATA"
+        assert "otm_put_dist" in enriched["reason"]
+
+    def test_otm_distance_both_ok_passes(self):
+        result = {"ticker": "NORMAL", "Signal": "強烈買入 (爆發)", "composite_score": 80}
+        skew_data = {
+            "atm_iv": 0.30,
+            "call_skew": 0.03,
+            "put_skew": -0.01,
+            "risk_reversal": 0.04,
+            "skew_bias": "bullish",
+            "skew_score": 0.4,
+            "total_volume": 500,
+            "avg_spread_pct": 0.05,
+            "otm_call_distance": 0.03,
+            "otm_put_distance": 0.03,
+        }
+        enriched = attach_skew_to_result(result, skew_data)
+        assert enriched["skew_score_v2"] == 10  # skew applied normally
+        assert enriched["score_delta"] == 10
+        assert enriched["final_action"] == "HIGH_CONVICTION"
 
 
 class TestGetExpiryChain:

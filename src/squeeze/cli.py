@@ -337,6 +337,7 @@ def scan(
                         "atm_iv", "call_skew", "put_skew",
                         "risk_reversal", "skew_bias",
                         "total_volume", "avg_spread_pct",
+                        "otm_call_distance", "otm_put_distance",
                         "liquidity_ok", "iv_overheated",
                         "skew_score_v2",
                         "final_score_v2", "score_delta", "final_action", "reason",

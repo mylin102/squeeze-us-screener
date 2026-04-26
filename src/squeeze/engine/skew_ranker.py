@@ -30,6 +30,10 @@ MAX_BID_ASK_SPREAD_PCT = 0.25   # 25% spread max
 # When ATM IV exceeds this level we apply the penalty
 IV_OVERHEATED_THRESHOLD = 0.80  # 80% IV
 
+# OTM strike distance guard — if the gap between ATM and OTM strikes
+# exceeds this proportion of spot, the skew signal is unreliable.
+MAX_OTM_DISTANCE_PCT = 0.10  # 10% of spot
+
 
 def translate_base_signal(signal: str) -> str:
     """Map Chinese signal to English for the CSV/report."""
@@ -133,6 +137,30 @@ def is_iv_overheated(atm_iv: float | None) -> tuple[bool, str]:
     return False, ""
 
 
+# ── OTM strike distance guard ──────────────────────────────────────────
+
+def check_otm_distance_ok(
+    otm_call_distance: float | None,
+    otm_put_distance: float | None,
+) -> tuple[bool, str]:
+    """
+    Verify that the OTM strikes aren't too far from ATM.
+
+    If the gap between ATM and the selected OTM strike exceeds
+    MAX_OTM_DISTANCE_PCT of spot, the skew signal is unreliable.
+
+    Returns (is_ok, reason_string).
+    """
+    reasons = []
+    if otm_call_distance is not None and otm_call_distance > MAX_OTM_DISTANCE_PCT:
+        reasons.append(f"otm_call_dist={otm_call_distance:.2%}>{MAX_OTM_DISTANCE_PCT:.0%}")
+    if otm_put_distance is not None and otm_put_distance > MAX_OTM_DISTANCE_PCT:
+        reasons.append(f"otm_put_dist={otm_put_distance:.2%}>{MAX_OTM_DISTANCE_PCT:.0%}")
+    if reasons:
+        return False, "OTM strike distance too large: " + "; ".join(reasons)
+    return True, ""
+
+
 # ── final score & action ───────────────────────────────────────────────
 
 def compute_final_score_v2(base_score: float, skew_offset: int) -> float:
@@ -231,6 +259,8 @@ def attach_skew_to_result(result: dict, skew_data: dict) -> dict:
     skew_bias = skew_data.get("skew_bias", "neutral")
     total_volume = skew_data.get("total_volume")
     avg_spread_pct = skew_data.get("avg_spread_pct")
+    otm_call_distance = skew_data.get("otm_call_distance")
+    otm_put_distance = skew_data.get("otm_put_distance")
 
     enriched["atm_iv"] = atm_iv
     enriched["call_skew"] = call_skew_val
@@ -239,6 +269,8 @@ def attach_skew_to_result(result: dict, skew_data: dict) -> dict:
     enriched["skew_bias"] = skew_bias
     enriched["total_volume"] = total_volume
     enriched["avg_spread_pct"] = avg_spread_pct
+    enriched["otm_call_distance"] = otm_call_distance
+    enriched["otm_put_distance"] = otm_put_distance
 
     # -- Protection 2: liquidity gate -----------------------------------
     liquidity_ok, liquidity_reason = compute_liquidity_flags(total_volume, avg_spread_pct)
@@ -250,6 +282,17 @@ def attach_skew_to_result(result: dict, skew_data: dict) -> dict:
         enriched["score_delta"] = 0
         enriched["final_action"] = "NO_SKEW_DATA"
         enriched["reason"] = liquidity_reason
+        return enriched
+
+    # -- Protection 4: OTM strike distance guard ------------------------
+    otm_distance_ok, otm_distance_reason = check_otm_distance_ok(otm_call_distance, otm_put_distance)
+
+    if not otm_distance_ok:
+        enriched["skew_score_v2"] = 0
+        enriched["final_score_v2"] = enriched["base_score"]
+        enriched["score_delta"] = 0
+        enriched["final_action"] = "NO_SKEW_DATA"
+        enriched["reason"] = otm_distance_reason
         return enriched
 
     # -- Protection 3: IV overheated penalty ----------------------------

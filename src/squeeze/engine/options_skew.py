@@ -109,7 +109,8 @@ def compute_skew(
         spot, atm_strike, atm_iv, otm_call_strike, otm_call_iv,
         otm_put_strike, otm_put_iv, call_skew, put_skew,
         risk_reversal, total_skew, skew_bias, skew_score,
-        total_volume, avg_spread_pct
+        total_volume, avg_spread_pct,
+        otm_call_distance, otm_put_distance
     """
     result: dict = {
         "spot": spot,
@@ -127,6 +128,8 @@ def compute_skew(
         "skew_score": 0.0,
         "total_volume": 0.0,
         "avg_spread_pct": None,
+        "otm_call_distance": None,
+        "otm_put_distance": None,
     }
 
     if calls.empty and puts.empty:
@@ -142,6 +145,10 @@ def compute_skew(
     otm_call_strike, otm_put_strike = resolve_otm_strikes(calls, puts, spot, atm_strike)
     result["otm_call_strike"] = otm_call_strike
     result["otm_put_strike"] = otm_put_strike
+
+    # -- OTM strike distance (proportion of spot) --
+    result["otm_call_distance"] = round(abs(otm_call_strike - atm_strike) / spot, 4)
+    result["otm_put_distance"] = round(abs(otm_put_strike - atm_strike) / spot, 4)
 
     otm_call_iv = _iv_for_strike(calls, otm_call_strike) or _iv_for_strike(puts, otm_call_strike)
     otm_put_iv = _iv_for_strike(puts, otm_put_strike) or _iv_for_strike(calls, otm_put_strike)
