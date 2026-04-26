@@ -1,26 +1,26 @@
-date,ticker,name,entry_price,signal,current_price,return_pct,strategy_return_pct,days_tracked,last_updated,status,type,pattern,momentum,prev_momentum,energy_level,squeeze_on,fired,market_regime,benchmark_ticker,value_score
-2026-03-27,ALB,Albemarle Corporation,174.5,買入 (動能增強),174.5,0.0,0.0,0,2026-03-27,tracking,buy,squeeze,4.586634318033854,1.2064285278320312,0,True,False,range_bound,SPY,
-2026-03-27,AMZN,Amazon,207.5399932861328,賣出 (動能轉弱),207.5399932861328,0.0,0.0,0,2026-03-27,tracking,sell,squeeze,-5.79333750406901,-4.415003458658854,0,True,False,range_bound,SPY,
-2026-03-27,APH,Amphenol,123.12999725341797,賣出 (動能轉弱),123.12999725341797,0.0,0.0,0,2026-03-27,tracking,sell,squeeze,-5.893337249755859,-4.850003560384113,0,True,False,range_bound,SPY,
-2026-03-27,CRM,Salesforce,185.63999938964844,賣出 (動能轉弱),185.63999938964844,0.0,0.0,0,2026-03-27,tracking,sell,squeeze,-8.359998067220051,-6.583330790201822,0,True,False,range_bound,SPY,
-2026-03-27,EME,Emcor,726.3099975585938,買入 (動能增強),726.3099975585938,0.0,0.0,0,2026-03-27,tracking,buy,squeeze,21.455006917317707,21.279998779296875,0,True,False,range_bound,SPY,
-2026-03-27,EPAM,EPAM Systems,136.14999389648438,賣出 (動能轉弱),136.14999389648438,0.0,0.0,0,2026-03-27,tracking,sell,squeeze,-8.215001424153645,-8.073336283365885,0,True,False,range_bound,SPY,
-2026-03-27,ETN,Eaton Corporation,357.1000061035156,買入 (動能增強),357.1000061035156,0.0,0.0,0,2026-03-27,tracking,buy,squeeze,10.161829630533854,8.207356770833332,0,True,False,range_bound,SPY,
-2026-03-27,FFIV,"F5, Inc.",293.1499938964844,買入 (動能增強),293.1499938964844,0.0,0.0,0,2026-03-27,tracking,buy,squeeze,5.898325602213541,5.429997762044271,0,True,False,range_bound,SPY,
-2026-03-27,IT,Gartner,156.60000610351562,賣出 (動能轉弱),156.60000610351562,0.0,0.0,0,2026-03-27,tracking,sell,squeeze,-9.27333068847656,-9.055000305175781,0,True,False,range_bound,SPY,
-2026-03-27,KLAC,KLA Corporation,1451.1300048828125,買入 (動能增強),1451.1300048828125,0.0,0.0,0,2026-03-27,tracking,buy,squeeze,84.92500813802083,76.461669921875,0,True,False,range_bound,SPY,
-2026-03-27,LHX,L3Harris,349.3399963378906,強烈賣出 (跌破),349.3399963378906,0.0,0.0,0,2026-03-27,tracking,sell,squeeze,-12.970418294270832,-12.371449788411457,0,False,True,range_bound,SPY,
-2026-03-27,MPWR,Monolithic Power Systems,1058.280029296875,買入 (動能增強),1058.280029296875,0.0,0.0,0,2026-03-27,tracking,buy,squeeze,20.601674397786457,8.976674397786457,0,True,False,range_bound,SPY,
-2026-03-27,NTAP,NetApp,104.4499969482422,買入 (動能增強),104.4499969482422,0.0,0.0,0,2026-03-27,tracking,buy,squeeze,3.454998016357422,2.30166498819987,0,True,False,range_bound,SPY,
-2026-03-27,NVDA,NVIDIA,171.24000549316406,賣出 (動能轉弱),171.24000549316406,0.0,0.0,0,2026-03-27,tracking,sell,squeeze,-6.598487854003906,-4.690175374348958,0,True,False,range_bound,SPY,
-2026-03-27,RL,Ralph Lauren Corporation,333.6400146484375,賣出 (動能轉弱),333.6400146484375,0.0,0.0,0,2026-03-27,tracking,sell,squeeze,-11.75000508626302,-11.746673583984375,0,True,False,range_bound,SPY,
-2026-03-27,RMBS,Rambus,91.44000244140624,買入 (動能增強),91.44000244140624,0.0,0.0,0,2026-03-27,tracking,buy,squeeze,3.656667073567708,2.425000508626302,0,True,False,range_bound,SPY,
-2026-03-27,SNPS,Synopsys,401.95001220703125,賣出 (動能轉弱),401.95001220703125,0.0,0.0,0,2026-03-27,tracking,sell,squeeze,-16.021662394205727,-10.236663818359375,0,True,False,range_bound,SPY,
-2026-03-27,TER,Teradyne,297.3399963378906,買入 (動能增強),297.3399963378906,0.0,0.0,0,2026-03-27,tracking,buy,squeeze,8.788335164388021,5.066670735677084,0,True,False,range_bound,SPY,
-2026-03-27,TRGP,Targa Resources,250.5,買入 (動能增強),250.5,0.0,0.0,0,2026-03-27,tracking,buy,squeeze,4.735003153483072,0.791669209798177,0,True,False,range_bound,SPY,
-2026-03-27,TYL,Tyler Technologies,341.07000732421875,強烈賣出 (跌破),341.07000732421875,0.0,0.0,0,2026-03-27,tracking,sell,squeeze,-22.87666320800781,-22.459996541341145,0,False,True,range_bound,SPY,
-2026-03-26,ALB,Albemarle Corporation,174.5,買入 (動能增強),174.5,0.0,0.0,1,2026-03-27,tracking,buy,squeeze,0.0,0.0,0,False,False,unknown,SPY,
-2026-03-26,AMZN,Amazon,207.5399932861328,賣出 (動能轉弱),207.5399932861328,0.0,-0.0,1,2026-03-27,tracking,sell,squeeze,0.0,0.0,0,False,False,unknown,SPY,
-2026-03-26,APH,Amphenol,123.12999725341795,賣出 (動能轉弱),123.12999725341795,1.1541342509700678e-14,-1.1541342509700678e-14,1,2026-03-27,tracking,sell,squeeze,0.0,0.0,0,False,False,unknown,SPY,
-2026-03-26,CRM,Salesforce,185.63999938964844,賣出 (動能轉弱),185.63999938964844,0.0,-0.0,1,2026-03-27,tracking,sell,squeeze,0.0,0.0,0,False,False,unknown,SPY,
-2026-03-26,EME,Emcor,726.3099975585938,買入 (動能增強),726.3099975585938,0.0,0.0,1,2026-03-27,tracking,buy,squeeze,0.0,0.0,0,False,False,unknown,SPY,
+date,ticker,name,entry_price,signal,current_price,return_pct,strategy_return_pct,days_tracked,last_updated,status,type,pattern,momentum,prev_momentum,energy_level,squeeze_on,fired,market_regime,benchmark_ticker,value_score,stop_loss_rule,stop_loss_threshold,stop_loss_triggered,stop_loss_message,stop_loss_ma_window,stop_loss_ticks,stop_loss_tick_size
+2026-04-21,ABBV,AbbVie,205.1199951171875,賣出 (動能轉弱),205.1199951171875,0.0,0.0,0,2026-04-21,tracking,sell,squeeze,-3.5516382853190103,-3.3353805541992188,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,ADBE,Adobe Inc.,247.17999267578125,買入 (動能增強),247.17999267578125,0.0,0.0,0,2026-04-21,tracking,buy,squeeze,4.096666971842447,3.8633346557617183,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,ALNY,Alnylam Pharmaceuticals,308.42999267578125,賣出 (動能轉弱),308.42999267578125,0.0,0.0,0,2026-04-21,tracking,sell,squeeze,-3.01666259765625,-0.5633290608723951,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,AON,Aon plc,335.32000732421875,買入 (動能增強),335.32000732421875,0.0,0.0,0,2026-04-21,tracking,buy,squeeze,9.459996541341145,8.088328043619791,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,BG,Bunge Global,125.83000183105469,賣出 (動能轉弱),125.83000183105469,0.0,0.0,0,2026-04-21,tracking,sell,squeeze,-5.468332926432291,-5.186667124430339,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,DRI,Darden Restaurants,196.9499969482422,買入 (動能增強),196.9499969482422,0.0,0.0,0,2026-04-21,tracking,buy,squeeze,5.217109680175781,3.492230733235677,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,EXPD,Expeditors International,150.97999572753906,強烈買入 (爆發),150.97999572753906,0.0,0.0,0,2026-04-21,tracking,buy,squeeze,4.136667887369792,3.3916702270507812,0,False,True,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,FICO,Fair Isaac,1036.699951171875,賣出 (動能轉弱),1036.699951171875,0.0,0.0,0,2026-04-21,tracking,sell,squeeze,-6.079966227213541,-4.268290201822916,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,IDXX,Idexx Laboratories,569.010009765625,買入 (動能增強),569.010009765625,0.0,0.0,0,2026-04-21,tracking,buy,squeeze,15.213338216145832,15.01667277018229,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,ISRG,Intuitive Surgical,451.2900085449219,買入 (動能增強),451.2900085449219,0.0,0.0,0,2026-04-21,tracking,buy,squeeze,4.7099965413411455,3.003326416015625,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,MCK,McKesson Corporation,842.25,賣出 (動能轉弱),842.25,0.0,0.0,0,2026-04-21,tracking,sell,squeeze,-7.441670735677083,-2.966664632161458,1,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,MRK,Merck,112.55999755859375,強烈賣出 (跌破),112.55999755859375,0.0,0.0,0,2026-04-21,tracking,sell,squeeze,-2.7683334350585938,-1.253332773844401,0,False,True,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,MRSH,Marsh McLennan,179.0,買入 (動能增強),179.0,0.0,0.0,0,2026-04-21,tracking,buy,squeeze,4.510581970214843,3.6702321370442705,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,MSI,Motorola Solutions,445.4800109863281,買入 (動能增強),445.4800109863281,0.0,0.0,0,2026-04-21,tracking,buy,squeeze,6.1566619873046875,3.219991048177083,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,NOC,Northrop Grumman,611.1300048828125,強烈賣出 (跌破),611.1300048828125,0.0,0.0,0,2026-04-21,tracking,sell,squeeze,-26.57666015625,-12.998331705729166,0,False,True,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,REGN,Regeneron Pharmaceuticals,747.3599853515625,賣出 (動能轉弱),747.3599853515625,0.0,0.0,0,2026-04-21,tracking,sell,squeeze,-8.781667073567707,-6.868326822916666,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,TRGP,Targa Resources,232.64999389648438,強烈賣出 (跌破),232.64999389648438,0.0,0.0,0,2026-04-21,tracking,sell,squeeze,-11.871665954589842,-10.740000406901041,0,False,True,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,UAL,United Airlines Holdings,97.12999725341795,買入 (動能增強),97.12999725341795,0.0,0.0,0,2026-04-21,tracking,buy,squeeze,6.4399986267089835,5.994998931884765,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,VLO,Valero Energy,233.38999938964844,強烈賣出 (跌破),233.38999938964844,0.0,0.0,0,2026-04-21,tracking,sell,squeeze,-14.953336079915363,-11.91333516438802,0,False,True,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-21,WTW,Willis Towers Watson,297.8399963378906,買入 (動能增強),297.8399963378906,0.0,0.0,0,2026-04-21,tracking,buy,squeeze,7.629221598307292,5.994105021158854,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-20,AJG,Arthur J. Gallagher & Co.,223.07000732421875,強烈買入 (爆發),224.4600067138672,0.6231224924954423,0.6231224924954423,1,2026-04-21,tracking,buy,squeeze,9.090001424153645,7.513333638509114,0,False,True,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-20,AON,Aon plc,331.95001220703125,買入 (動能增強),335.32000732421875,1.0152116262269315,1.0152116262269315,1,2026-04-21,tracking,buy,squeeze,8.088328043619791,3.909993489583333,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-20,BG,Bunge Global,122.45999908447266,賣出 (動能轉弱),125.83000183105467,2.7519212573710785,-2.7519212573710785,1,2026-04-21,tracking,sell,squeeze,-5.186667124430339,-4.238332112630207,0,True,False,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-20,CHTR,Charter Communications,244.69000244140625,強烈買入 (爆發),241.9499969482422,-1.119786450539673,-1.119786450539673,1,2026-04-21,tracking,buy,squeeze,11.6316655476888,7.0983327229817705,0,False,True,bull_trend,SPY,,,,False,,,0,0.01
+2026-04-20,GD,General Dynamics,332.1400146484375,強烈賣出 (跌破),325.5199890136719,-1.9931430549772116,1.9931430549772116,1,2026-04-21,tracking,sell,squeeze,-9.425211588541666,-8.210194905598957,0,False,True,bull_trend,SPY,,,,False,,,0,0.01
