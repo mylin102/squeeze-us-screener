@@ -383,14 +383,17 @@ class TestAttachSkewToResult:
             "skew_score": 0.5,
             "total_volume": 500,
             "avg_spread_pct": 0.05,
+            "otm_call_distance": 0.03,
+            "otm_put_distance": 0.03,
         }
         enriched = attach_skew_to_result(result, skew_data)
-        # base=85, skew_offset=+10 → 95, then -10 penalty → 85
-        assert enriched["skew_score_v2"] == 10
-        assert enriched["score_delta"] == 10
-        assert enriched["final_score_v2"] == 85
+        # base=85, IV overheated → bypass skew: base - 10 = 75, delta = -10
+        assert enriched["skew_score_v2"] == 0  # skew not computed
+        assert enriched["score_delta"] == -10
+        assert enriched["final_score_v2"] == 75
         assert enriched["final_action"] == "AVOID_OVERHEATED_IV"
-        assert "IV rank too high" in enriched["reason"]
+        assert "overheated" in enriched["reason"]
+        assert "avoid chasing" in enriched["reason"]
 
     def test_iv_below_threshold_no_penalty(self):
         result = {"ticker": "COOL", "Signal": "強烈買入 (爆發)", "composite_score": 85}

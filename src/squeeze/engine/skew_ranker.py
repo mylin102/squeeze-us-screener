@@ -296,8 +296,18 @@ def attach_skew_to_result(result: dict, skew_data: dict) -> dict:
         return enriched
 
     # -- Protection 3: IV overheated penalty ----------------------------
+    # If IV is overheated the data is valid but the price is too rich.
+    # We bypass skew entirely: base - 10, score_delta = -10.
     iv_overheated, iv_reason = is_iv_overheated(atm_iv)
     enriched["iv_overheated"] = iv_overheated
+
+    if iv_overheated:
+        enriched["skew_score_v2"] = 0
+        enriched["score_delta"] = -10.0
+        enriched["final_score_v2"] = max(0.0, round(enriched["base_score"] - IV_OVERHEAT_PENALTY, 4))
+        enriched["final_action"] = "AVOID_OVERHEATED_IV"
+        enriched["reason"] = "ATM IV overheated; avoid chasing"
+        return enriched
 
     # -- compute skew offset --------------------------------------------
     skew_offset = compute_skew_offset(raw_signal, rr, call_skew_val, put_skew_val)
@@ -309,16 +319,9 @@ def attach_skew_to_result(result: dict, skew_data: dict) -> dict:
     base = enriched["base_score"]
     final = compute_final_score_v2(base, skew_offset)
 
-    if iv_overheated:
-        final = max(0.0, final - IV_OVERHEAT_PENALTY)
-
     enriched["final_score_v2"] = final
     enriched["final_action"] = determine_final_action(final, float(skew_offset))
     enriched["reason"] = determine_reason(raw_signal, skew_offset, skew_bias)
-
-    if iv_overheated:
-        enriched["final_action"] = "AVOID_OVERHEATED_IV"
-        enriched["reason"] += "; " + iv_reason
 
     return enriched
 
