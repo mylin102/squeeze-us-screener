@@ -5,6 +5,11 @@ to existing squeeze results without altering base signals.
 Produces a two-layer view:
   Layer 1: raw squeeze signal / base_score
   Layer 2: skew-adjusted final_score_v2, score_delta, final_action, reason
+
+Three protections prevent false signals:
+  - score_delta = skew_score_v2 directly (transparent, no blending)
+  - Liquidity gate: low volume or wide spread → NO_SKEW_DATA
+  - IV overheated penalty: atm_iv >= 80% threshold → penalty
 """
 
 import logging
@@ -12,11 +17,18 @@ import logging
 logger = logging.getLogger(__name__)
 
 # ── scoring scale constants ─────────────────────────────────────────────
-# The skew_score offset lives in [-10, +10] and is OR'd onto a
-# base_score that already scales 0-85+ via _signal_score + pattern flags.
 
-SKEW_BOOST = 10   # maximum delta added by skew confirmation
-SKEW_PENALTY = 10 # maximum delta subtracted by skew contradiction
+SKEW_BOOST = 10       # max delta from skew confirmation
+SKEW_PENALTY = 10     # max delta from skew contradiction
+IV_OVERHEAT_PENALTY = 10  # penalty when IV is overheated
+
+# Liquidity thresholds
+MIN_OPTION_VOLUME = 50          # sum of ATM+OTM call+put volume
+MAX_BID_ASK_SPREAD_PCT = 0.25   # 25% spread max
+
+# IV threshold (absolute ATM IV as proxy for "overheated")
+# When ATM IV exceeds this level we apply the penalty
+IV_OVERHEATED_THRESHOLD = 0.80  # 80% IV
 
 
 def translate_base_signal(signal: str) -> str:
@@ -52,13 +64,15 @@ def compute_skew_offset(
     Return an integer offset in [-10, +10] based on the direction of the
     underlying squeeze signal and the skew structure.
 
+    Contradiction checked FIRST (stronger weight than confirmation).
+
     Bullish setup (base signal wants a long):
-      risk_reversal > 0 AND call_skew > 0   → +10  (skew confirms)
-      put_skew > call_skew                   → -10  (skew contradicts)
+      put_skew > call_skew             → -10  (skew contradicts)
+      risk_reversal > 0 AND call_skew > 0  → +10  (skew confirms)
 
     Bearish setup (base signal wants a short):
-      risk_reversal < 0 AND put_skew > 0    → +10  (skew confirms)
-      call_skew > put_skew                   → -10  (skew contradicts)
+      call_skew > put_skew             → -10  (skew contradicts)
+      risk_reversal < 0 AND put_skew > 0  → +10  (skew confirms)
 
     Neutral / unknown signal → offset = 0
     Missing IV data         → offset = 0
@@ -69,53 +83,91 @@ def compute_skew_offset(
     eng_signal = translate_base_signal(signal)
 
     if is_bullish_signal(eng_signal):
-        # Contradiction check first (stronger signal)
         if put_skew > call_skew:
-            return -SKEW_PENALTY   # -10: skew contradicts bullish
+            return -SKEW_PENALTY
         elif risk_reversal > 0 and call_skew > 0:
-            return SKEW_BOOST      # +10: skew confirms bullish
-        else:
-            return 0
+            return SKEW_BOOST
+        return 0
 
     if is_bearish_signal(eng_signal):
-        # Contradiction check first
         if call_skew > put_skew:
-            return -SKEW_PENALTY   # -10: skew contradicts bearish
+            return -SKEW_PENALTY
         elif risk_reversal < 0 and put_skew > 0:
-            return SKEW_BOOST      # +10: skew confirms bearish
-        else:
-            return 0
+            return SKEW_BOOST
+        return 0
 
     return 0
 
 
+# ── liquidity check ────────────────────────────────────────────────────
+
+def compute_liquidity_flags(
+    total_volume: float | None,
+    avg_spread_pct: float | None,
+) -> tuple[bool, str]:
+    """
+    Check whether the option chain has sufficient liquidity.
+
+    Returns (is_ok, reason_string).
+    """
+    reasons = []
+    if total_volume is not None and total_volume < MIN_OPTION_VOLUME:
+        reasons.append(f"volume={total_volume:.0f}<{MIN_OPTION_VOLUME}")
+    if avg_spread_pct is not None and avg_spread_pct > MAX_BID_ASK_SPREAD_PCT:
+        reasons.append(f"spread={avg_spread_pct:.1%}>{MAX_BID_ASK_SPREAD_PCT:.0%}")
+    if reasons:
+        return False, "Option liquidity too low: " + "; ".join(reasons)
+    return True, ""
+
+
+# ── IV overheated check ────────────────────────────────────────────────
+
+def is_iv_overheated(atm_iv: float | None) -> tuple[bool, str]:
+    """
+    Check whether ATM IV suggests the option market is overheated.
+
+    Returns (is_overheated, reason_suffix).
+    """
+    if atm_iv is not None and atm_iv >= IV_OVERHEATED_THRESHOLD:
+        return True, f"IV rank too high ({atm_iv:.1%})"
+    return False, ""
+
+
+# ── final score & action ───────────────────────────────────────────────
+
 def compute_final_score_v2(base_score: float, skew_offset: int) -> float:
-    """final_score_v2 = composite_score (1-85+) + skew_offset."""
+    """final_score_v2 = base_score + skew_offset (floor 0)."""
     return max(0.0, round(base_score + skew_offset, 4))
 
-
-# ── final action & reason ───────────────────────────────────────────────
 
 def determine_final_action(
     final_score: float,
     score_delta: float,
 ) -> str:
     """
-    Map a (final_score, score_delta) pair to a human-readable action.
+    Map (final_score, score_delta) to a human-readable action.
+
+    Tier priority:
+      1. score_delta < 0       → DOWNGRADED
+      2. final_score >= 85 AND score_delta > 0  → HIGH_CONVICTION
+      3. final_score >= 75 AND score_delta >= 0 → BUY_CANDIDATE
+      4. final_score >= 65     → WATCHLIST
+      5. Otherwise             → NO_TRADE
     """
-    if final_score >= 85:
-        return "High Conviction"
-    elif final_score >= 70:
-        return "Watch / Small Position"
-    elif score_delta <= -15:
-        return "Downgraded by Options Skew"
-    else:
-        return "No Trade"
+    if score_delta < 0:
+        return "DOWNGRADED"
+    if final_score >= 85 and score_delta > 0:
+        return "HIGH_CONVICTION"
+    if final_score >= 75 and score_delta >= 0:
+        return "BUY_CANDIDATE"
+    if final_score >= 65:
+        return "WATCHLIST"
+    return "NO_TRADE"
 
 
-def determine_reason(signal: str, skew_offset: int, skew_bias: str) -> str:
+def determine_reason(base_signal: str, skew_offset: int, skew_bias: str) -> str:
     """Produce a one-liner explaining the skew effect."""
-    eng = translate_base_signal(signal)
+    eng = translate_base_signal(base_signal)
 
     if skew_offset == 0:
         return "No clear skew signal"
@@ -142,14 +194,17 @@ def attach_skew_to_result(result: dict, skew_data: dict) -> dict:
     Return a new dict that merges all *skew_data* fields into *result*
     and adds the enriched view columns:
 
-      ticker, base_signal, base_score, squeeze_state, momentum, volume_score
-      atm_iv, call_skew, put_skew, risk_reversal, skew_bias, skew_score
+      ticker, base_signal, base_score, squeeze_state, momentum,
+      atm_iv, call_skew, put_skew, risk_reversal, skew_bias,
+      skew_score_v2, total_volume, avg_spread_pct,
+      liquidity_ok, iv_overheated,
       final_score_v2, score_delta, final_action, reason
 
     The original ``Signal`` field is never modified.
 
-    ``skew_data`` must contain at least:
-      atm_iv, call_skew, put_skew, risk_reversal, skew_bias, skew_score
+    ``skew_data`` should contain (at minimum):
+      atm_iv, call_skew, put_skew, risk_reversal, skew_bias, skew_score,
+      total_volume, avg_spread_pct
     """
     enriched = dict(result)
 
@@ -169,31 +224,58 @@ def attach_skew_to_result(result: dict, skew_data: dict) -> dict:
     enriched["momentum"] = result.get("momentum", 0.0)
 
     # -- layer 2: skew fields -------------------------------------------
-    enriched["atm_iv"] = skew_data.get("atm_iv")
-    enriched["call_skew"] = skew_data.get("call_skew")
-    enriched["put_skew"] = skew_data.get("put_skew")
-    enriched["risk_reversal"] = skew_data.get("risk_reversal")
-    enriched["skew_bias"] = skew_data.get("skew_bias", "neutral")
-    enriched["skew_score"] = skew_data.get("skew_score", 0.0)
-
-    # -- computed fields ------------------------------------------------
-    signal_str = result.get("Signal", "觀望")
+    atm_iv = skew_data.get("atm_iv")
+    call_skew_val = skew_data.get("call_skew")
+    put_skew_val = skew_data.get("put_skew")
     rr = skew_data.get("risk_reversal")
-    cs = skew_data.get("call_skew")
-    ps = skew_data.get("put_skew")
+    skew_bias = skew_data.get("skew_bias", "neutral")
+    total_volume = skew_data.get("total_volume")
+    avg_spread_pct = skew_data.get("avg_spread_pct")
 
-    skew_offset = compute_skew_offset(signal_str, rr, cs, ps)
-    enriched["skew_score_v2"] = skew_offset  # the -10..+10 quantised offset
+    enriched["atm_iv"] = atm_iv
+    enriched["call_skew"] = call_skew_val
+    enriched["put_skew"] = put_skew_val
+    enriched["risk_reversal"] = rr
+    enriched["skew_bias"] = skew_bias
+    enriched["total_volume"] = total_volume
+    enriched["avg_spread_pct"] = avg_spread_pct
+
+    # -- Protection 2: liquidity gate -----------------------------------
+    liquidity_ok, liquidity_reason = compute_liquidity_flags(total_volume, avg_spread_pct)
+    enriched["liquidity_ok"] = liquidity_ok
+
+    if not liquidity_ok:
+        enriched["skew_score_v2"] = 0
+        enriched["final_score_v2"] = enriched["base_score"]
+        enriched["score_delta"] = 0
+        enriched["final_action"] = "NO_SKEW_DATA"
+        enriched["reason"] = liquidity_reason
+        return enriched
+
+    # -- Protection 3: IV overheated penalty ----------------------------
+    iv_overheated, iv_reason = is_iv_overheated(atm_iv)
+    enriched["iv_overheated"] = iv_overheated
+
+    # -- compute skew offset --------------------------------------------
+    skew_offset = compute_skew_offset(raw_signal, rr, call_skew_val, put_skew_val)
+    enriched["skew_score_v2"] = skew_offset
+
+    # Protection 1: score_delta = skew_score_v2 directly (the -10..+10)
+    enriched["score_delta"] = float(skew_offset)
 
     base = enriched["base_score"]
-    enriched["final_score_v2"] = compute_final_score_v2(base, skew_offset)
-    enriched["score_delta"] = round(enriched["final_score_v2"] - base, 4)
-    enriched["final_action"] = determine_final_action(
-        enriched["final_score_v2"], enriched["score_delta"],
-    )
-    enriched["reason"] = determine_reason(
-        signal_str, skew_offset, enriched["skew_bias"],
-    )
+    final = compute_final_score_v2(base, skew_offset)
+
+    if iv_overheated:
+        final = max(0.0, final - IV_OVERHEAT_PENALTY)
+
+    enriched["final_score_v2"] = final
+    enriched["final_action"] = determine_final_action(final, float(skew_offset))
+    enriched["reason"] = determine_reason(raw_signal, skew_offset, skew_bias)
+
+    if iv_overheated:
+        enriched["final_action"] = "AVOID_OVERHEATED_IV"
+        enriched["reason"] += "; " + iv_reason
 
     return enriched
 

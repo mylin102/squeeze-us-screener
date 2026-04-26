@@ -108,7 +108,8 @@ def compute_skew(
     Returns a dict with keys:
         spot, atm_strike, atm_iv, otm_call_strike, otm_call_iv,
         otm_put_strike, otm_put_iv, call_skew, put_skew,
-        risk_reversal, total_skew, skew_bias, skew_score
+        risk_reversal, total_skew, skew_bias, skew_score,
+        total_volume, avg_spread_pct
     """
     result: dict = {
         "spot": spot,
@@ -124,6 +125,8 @@ def compute_skew(
         "total_skew": None,
         "skew_bias": "neutral",
         "skew_score": 0.0,
+        "total_volume": 0.0,
+        "avg_spread_pct": None,
     }
 
     if calls.empty and puts.empty:
@@ -144,6 +147,33 @@ def compute_skew(
     otm_put_iv = _iv_for_strike(puts, otm_put_strike) or _iv_for_strike(calls, otm_put_strike)
     result["otm_call_iv"] = otm_call_iv
     result["otm_put_iv"] = otm_put_iv
+
+    # -- liquidity estimation (volume + spread) --
+    # Aggregate volume from ATM and OTM contracts
+    total_vol = 0.0
+    bid_prices = []
+    ask_prices = []
+    for key_df, key_strike in [("calls", atm_strike), ("puts", atm_strike),
+                                ("calls", otm_call_strike), ("puts", otm_put_strike)]:
+        df_ref = calls if key_df == "calls" else puts
+        match = df_ref.loc[df_ref["strike"] == key_strike] if not df_ref.empty else pd.DataFrame()
+        if not match.empty:
+            row = match.iloc[0]
+            vol = row.get("volume")
+            if pd.notna(vol):
+                total_vol += float(vol)
+            bid = row.get("bid")
+            ask = row.get("ask")
+            if pd.notna(bid) and pd.notna(ask) and float(bid) > 0:
+                bid_prices.append(float(bid))
+                ask_prices.append(float(ask))
+
+    result["total_volume"] = total_vol
+    if bid_prices and ask_prices:
+        avg_spread_pct = sum((a - b) / b for a, b in zip(ask_prices, bid_prices)) / len(bid_prices)
+        result["avg_spread_pct"] = round(avg_spread_pct, 4)
+    else:
+        result["avg_spread_pct"] = None
 
     # -- compute derived metrics --
     if atm_iv is not None and otm_call_iv is not None:

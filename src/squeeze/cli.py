@@ -335,7 +335,10 @@ def scan(
                         "ticker", "base_signal", "base_score",
                         "squeeze_state", "momentum",
                         "atm_iv", "call_skew", "put_skew",
-                        "risk_reversal", "skew_bias", "skew_score_v2",
+                        "risk_reversal", "skew_bias",
+                        "total_volume", "avg_spread_pct",
+                        "liquidity_ok", "iv_overheated",
+                        "skew_score_v2",
                         "final_score_v2", "score_delta", "final_action", "reason",
                     ]
                     import csv as csv_module
@@ -386,12 +389,14 @@ def scan(
                         )
 
                         # Classify for summary
-                        if delta >= 10:
+                        if final_act == "HIGH_CONVICTION":
                             confirmed_bullish.append(e)
-                        elif delta <= -10:
+                        elif final_act == "BUY_CANDIDATE":
+                            confirmed_bullish.append(e)
+                        elif final_act == "DOWNGRADED":
                             downgraded.append(e)
-                        elif delta >= 5:
-                            confirmed_bullish.append(e)
+                        elif final_act == "AVOID_OVERHEATED_IV":
+                            downgraded.append(e)
 
                     console.print(table)
 

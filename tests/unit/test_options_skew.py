@@ -198,17 +198,25 @@ class TestComputeFinalScoreV2:
 
 
 class TestDetermineFinalAction:
-    def test_high_conviction(self):
-        assert determine_final_action(90, 10) == "High Conviction"
-
-    def test_watch_small(self):
-        assert determine_final_action(75, 0) == "Watch / Small Position"
-
     def test_downgraded(self):
-        assert determine_final_action(60, -20) == "Downgraded by Options Skew"
+        """score_delta < 0 takes top priority."""
+        assert determine_final_action(90, -1) == "DOWNGRADED"
 
-    def test_no_trade(self):
-        assert determine_final_action(50, -5) == "No Trade"
+    def test_high_conviction(self):
+        assert determine_final_action(90, 10) == "HIGH_CONVICTION"
+
+    def test_buy_candidate(self):
+        assert determine_final_action(78, 0) == "BUY_CANDIDATE"
+
+    def test_watchlist(self):
+        assert determine_final_action(68, 0) == "WATCHLIST"
+
+    def test_no_trade_low_score(self):
+        assert determine_final_action(50, 0) == "NO_TRADE"
+
+    def test_no_trade_with_delta(self):
+        """delta >=0 but score low → still NO_TRADE."""
+        assert determine_final_action(60, 10) == "NO_TRADE"
 
 
 class TestDetermineReason:
@@ -250,6 +258,8 @@ class TestAttachSkewToResult:
             "risk_reversal": 0.05,
             "skew_bias": "bullish",
             "skew_score": 0.5,
+            "total_volume": 500,
+            "avg_spread_pct": 0.05,
         }
         enriched = attach_skew_to_result(result, skew_data)
 
@@ -264,13 +274,19 @@ class TestAttachSkewToResult:
         assert enriched["atm_iv"] == 0.25
         assert enriched["call_skew"] == 0.03
         assert enriched["skew_bias"] == "bullish"
+        assert enriched["total_volume"] == 500
+        assert enriched["avg_spread_pct"] == 0.05
 
-        # Computed
-        # STRONG_BUY + risk_reversal>0 + call_skew>0 → +10 → final = 88
+        # Liquidity gate passes
+        assert enriched["liquidity_ok"] is True
+        assert "liquidity" not in enriched["reason"]
+
+        # Computed — score_delta = skew_score_v2 directly
+        # STRONG_BUY + risk_reversal>0 + call_skew>0 → +10 → delta=10
         assert enriched["skew_score_v2"] == 10
-        assert enriched["final_score_v2"] == 88
         assert enriched["score_delta"] == 10
-        assert enriched["final_action"] == "High Conviction"
+        assert enriched["final_score_v2"] == 88
+        assert enriched["final_action"] == "HIGH_CONVICTION"
         assert "call skew confirmation" in enriched["reason"]
 
     def test_bearish_downgrade(self):
@@ -289,22 +305,105 @@ class TestAttachSkewToResult:
             "risk_reversal": -0.03,
             "skew_bias": "bearish",
             "skew_score": -0.3,
+            "total_volume": 300,
+            "avg_spread_pct": 0.10,
         }
         enriched = attach_skew_to_result(result, skew_data)
 
-        # BUY + put_skew > call_skew → -10 → final = 72
+        # BUY + put_skew(0.04) > call_skew(0.01) → -10
         assert enriched["base_signal"] == "BUY"
         assert enriched["skew_score_v2"] == -10
+        assert enriched["score_delta"] == -10  # = skew_score_v2 directly
+        # score_delta < 0 → DOWNGRADED (even though final_score=72)
         assert enriched["final_score_v2"] == 72
-        assert enriched["score_delta"] == -10
-        assert enriched["final_action"] == "Watch / Small Position"
+        assert enriched["final_action"] == "DOWNGRADED"
         assert "Put skew contradicts" in enriched["reason"]
 
     def test_signal_unchanged(self):
         result = {"ticker": "MSFT", "Signal": "觀望 (動能減弱)", "composite_score": 1}
-        skew_data = {"skew_score": 0.8, "skew_bias": "bullish"}
+        skew_data = {"skew_score": 0.8, "skew_bias": "bullish", "atm_iv": 0.25}
         enriched = attach_skew_to_result(result, skew_data)
         assert enriched["Signal"] == "觀望 (動能減弱)"
+
+    # ── Protection 2: liquidity gate ──────────────────────────────────
+
+    def test_liquidity_low_volume_gates_skew(self):
+        result = {"ticker": "OBSCURE", "Signal": "強烈買入 (爆發)", "composite_score": 70}
+        skew_data = {
+            "atm_iv": 0.30,
+            "call_skew": 0.03,
+            "put_skew": -0.02,
+            "risk_reversal": 0.05,
+            "skew_bias": "bullish",
+            "skew_score": 0.5,
+            "total_volume": 10,     # < 50
+            "avg_spread_pct": 0.10,
+        }
+        enriched = attach_skew_to_result(result, skew_data)
+        assert enriched["liquidity_ok"] is False
+        assert enriched["skew_score_v2"] == 0
+        assert enriched["score_delta"] == 0
+        assert enriched["final_score_v2"] == 70  # base score unchanged
+        assert enriched["final_action"] == "NO_SKEW_DATA"
+        assert "volume" in enriched["reason"]
+
+    def test_liquidity_high_spread_gates_skew(self):
+        result = {"ticker": "WIDE", "Signal": "強烈買入 (爆發)", "composite_score": 80}
+        skew_data = {
+            "atm_iv": 0.25,
+            "call_skew": 0.03,
+            "put_skew": -0.01,
+            "risk_reversal": 0.04,
+            "skew_bias": "bullish",
+            "skew_score": 0.4,
+            "total_volume": 500,
+            "avg_spread_pct": 0.50,  # > 0.25
+        }
+        enriched = attach_skew_to_result(result, skew_data)
+        assert enriched["liquidity_ok"] is False
+        assert enriched["skew_score_v2"] == 0
+        assert enriched["score_delta"] == 0
+        assert enriched["final_action"] == "NO_SKEW_DATA"
+        assert "spread" in enriched["reason"]
+
+    # ── Protection 3: IV overheated penalty ───────────────────────────
+
+    def test_iv_overheated_applies_penalty(self):
+        result = {"ticker": "HOT", "Signal": "強烈買入 (爆發)", "composite_score": 85}
+        skew_data = {
+            "atm_iv": 0.85,          # > 0.80 → overheated
+            "call_skew": 0.03,
+            "put_skew": -0.02,
+            "risk_reversal": 0.05,
+            "skew_bias": "bullish",
+            "skew_score": 0.5,
+            "total_volume": 500,
+            "avg_spread_pct": 0.05,
+        }
+        enriched = attach_skew_to_result(result, skew_data)
+        # base=85, skew_offset=+10 → 95, then -10 penalty → 85
+        assert enriched["skew_score_v2"] == 10
+        assert enriched["score_delta"] == 10
+        assert enriched["final_score_v2"] == 85
+        assert enriched["final_action"] == "AVOID_OVERHEATED_IV"
+        assert "IV rank too high" in enriched["reason"]
+
+    def test_iv_below_threshold_no_penalty(self):
+        result = {"ticker": "COOL", "Signal": "強烈買入 (爆發)", "composite_score": 85}
+        skew_data = {
+            "atm_iv": 0.40,          # < 0.80 → fine
+            "call_skew": 0.03,
+            "put_skew": -0.02,
+            "risk_reversal": 0.05,
+            "skew_bias": "bullish",
+            "skew_score": 0.5,
+            "total_volume": 500,
+            "avg_spread_pct": 0.05,
+        }
+        enriched = attach_skew_to_result(result, skew_data)
+        assert enriched["final_score_v2"] == 95  # 85+10, no penalty
+        assert enriched["final_action"] == "HIGH_CONVICTION"
+        assert "IV" not in enriched["reason"]
 
 
 class TestGetExpiryChain:
