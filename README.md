@@ -1,4 +1,14 @@
-# Squeeze Stock Screener (US Market) v1.2.1
+# Squeeze Stock Screener (US Market) v1.2.2
+
+專為美國股市設計的自動化標的篩選工具，採用 Squeeze Momentum 擠壓動能邏輯與進階形態識別技術。
+
+## Phase 2: Options Skew Confirmation
+- **Options Skew 驗證**：透過期權 skew 資料對 squeeze 訊號進行二次確認，輸出 final_score_v2 / score_delta / final_action / reason
+- **Liquidity Gate**：volume < 50 或 bid-ask spread > 25% 時跳過 skew 計算 (NO_SKEW_DATA)
+- **OTM Distance Guard**：選擇權履約價偏離現貨 > 10% 時跳過 (NO_SKEW_DATA)
+- **IV Overheated Penalty**：ATM IV >= 80% 時直接扣 10 分 (AVOID_OVERHEATED_IV)
+- **兩層輸出**：每日 scan 可看到原始建議與 skew 修正後建議的 score_delta 差異
+- 使用方式：`squeeze scan --with-options-skew --top-n-options 50`
 
 專為美國股市設計的自動化標的篩選工具，採用 Squeeze Momentum 擠壓動能邏輯與進階形態識別技術。
 

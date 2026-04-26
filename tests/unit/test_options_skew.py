@@ -395,6 +395,32 @@ class TestAttachSkewToResult:
         assert "overheated" in enriched["reason"]
         assert "avoid chasing" in enriched["reason"]
 
+    def test_iv_overheated_not_no_skew_data(self):
+        """Regression: IV overheated must NOT return NO_SKEW_DATA
+        even when liquidity and OTM distance both pass."""
+        result = {"ticker": "HOT2", "Signal": "強烈買入 (爆發)", "composite_score": 78}
+        skew_data = {
+            "atm_iv": 0.82,          # > 0.80
+            "call_skew": 0.03,
+            "put_skew": -0.02,
+            "risk_reversal": 0.05,
+            "skew_bias": "bullish",
+            "skew_score": 0.5,
+            "total_volume": 999,     # liquid
+            "avg_spread_pct": 0.05,  # tight spread
+            "otm_call_distance": 0.02,  # close strikes
+            "otm_put_distance": 0.02,
+        }
+        enriched = attach_skew_to_result(result, skew_data)
+        assert enriched["final_action"] == "AVOID_OVERHEATED_IV", (
+            f"Expected AVOID_OVERHEATED_IV but got {enriched['final_action']}"
+        )
+        assert enriched["score_delta"] == -10
+        assert enriched["final_score_v2"] == 68  # 78 - 10
+        assert enriched["skew_score_v2"] == 0  # skew bypassed
+        assert enriched["liquidity_ok"] is True
+        assert "NO_SKEW_DATA" not in enriched["final_action"]
+
     def test_iv_below_threshold_no_penalty(self):
         result = {"ticker": "COOL", "Signal": "強烈買入 (爆發)", "composite_score": 85}
         skew_data = {
