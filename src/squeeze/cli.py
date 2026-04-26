@@ -3,6 +3,7 @@ import pandas as pd
 from rich.console import Console
 from rich.table import Table
 from pathlib import Path
+from datetime import datetime
 
 from typing import Optional
 
@@ -208,6 +209,8 @@ def scan(
     tracking_stop_loss_pct: Optional[float] = typer.Option(None, "--tracking-stop-loss-pct", help="Attach a fixed stop-loss alert percentage to tracked buy positions."),
     tracking_stop_loss_ma_window: Optional[int] = typer.Option(None, "--tracking-stop-loss-ma-window", help="Attach a moving-average stop-loss alert window to tracked buy positions."),
     tracking_stop_loss_ticks: int = typer.Option(0, "--tracking-stop-loss-ticks", help="Attach a tick offset below the moving average for tracked buy stop-loss alerts."),
+    with_options_skew: bool = typer.Option(False, "--with-options-skew", help="Enable options skew confirmation for top squeeze candidates."),
+    top_n_options: int = typer.Option(50, "--top-n-options", help="Number of top squeeze candidates to run options skew on (only when --with-options-skew)."),
 ):
     """
     Scan all US stocks for specific technical patterns and fundamental filters.
@@ -291,6 +294,52 @@ def scan(
     if pattern != "squeeze":
         matched = [r for r in results if config['filter'](r)]
     matched = sorted(matched, key=config['sort_key'], reverse=True)
+
+    # ── Options Skew Confirmation ────────────────────────────────────────
+    skew_enriched = None
+    if with_options_skew and pattern == "squeeze" and matched:
+        console.print(f"[yellow]Running options skew confirmation on top {min(top_n_options, len(matched))} candidates...[/yellow]")
+        try:
+            from squeeze.data.options_loader import get_expiry_chain
+            from squeeze.engine.options_skew import compute_skew
+            from squeeze.engine.skew_ranker import attach_skew_to_result
+
+            skew_candidates = matched[:top_n_options]
+            skew_enriched = []
+            for r in skew_candidates:
+                ticker = r["ticker"]
+                spot = r.get("Close", 0)
+                if not spot or spot <= 0:
+                    continue
+                chain = get_expiry_chain(ticker)
+                if chain is None:
+                    continue
+                skew_data = compute_skew(chain["calls"], chain["puts"], spot)
+                enriched = attach_skew_to_result(r, skew_data)
+                skew_enriched.append(enriched)
+
+            if skew_enriched:
+                console.print(f"  [green]✔[/green] Options skew computed for {len(skew_enriched)} tickers")
+                # Sort by final_score_v2 descending
+                skew_enriched.sort(key=lambda x: x.get("final_score_v2", 0), reverse=True)
+                # Export a dedicated CSV
+                try:
+                    skew_csv_dir = Path("exports") / "skew"
+                    skew_csv_dir.mkdir(parents=True, exist_ok=True)
+                    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    skew_csv_path = skew_csv_dir / f"squeeze_skew_recommendations_{ts}.csv"
+                    import csv as csv_module
+                    if skew_enriched:
+                        headers = list(skew_enriched[0].keys())
+                        with open(skew_csv_path, "w", newline="", encoding="utf-8") as f:
+                            w = csv_module.DictWriter(f, fieldnames=headers)
+                            w.writeheader()
+                            w.writerows(skew_enriched)
+                    console.print(f"  [green]✔[/green] Skew CSV exported: {skew_csv_path}")
+                except Exception as csv_err:
+                    console.print(f"  [red]✘[/red] Error exporting skew CSV: {csv_err}")
+        except Exception as opt_err:
+            console.print(f"  [red]✘[/red] Options skew error: {opt_err}")
     
     table = Table(title=f"{config['title']} ({len(matched)} matches)")
     table.add_column("Ticker", style="cyan")
