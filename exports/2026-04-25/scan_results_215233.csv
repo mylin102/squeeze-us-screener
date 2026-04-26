@@ -1,0 +1,2 @@
+is_squeezed,energy_level,momentum,prev_momentum,squeeze_on,fired,Signal,Close,timestamp,ticker,name,has_houyi,has_whale,composite_score
+False,0,-6.36230214436849,-4.901870727539062,False,True,強烈賣出 (跌破),198.7100067138672,2026-04-24 00:00:00,ABBV,AbbVie,False,False,0

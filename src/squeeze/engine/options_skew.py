@@ -92,8 +92,8 @@ def _iv_for_strike(df: pd.DataFrame, strike: float) -> Optional[float]:
     """
     if df.empty:
         return None
-    match = df.iloc[(df["strike"] - strike).abs().idxmin()]
-    iv = match.get("impliedVolatility")
+    idx = (df["strike"] - strike).abs().idxmin()
+    iv = df.loc[idx, "impliedVolatility"] if idx in df.index else None
     return float(iv) if pd.notna(iv) else None
 
 

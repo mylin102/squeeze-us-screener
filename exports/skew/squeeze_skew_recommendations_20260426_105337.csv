@@ -1,0 +1,2 @@
+ticker,base_signal,base_score,squeeze_state,momentum,atm_iv,call_skew,put_skew,risk_reversal,skew_bias,total_volume,avg_spread_pct,otm_call_distance,otm_put_distance,liquidity_ok,iv_overheated,skew_score_v2,final_score_v2,score_delta,final_action,reason
+ABBV,STRONG_SELL,0,Fired,-6.36230214436849,0.3689638299560547,-0.018982,-0.000488,-0.018493,neutral,147.0,0.1179,0.0755,0.0252,True,False,0,0.0,0.0,NO_TRADE,No clear skew signal
