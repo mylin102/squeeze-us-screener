@@ -4,7 +4,6 @@ to existing squeeze results without altering base signals.
 """
 
 import logging
-from typing import Any
 
 logger = logging.getLogger(__name__)
 

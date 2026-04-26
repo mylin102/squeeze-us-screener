@@ -8,10 +8,9 @@ from squeeze.engine.options_skew import (
     resolve_atm_strike,
     resolve_otm_strikes,
     compute_skew,
-    _iv_for_strike,
-    _nearest_strike,
 )
 from squeeze.engine.skew_ranker import compute_skew_score_for_result, attach_skew_to_result
+from unittest.mock import patch, MagicMock
 
 
 # ── helpers ────────────────────────────────────────────────────────────
@@ -155,3 +154,46 @@ class TestSkewRanker:
         skew_data = {"skew_score": 0.8, "skew_bias": "bullish"}
         enriched = attach_skew_to_result(result, skew_data)
         assert enriched["Signal"] == "觀望 (動能減弱)"
+
+
+class TestGetExpiryChain:
+    """Tests for get_expiry_chain using mocked yfinance."""
+
+    @patch("squeeze.data.options_loader.yf.Ticker")
+    def test_returns_expected_contract(self, mock_ticker_cls):
+        from squeeze.data.options_loader import get_expiry_chain
+
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        mock_ticker.options = ["2026-05-15", "2026-05-29", "2026-06-12"]
+
+        # Build mock option chain DataFrames
+        mock_calls = _make_option_df([95, 100, 105], [0.25, 0.26, 0.27])
+        mock_puts = _make_option_df([95, 100, 105], [0.28, 0.26, 0.24])
+        mock_chain = MagicMock()
+        mock_chain.calls = mock_calls
+        mock_chain.puts = mock_puts
+        mock_ticker.option_chain.return_value = mock_chain
+
+        ref_date = pd.Timestamp("2026-04-26")
+        result = get_expiry_chain("AAPL", min_dte=21, max_dte=45, ref_date=ref_date)
+
+        assert result is not None
+        # 2026-05-29 = 33 DTE, should be selected
+        assert result["expiry"] == "2026-05-29"
+        assert "calls" in result
+        assert "puts" in result
+        assert not result["calls"].empty
+        assert not result["puts"].empty
+        assert list(result["calls"].columns) == ["strike", "impliedVolatility", "openInterest"]
+
+    @patch("squeeze.data.options_loader.yf.Ticker")
+    def test_returns_none_on_failure(self, mock_ticker_cls):
+        from squeeze.data.options_loader import get_expiry_chain
+
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        mock_ticker.options = []  # No expirations
+
+        result = get_expiry_chain("AAPL")
+        assert result is None

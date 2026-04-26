@@ -29,13 +29,17 @@ def resolve_atm_strike(calls: pd.DataFrame, puts: pd.DataFrame, spot: float) -> 
     Determine the ATM strike closest to *spot*.
     Uses whichever chain (calls or puts) has a strike close to spot.
     """
-    all_strikes = pd.concat([
-        calls.get("strike", pd.Series(dtype=float)),
-        puts.get("strike", pd.Series(dtype=float)),
-    ]).dropna().unique()
-    if len(all_strikes) == 0:
+    series_list = []
+    cs = calls.get("strike", pd.Series(dtype=float))
+    if not cs.empty:
+        series_list.append(cs)
+    ps = puts.get("strike", pd.Series(dtype=float))
+    if not ps.empty:
+        series_list.append(ps)
+    if not series_list:
         logger.warning("No strikes available; falling back to spot")
         return spot
+    all_strikes = pd.concat(series_list).dropna().unique()
     return _nearest_strike(spot, pd.Series(all_strikes))
 
 
@@ -59,14 +63,24 @@ def resolve_otm_strikes(
 
     # If one side is missing, fall back to the next available strike from either chain.
     if pd.isna(otm_call):
-        all_above = pd.concat([call_strikes[call_strikes > atm_strike],
-                               put_strikes[put_strikes > atm_strike]]).dropna()
-        otm_call = all_above.min() if not all_above.empty else spot * 1.1
+        above_parts = []
+        above_calls = call_strikes[call_strikes > atm_strike]
+        if not above_calls.empty:
+            above_parts.append(above_calls)
+        above_puts = put_strikes[put_strikes > atm_strike]
+        if not above_puts.empty:
+            above_parts.append(above_puts)
+        otm_call = pd.concat(above_parts).min() if above_parts else spot * 1.1
 
     if pd.isna(otm_put):
-        all_below = pd.concat([call_strikes[call_strikes < atm_strike],
-                               put_strikes[put_strikes < atm_strike]]).dropna()
-        otm_put = all_below.max() if not all_below.empty else spot * 0.9
+        below_parts = []
+        below_calls = call_strikes[call_strikes < atm_strike]
+        if not below_calls.empty:
+            below_parts.append(below_calls)
+        below_puts = put_strikes[put_strikes < atm_strike]
+        if not below_puts.empty:
+            below_parts.append(below_puts)
+        otm_put = pd.concat(below_parts).max() if below_parts else spot * 0.9
 
     return float(otm_call), float(otm_put)
 

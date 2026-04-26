@@ -6,9 +6,10 @@ within a configured DTE window (default 21-45 days).
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional
 
+import pandas as pd
 import yfinance as yf
 
 logger = logging.getLogger(__name__)
@@ -101,8 +102,6 @@ def filter_liquid_options(df, min_oi: int = MIN_OPEN_INTEREST) -> "pd.DataFrame"
     Return only rows with ``openInterest >= min_oi``.
     Accepts calls or puts DataFrame as returned by yfinance.
     """
-    import pandas as pd
-
     if df is None or df.empty:
         return pd.DataFrame()
 
