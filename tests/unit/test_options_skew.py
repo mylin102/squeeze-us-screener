@@ -9,7 +9,14 @@ from squeeze.engine.options_skew import (
     resolve_otm_strikes,
     compute_skew,
 )
-from squeeze.engine.skew_ranker import compute_skew_score_for_result, attach_skew_to_result
+from squeeze.engine.skew_ranker import (
+    translate_base_signal,
+    compute_skew_offset,
+    compute_final_score_v2,
+    determine_final_action,
+    determine_reason,
+    attach_skew_to_result,
+)
 from unittest.mock import patch, MagicMock
 
 
@@ -122,17 +129,121 @@ class TestComputeSkew:
 
 # ── skew_ranker ────────────────────────────────────────────────────────
 
-class TestSkewRanker:
-    def test_compute_score(self):
-        result = {"composite_score": 5}
-        skew_data = {"skew_score": 0.5}
-        score = compute_skew_score_for_result(result, skew_data)
-        assert score == 5.5
+class TestTranslateBaseSignal:
+    def test_strong_buy(self):
+        assert translate_base_signal("強烈買入 (爆發)") == "STRONG_BUY"
 
-    def test_attach_skew(self):
-        result = {"ticker": "AAPL", "Signal": "強烈買入 (爆發)", "composite_score": 3}
+    def test_buy(self):
+        assert translate_base_signal("買入 (動能增強)") == "BUY"
+
+    def test_watch_converge(self):
+        assert translate_base_signal("觀察 (跌勢收斂)") == "WATCH_CONVERGE"
+
+    def test_sell(self):
+        assert translate_base_signal("賣出 (動能轉弱)") == "SELL"
+
+    def test_unknown_pass_through(self):
+        assert translate_base_signal("SOMETHING") == "SOMETHING"
+
+
+class TestComputeSkewOffset:
+    def test_bullish_confirmed(self):
+        """STRONG_BUY + risk_reversal > 0 + call_skew > 0 → +10"""
+        offset = compute_skew_offset("強烈買入 (爆發)", 0.05, 0.03, -0.02)
+        assert offset == 10
+
+    def test_bullish_contradicted(self):
+        """BUY + put_skew > call_skew → -10"""
+        offset = compute_skew_offset("買入 (動能增強)", 0.01, 0.01, 0.05)
+        assert offset == -10
+
+    def test_bullish_neutral(self):
+        """BUY + balanced skew (no clear confirm or contradict) → 0"""
+        offset = compute_skew_offset("買入 (動能增強)", 0.0, 0.0, 0.0)
+        assert offset == 0
+
+    def test_bearish_confirmed(self):
+        """STRONG_SELL + risk_reversal < 0 + put_skew > 0 → +10"""
+        offset = compute_skew_offset("強烈賣出 (跌破)", -0.04, -0.01, 0.03)
+        assert offset == 10
+
+    def test_bearish_contradicted(self):
+        """SELL + call_skew > put_skew → -10"""
+        offset = compute_skew_offset("賣出 (動能轉弱)", 0.01, 0.04, 0.01)
+        assert offset == -10
+
+    def test_bearish_neutral(self):
+        offset = compute_skew_offset("賣出 (動能轉弱)", 0.0, 0.0, 0.0)
+        assert offset == 0
+
+    def test_missing_iv_data_returns_zero(self):
+        offset = compute_skew_offset("強烈買入 (爆發)", None, 0.03, -0.02)
+        assert offset == 0
+
+    def test_watch_converge_bullish(self):
+        """WATCH_CONVERGE treated as bullish."""
+        offset = compute_skew_offset("觀察 (跌勢收斂)", 0.03, 0.02, -0.01)
+        assert offset == 10
+
+
+class TestComputeFinalScoreV2:
+    def test_base_plus_boost(self):
+        assert compute_final_score_v2(70, 10) == 80.0
+
+    def test_base_plus_penalty(self):
+        assert compute_final_score_v2(85, -10) == 75.0
+
+    def test_no_negative_floor(self):
+        assert compute_final_score_v2(5, -10) == 0.0
+
+
+class TestDetermineFinalAction:
+    def test_high_conviction(self):
+        assert determine_final_action(90, 10) == "High Conviction"
+
+    def test_watch_small(self):
+        assert determine_final_action(75, 0) == "Watch / Small Position"
+
+    def test_downgraded(self):
+        assert determine_final_action(60, -20) == "Downgraded by Options Skew"
+
+    def test_no_trade(self):
+        assert determine_final_action(50, -5) == "No Trade"
+
+
+class TestDetermineReason:
+    def test_bullish_confirmed(self):
+        r = determine_reason("強烈買入 (爆發)", 10, "bullish")
+        assert "call skew confirmation" in r
+
+    def test_bullish_contradicted(self):
+        r = determine_reason("買入 (動能增強)", -10, "bearish")
+        assert "Put skew contradicts" in r
+
+    def test_bearish_confirmed(self):
+        r = determine_reason("強烈賣出 (跌破)", 10, "bearish")
+        assert "put skew confirmation" in r
+
+    def test_bearish_contradicted(self):
+        r = determine_reason("賣出 (動能轉弱)", -10, "bullish")
+        assert "Call skew contradicts" in r
+
+    def test_zero_offset(self):
+        r = determine_reason("買入 (動能增強)", 0, "neutral")
+        assert "No clear skew signal" in r
+
+
+class TestAttachSkewToResult:
+    def test_full_enrichment(self):
+        result = {
+            "ticker": "AAPL",
+            "Signal": "強烈買入 (爆發)",
+            "composite_score": 78,
+            "is_squeezed": False,
+            "fired": True,
+            "momentum": 0.45,
+        }
         skew_data = {
-            "spot": 150,
             "atm_iv": 0.25,
             "call_skew": 0.03,
             "put_skew": -0.02,
@@ -141,15 +252,55 @@ class TestSkewRanker:
             "skew_score": 0.5,
         }
         enriched = attach_skew_to_result(result, skew_data)
+
+        # Layer 1 preserved
         assert enriched["ticker"] == "AAPL"
         assert enriched["Signal"] == "強烈買入 (爆發)"  # unchanged
+        assert enriched["base_signal"] == "STRONG_BUY"
+        assert enriched["base_score"] == 78
+        assert enriched["squeeze_state"] == "Fired"
+
+        # Layer 2 skew fields
         assert enriched["atm_iv"] == 0.25
         assert enriched["call_skew"] == 0.03
         assert enriched["skew_bias"] == "bullish"
-        assert enriched["final_score_v2"] == 3.5
+
+        # Computed
+        # STRONG_BUY + risk_reversal>0 + call_skew>0 → +10 → final = 88
+        assert enriched["skew_score_v2"] == 10
+        assert enriched["final_score_v2"] == 88
+        assert enriched["score_delta"] == 10
+        assert enriched["final_action"] == "High Conviction"
+        assert "call skew confirmation" in enriched["reason"]
+
+    def test_bearish_downgrade(self):
+        result = {
+            "ticker": "TSLA",
+            "Signal": "買入 (動能增強)",
+            "composite_score": 82,
+            "squeeze_on": True,
+            "fired": False,
+            "momentum": 0.12,
+        }
+        skew_data = {
+            "atm_iv": 0.30,
+            "call_skew": 0.01,
+            "put_skew": 0.04,
+            "risk_reversal": -0.03,
+            "skew_bias": "bearish",
+            "skew_score": -0.3,
+        }
+        enriched = attach_skew_to_result(result, skew_data)
+
+        # BUY + put_skew > call_skew → -10 → final = 72
+        assert enriched["base_signal"] == "BUY"
+        assert enriched["skew_score_v2"] == -10
+        assert enriched["final_score_v2"] == 72
+        assert enriched["score_delta"] == -10
+        assert enriched["final_action"] == "Watch / Small Position"
+        assert "Put skew contradicts" in enriched["reason"]
 
     def test_signal_unchanged(self):
-        """The original Signal field must never be altered."""
         result = {"ticker": "MSFT", "Signal": "觀望 (動能減弱)", "composite_score": 1}
         skew_data = {"skew_score": 0.8, "skew_bias": "bullish"}
         enriched = attach_skew_to_result(result, skew_data)

@@ -320,22 +320,94 @@ def scan(
 
             if skew_enriched:
                 console.print(f"  [green]✔[/green] Options skew computed for {len(skew_enriched)} tickers")
+
                 # Sort by final_score_v2 descending
                 skew_enriched.sort(key=lambda x: x.get("final_score_v2", 0), reverse=True)
-                # Export a dedicated CSV
+
+                # ── export CSV with all enrichment columns ─────────────
                 try:
                     skew_csv_dir = Path("exports") / "skew"
                     skew_csv_dir.mkdir(parents=True, exist_ok=True)
                     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
                     skew_csv_path = skew_csv_dir / f"squeeze_skew_recommendations_{ts}.csv"
+
+                    skew_cols = [
+                        "ticker", "base_signal", "base_score",
+                        "squeeze_state", "momentum",
+                        "atm_iv", "call_skew", "put_skew",
+                        "risk_reversal", "skew_bias", "skew_score_v2",
+                        "final_score_v2", "score_delta", "final_action", "reason",
+                    ]
                     import csv as csv_module
-                    if skew_enriched:
-                        headers = list(skew_enriched[0].keys())
-                        with open(skew_csv_path, "w", newline="", encoding="utf-8") as f:
-                            w = csv_module.DictWriter(f, fieldnames=headers)
-                            w.writeheader()
-                            w.writerows(skew_enriched)
+                    with open(skew_csv_path, "w", newline="", encoding="utf-8") as f:
+                        w = csv_module.DictWriter(f, fieldnames=skew_cols, extrasaction="ignore")
+                        w.writeheader()
+                        w.writerows(skew_enriched)
                     console.print(f"  [green]✔[/green] Skew CSV exported: {skew_csv_path}")
+
+                    # ── print terminal summary table ───────────────────
+                    table = Table(title=f"Options Skew Confirmation ({len(skew_enriched)} candidates)")
+                    table.add_column("Ticker", style="cyan", no_wrap=True)
+                    table.add_column("Base", style="bold")
+                    table.add_column("Skew Bias", style="magenta")
+                    table.add_column("Score", justify="right", style="blue")
+                    table.add_column("Delta", justify="right")
+                    table.add_column("Final", style="bold")
+                    table.add_column("Reason", style="white")
+
+                    # Group the three summary sections
+                    confirmed_bullish = []
+                    confirmed_bearish = []
+                    downgraded = []
+
+                    for e in skew_enriched:
+                        delta = e.get("score_delta", 0) or 0
+                        final_act = e.get("final_action", "")
+                        reason = e.get("reason", "")
+                        base_sig = e.get("base_signal", "")
+                        skew_bias = e.get("skew_bias", "")
+
+                        # Colorise delta
+                        if delta > 0:
+                            delta_str = f"[green]+{delta:.0f}[/green]"
+                        elif delta < 0:
+                            delta_str = f"[red]{delta:.0f}[/red]"
+                        else:
+                            delta_str = "0"
+
+                        table.add_row(
+                            e.get("ticker", "?"),
+                            base_sig,
+                            skew_bias,
+                            f"{e.get('final_score_v2', 0):.0f}",
+                            delta_str,
+                            final_act,
+                            reason,
+                        )
+
+                        # Classify for summary
+                        if delta >= 10:
+                            confirmed_bullish.append(e)
+                        elif delta <= -10:
+                            downgraded.append(e)
+                        elif delta >= 5:
+                            confirmed_bullish.append(e)
+
+                    console.print(table)
+
+                    # ── three-line summary ─────────────────────────────
+                    def _tag_line(items, tag, emoji):
+                        if not items:
+                            return f"{emoji} {tag}: (none)"
+                        names = ", ".join(f"{i['ticker']}{i.get('score_delta',0):+.0f}" for i in items[:5])
+                        return f"{emoji} {tag}: {names}"
+
+                    console.print()
+                    console.print("[bold]── Options Skew Summary ──[/bold]")
+                    console.print(_tag_line(confirmed_bullish, "Skew-confirmed Bullish", "🟢"))
+                    console.print(_tag_line(confirmed_bearish, "Skew-confirmed Bearish", "🔴"))
+                    console.print(_tag_line(downgraded, "Downgraded by Options Skew", "⚠️"))
+
                 except Exception as csv_err:
                     console.print(f"  [red]✘[/red] Error exporting skew CSV: {csv_err}")
         except Exception as opt_err:
@@ -366,9 +438,9 @@ def scan(
     if export or plot:
         base_dir = output_dir or Path("exports")
         if export:
-            console.print(f"[yellow]Exporting results...[/yellow]")
+            console.print("[yellow]Exporting results...[/yellow]")
             exporter = ReportExporter()
-            paths = exporter.export(matched, base_dir, extra_sections=extra_sections)
+            exporter.export(matched, base_dir, extra_sections=extra_sections)
         
         if plot:
             plot_count = min(len(chart_candidates), top)
