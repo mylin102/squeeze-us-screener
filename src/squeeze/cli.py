@@ -498,10 +498,25 @@ def scan(
         console.print("[yellow]Sending notifications...[/yellow]")
         notifier = LineNotifier()
         msg = f"Squeeze Scan Complete (US): {pattern}\nBuy: {len(today_buys)} | Sell: {len(today_sells)}"
+        if skew_enriched:
+            msg += f"\n\nOptions Skew:\n"
+            confirmed = [e for e in skew_enriched if e.get("final_action") in ("HIGH_CONVICTION", "BUY_CANDIDATE")]
+            downgraded = [e for e in skew_enriched if e.get("final_action") == "DOWNGRADED"]
+            avoided = [e for e in skew_enriched if e.get("final_action") == "AVOID_OVERHEATED_IV"]
+            if confirmed:
+                msg += "🟢 Confirmed: " + ", ".join(e["ticker"] for e in confirmed[:5]) + "\n"
+            if downgraded:
+                msg += "⚠️ Downgraded: " + ", ".join(e["ticker"] for e in downgraded[:5]) + "\n"
+            if avoided:
+                msg += "🔥 Avoid IV: " + ", ".join(e["ticker"] for e in avoided[:5]) + "\n"
         notifier.send_summary(msg)
 
         email_notifier = EmailNotifier()
         exporter = ReportExporter()
+        # Inject skew enriched data into extra_sections for the HTML template
+        extra_sections = dict(extra_sections or {})
+        if skew_enriched:
+            extra_sections["skew"] = skew_enriched
         html_report = exporter.render_html_summary(buy_results=today_buys, sell_results=today_sells, tracking_buys=tracking_buys, tracking_sells=tracking_sells, extra_sections=extra_sections)
         subject = f"Squeeze Scan Report (US - {pattern}) - {pd.Timestamp.now().strftime('%Y-%m-%d')}"
         

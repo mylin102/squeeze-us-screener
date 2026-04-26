@@ -9,11 +9,24 @@
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
         th { background-color: #f8f9fa; color: #2c3e50; }
-        .buy { color: #27ae60; font-weight: bold; } /* US: Green for Buy */
-        .sell { color: #e74c3c; font-weight: bold; } /* US: Red for Sell */
+        .buy { color: #27ae60; font-weight: bold; }
+        .sell { color: #e74c3c; font-weight: bold; }
         .positive { color: #27ae60; font-weight: bold; }
         .negative { color: #e74c3c; font-weight: bold; }
         .footer { font-size: 12px; color: #7f8c8d; margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; }
+        .skew-boost { background-color: #e8f8e8; }
+        .skew-penalty { background-color: #fde8e8; }
+        .skew-avoid { background-color: #fff3e0; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .tag-high { background-color: #27ae60; color: #fff; }
+        .tag-buy { background-color: #2ecc71; color: #fff; }
+        .tag-down { background-color: #e67e22; color: #fff; }
+        .tag-avoid { background-color: #e74c3c; color: #fff; }
+        .tag-nodata { background-color: #95a5a6; color: #fff; }
+        .summary-badge { font-size: 16px; padding: 4px 12px; border-radius: 6px; display: inline-block; margin-bottom: 4px; }
+        .badge-confirmed { background-color: #d4edda; color: #155724; }
+        .badge-downgraded { background-color: #fff3cd; color: #856404; }
+        .badge-avoid { background-color: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
@@ -26,7 +39,7 @@
         <p><strong>Whale</strong>: daily and weekly momentum turning up together, better for swing-style setups.</p>
 
         {% if priority_count > 0 %}
-        <h2>⭐ Priority Watchlist (Top 10)</h2>
+        <h2>Priority Watchlist (Top 10)</h2>
         <table>
             <thead>
                 <tr>
@@ -35,7 +48,7 @@
                     <th>Signal</th>
                     <th>Houyi</th>
                     <th>Whale</th>
-                    <th>Priority Score</th>
+                    <th>Score</th>
                     <th>Momentum</th>
                 </tr>
             </thead>
@@ -61,7 +74,7 @@
         {% endif %}
 
         {% if sell_count > 0 %}
-        <h2>⚠️ Sell Recommendations (Top 10)</h2>
+        <h2>Sell Recommendations (Top 10)</h2>
         <table>
             <thead>
                 <tr>
@@ -86,8 +99,97 @@
         </table>
         {% endif %}
 
+        {% if skew_count > 0 %}
+        <h2>Options Skew Confirmation</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Base Signal</th>
+                    <th>Base Score</th>
+                    <th>Skew Bias</th>
+                    <th>ATM IV</th>
+                    <th>Score Delta</th>
+                    <th>Final Score</th>
+                    <th>Action</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in skew_results %}
+                {% set delta = e.get("score_delta", 0) %}
+                {% set fa = e.get("final_action", "") %}
+                {% if fa == "HIGH_CONVICTION" or fa == "BUY_CANDIDATE" %}
+                <tr class="skew-boost">
+                {% elif fa == "DOWNGRADED" %}
+                <tr class="skew-penalty">
+                {% elif fa == "AVOID_OVERHEATED_IV" %}
+                <tr class="skew-avoid">
+                {% else %}
+                <tr>
+                {% endif %}
+                    <td><strong>{{ e.get("ticker", "?") }}</strong></td>
+                    <td>{{ e.get("base_signal", "") }}</td>
+                    <td>{{ "%.0f"|format(e.get("base_score", 0)) }}</td>
+                    <td>{{ e.get("skew_bias", "neutral") }}</td>
+                    <td>{{ "%.1f"|format(e.get("atm_iv", 0) * 100) }}%</td>
+                    <td class="{{ 'positive' if delta > 0 else 'negative' if delta < 0 else '' }}">
+                        {{ "+%.0f"|format(delta) if delta > 0 else "%.0f"|format(delta) if delta < 0 else "0" }}
+                    </td>
+                    <td><strong>{{ "%.0f"|format(e.get("final_score_v2", 0)) }}</strong></td>
+                    <td>
+                        {% if fa == "HIGH_CONVICTION" %}<span class="tag tag-high">HIGH</span>
+                        {% elif fa == "BUY_CANDIDATE" %}<span class="tag tag-buy">BUY</span>
+                        {% elif fa == "DOWNGRADED" %}<span class="tag tag-down">DOWN</span>
+                        {% elif fa == "AVOID_OVERHEATED_IV" %}<span class="tag tag-avoid">AVOID</span>
+                        {% else %}{{ fa }}
+                        {% endif %}
+                    </td>
+                    <td>{{ e.get("reason", "") }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Options Skew Summary</h3>
+
+        <table style="max-width: 550px;">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Count</th>
+                    <th>Tickers</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if skew_confirmed %}
+                <tr class="skew-boost">
+                    <td><span class="summary-badge badge-confirmed">🟢 Skew Confirmed</span></td>
+                    <td style="text-align:center;"><strong>{{ skew_confirmed | length }}</strong></td>
+                    <td>{% for e in skew_confirmed[:8] %}<strong>{{ e.ticker }}</strong>{{ "+%.0f"|format(e.score_delta) }}{{ ", " if not loop.last }}{% endfor %}{{ ", …" if skew_confirmed | length > 8 }}</td>
+                </tr>
+                {% endif %}
+                {% if skew_downgraded %}
+                <tr class="skew-penalty">
+                    <td><span class="summary-badge badge-downgraded">⚠️ Downgraded by Skew</span></td>
+                    <td style="text-align:center;"><strong>{{ skew_downgraded | length }}</strong></td>
+                    <td>{% for e in skew_downgraded[:8] %}<strong>{{ e.ticker }}</strong>{{ "%.0f"|format(e.score_delta) }}{{ ", " if not loop.last }}{% endfor %}{{ ", …" if skew_downgraded | length > 8 }}</td>
+                </tr>
+                {% endif %}
+                {% if skew_avoid %}
+                <tr class="skew-avoid">
+                    <td><span class="summary-badge badge-avoid">🔥 Avoid Overheated IV</span></td>
+                    <td style="text-align:center;"><strong>{{ skew_avoid | length }}</strong></td>
+                    <td>{% for e in skew_avoid[:8] %}<strong>{{ e.ticker }}</strong> (IV={{ "%.0f"|format(e.atm_iv * 100) }}%){{ ", " if not loop.last }}{% endfor %}{{ ", …" if skew_avoid | length > 8 }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        {% endif %}
+
         {% if tracking_buys %}
-        <h2>📈 Performance Tracking (Buy)</h2>
+        <h2>Performance Tracking (Buy)</h2>
         <table>
             <thead>
                 <tr>

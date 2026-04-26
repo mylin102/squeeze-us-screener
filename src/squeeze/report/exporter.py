@@ -79,7 +79,12 @@ class ReportExporter:
         top_priority = sorted(extra_sections.get("priority", []), key=lambda x: (x.get('composite_score', 0), x.get('momentum', 0)), reverse=True)[:10]
         top_houyi = sorted(extra_sections.get("houyi", []), key=lambda x: x.get('rally_pct', 0), reverse=True)[:10]
         top_whale = sorted(extra_sections.get("whale", []), key=lambda x: x.get('weekly_momentum', 0), reverse=True)[:10]
-        render_data = {"date": self._get_market_now().strftime("%Y-%m-%d %H:%M:%S") + " (ET)", "app_version": self._get_app_version(), "buy_results": [self._format_result(r) for r in top_buys], "buy_count": len(buy_results or []), "sell_results": [self._format_result(r) for r in top_sells], "sell_count": len(sell_results or []), "tracking_buys": self._summarize_tracking_positions(tracking_buys or []), "tracking_sells": tracking_sells or [], "priority_results": [self._format_result(r) for r in top_priority], "priority_count": len(extra_sections.get("priority", [])), "houyi_results": [self._format_result(r) for r in top_houyi], "houyi_count": len(extra_sections.get("houyi", [])), "whale_results": [self._format_result(r) for r in top_whale], "whale_count": len(extra_sections.get("whale", []))}
+        skew_data = extra_sections.get("skew", [])
+        skew_results = sorted(
+            [self._format_skew_result(r) for r in skew_data],
+            key=lambda x: x.get("final_score_v2", 0), reverse=True,
+        )
+        render_data = {"date": self._get_market_now().strftime("%Y-%m-%d %H:%M:%S") + " (ET)", "app_version": self._get_app_version(), "buy_results": [self._format_result(r) for r in top_buys], "buy_count": len(buy_results or []), "sell_results": [self._format_result(r) for r in top_sells], "sell_count": len(sell_results or []), "tracking_buys": self._summarize_tracking_positions(tracking_buys or []), "tracking_sells": tracking_sells or [], "priority_results": [self._format_result(r) for r in top_priority], "priority_count": len(extra_sections.get("priority", [])), "houyi_results": [self._format_result(r) for r in top_houyi], "houyi_count": len(extra_sections.get("houyi", [])), "whale_results": [self._format_result(r) for r in top_whale], "whale_count": len(extra_sections.get("whale", [])), "skew_results": skew_results, "skew_count": len(skew_results), "skew_confirmed": [r for r in skew_results if r.get("score_delta", 0) > 0], "skew_downgraded": [r for r in skew_results if r.get("final_action") == "DOWNGRADED"], "skew_avoid": [r for r in skew_results if r.get("final_action") == "AVOID_OVERHEATED_IV"]}
         return template.render(**render_data)
 
     def _summarize_tracking_positions(self, tracking_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -115,3 +120,18 @@ class ReportExporter:
 
     def _format_result(self, r: Dict[str, Any]) -> Dict[str, Any]:
         return {"ticker": r.get('ticker'), "name": r.get('name', 'Unknown'), "close": f"{r.get('Close', 0):.2f}", "momentum": r.get('momentum', 0), "energy": r.get('energy_level', 0), "squeeze_active": r.get('is_squeezed', False), "signal": r.get('Signal', 'Neutral'), "has_houyi": r.get('has_houyi', False), "has_whale": r.get('has_whale', False), "composite_score": r.get('composite_score', 0)}
+
+    def _format_skew_result(self, r: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalise a raw skew-enriched dict for template consumption."""
+        return {
+            "ticker": r.get("ticker", ""),
+            "base_signal": r.get("base_signal", r.get("Signal", "")),
+            "base_score": round(float(r.get("base_score", 0) or 0), 1),
+            "score_delta": float(r.get("score_delta", 0) or 0),
+            "final_score_v2": round(float(r.get("final_score_v2", 0) or 0), 1),
+            "final_action": r.get("final_action", ""),
+            "skew_bias": r.get("skew_bias", ""),
+            "atm_iv": float(r.get("atm_iv", 0) or 0),
+            "reason": r.get("reason", ""),
+            "liquidity_ok": bool(r.get("liquidity_ok", False)),
+        }
