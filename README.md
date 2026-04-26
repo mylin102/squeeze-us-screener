@@ -47,6 +47,50 @@ python3 scripts/analyze_tracking.py --csv recommendations.csv
 PYTHONPATH=src python3 -m squeeze.cli analyze-tracking --csv recommendations.csv
 ```
 
+## 策略回測
+
+### 使用通用回測框架
+
+```bash
+# 安裝回測框架 (一次即可)
+cd ../squeeze-backtest
+pip install -e .
+
+# 執行回測
+squeeze-backtest run -c recommendations.csv -m us
+```
+
+### 使用快速腳本
+
+```bash
+# 基本回測
+python3 scripts/run_backtest.py --csv recommendations.csv
+
+# 指定策略
+python3 scripts/run_backtest.py --csv recommendations.csv \
+    --strategies momentum_focus whale_alignment bear_defense
+
+# 輸出 JSON
+python3 scripts/run_backtest.py --csv recommendations.csv --json
+
+# 指定輸出路徑
+python3 scripts/run_backtest.py --csv recommendations.csv \
+    --output exports/my_us_backtest.md
+```
+
+### 可用策略
+
+| 策略 | 描述 |
+|-----|------|
+| `baseline` | 基準策略，無過濾器 |
+| `momentum_focus` | 動能突破，要求 Fired |
+| `whale_alignment` | 日週線鯨魚共振 |
+| `bull_market` | 多頭市場專用 |
+| `bear_defense` | 空頭放空策略 |
+| `high_conviction` | 高信心嚴格過濾 |
+
+詳細策略文件見：`.planning/phases/backtest_strategy_from_tracking.md`
+
 ## 自動化設定 (GitHub Actions)
 專案預設包含 `.github/workflows/daily_scan.yml`，於每個交易日 16:30 (ET) 自動執行。
 
