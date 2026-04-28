@@ -1,0 +1,51 @@
+ticker,base_signal,base_score,squeeze_state,momentum,atm_iv,call_skew,put_skew,risk_reversal,skew_bias,total_volume,avg_spread_pct,otm_call_distance,otm_put_distance,liquidity_ok,iv_overheated,skew_score_v2,final_score_v2,score_delta,final_action,reason
+BRO,STRONG_BUY,3,Fired,0.12166722615559894,0.352545537109375,0.012207,0.053955,-0.041748,bearish,31.0,0.7368,0.0792,0.0792,False,,0,3,0,NO_SKEW_DATA,Option liquidity too low: volume=31<50; spread=73.7%>25%
+HAL,STRONG_BUY,3,Fired,1.736668268839518,0.389654541015625,-0.003906,-0.009277,0.005371,neutral,31.0,0.0506,0.0245,0.049,False,,0,3,0,NO_SKEW_DATA,Option liquidity too low: volume=31<50
+WRB,BUY,2,Squeezing,0.3733329772949219,0.25025163818359375,0.0,-0.023681,0.023681,bullish,42.0,0.1895,0.0943,0.0372,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=42<50
+ADBE,BUY,2,Squeezing,8.004997253417969,0.5214891601562499,-0.063354,-0.074096,0.010742,neutral,28.0,0.1922,0.0206,0.0206,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=28<50
+DGX,BUY,2,Squeezing,2.5749994913736973,0.24274438903808593,-0.019592,0.000183,-0.019775,neutral,22.0,0.2493,0.0256,0.0256,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=22<50
+DVA,BUY,2,Squeezing,2.4583358764648438,0.4657646197509766,0.0,-0.027405,0.027405,bullish,175.0,0.0726,0.0333,0.0333,True,False,0,2,0.0,NO_TRADE,No clear skew signal
+HIG,HOLD_WEAKEN,2,Squeezing,0.3200022379557291,0.20862607788085932,-0.006714,0.004272,-0.010986,neutral,11.0,0.268,0.036,0.036,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=11<50; spread=26.8%>25%
+AMGN,SELL,1,Squeezing,-3.8733367919921875,0.35510898803710933,0.0,0.253904,-0.253904,bearish,27.0,1.64,0.0546,0.2061,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=27<50; spread=164.0%>25%
+BMY,WATCH_CONVERGE,1,Squeezing,-0.3216673533121745,0.3491276025390625,-0.014648,-0.015625,0.000977,neutral,47.0,0.0599,0.0343,0.0343,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=47<50
+BR,WATCH_CONVERGE,1,Squeezing,-0.24499511718750022,0.3569400244140625,0.0,0.046386,-0.046386,bearish,3.0,0.2578,0.1889,0.0129,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=3<50; spread=25.8%>25%
+CF,WATCH_CONVERGE,1,Squeezing,-4.226668039957682,0.5649457568359376,0.0,0.097167,-0.097167,bearish,39.0,16.5,0.2824,0.0409,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=39<50; spread=1650.0%>25%
+CL,WATCH_CONVERGE,1,Squeezing,-0.5363133748372396,0.35034829345703117,0.105712,0.0,0.105712,bullish,85.0,4.0,0.0584,0.1505,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: spread=400.0%>25%
+CNP,WATCH_CONVERGE,1,Squeezing,-1.0099995930989583,0.19190261230468753,0.0,0.141112,-0.141112,bearish,98.0,0.375,0.0566,0.1855,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: spread=37.5%>25%
+EA,WATCH_CONVERGE,1,Squeezing,-0.6916707356770834,0.370123486328125,0.0,0.0,0.0,neutral,30.0,,0.2112,0.0112,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=30<50
+FICO,WATCH_CONVERGE,1,Squeezing,-56.20666503906249,0.6323736714172363,0.0,-0.042007,0.042007,bullish,5.0,0.1387,0.1188,0.1688,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=5<50
+HAS,HOLD_WEAKEN,1,Squeezing,2.4916674296061196,0.40650007568359375,-0.005127,0.028808,-0.033935,bearish,21.0,0.2777,0.0262,0.0523,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=21<50; spread=27.8%>25%
+IFF,SELL,1,Squeezing,-1.0383338928222656,0.40650007568359375,-0.010498,0.033447,-0.043945,bearish,11.0,0.3469,0.0707,0.106,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=11<50; spread=34.7%>25%
+ACGL,SELL,0,Squeezing,-0.09499994913736978,0.2827220166015625,-0.027221,0.00415,-0.031372,bearish,57.0,1.0831,0.0515,0.0515,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: spread=108.3%>25%
+CB,SELL,0,Squeezing,-1.2433319091796875,0.2178422943115234,-0.008911,-0.016235,0.007324,neutral,28.0,0.0926,0.0151,0.0151,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=28<50
+CPRT,HOLD_WEAKEN,0,Squeezing,0.43833351135253906,0.48633326171875,-0.092773,-0.041992,-0.050781,bearish,35.0,0.572,0.075,0.075,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=35<50; spread=57.2%>25%
+INCY,HOLD_WEAKEN,0,Squeezing,0.523333231608073,0.42127043579101564,0.026489,0.011719,0.01477,neutral,23.0,0.5958,0.0512,0.0512,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=23<50; spread=59.6%>25%
+ORLY,HOLD_WEAKEN,0,Squeezing,0.3766657511393229,0.3198310205078124,-0.021118,-0.013428,-0.00769,neutral,77.0,0.2273,0.0546,0.0546,True,False,0,0.0,0.0,NO_TRADE,No clear skew signal
+PEP,SELL,0,Squeezing,-1.0100021362304688,0.24134059448242187,-0.01831,-0.011841,-0.00647,neutral,166.0,0.0762,0.032,0.032,True,False,0,0.0,0.0,NO_TRADE,No clear skew signal
+STE,HOLD_WEAKEN,0,Squeezing,0.16666666666666663,0.332587240600586,0.039856,0.0,0.039856,bullish,2.0,2.9048,0.0455,0.1922,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=2<50; spread=290.5%>25%
+TSN,SELL,0,Squeezing,-0.4883321126302083,0.3007882421875,-0.003906,0.023437,-0.027343,bearish,76.0,0.4157,0.039,0.039,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: spread=41.6%>25%
+AEE,SELL,0,Squeezing,-1.4333330790201821,0.24549094360351562,-0.030273,0.150755,-0.181028,bearish,7.0,0.3023,0.0446,0.0446,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=7<50; spread=30.2%>25%
+AJG,HOLD_WEAKEN,0,Squeezing,0.26833089192708326,0.36377589355468753,0.000732,0.0,0.000732,neutral,4.0,0.3306,0.0469,0.1777,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=4<50; spread=33.1%>25%
+ALLE,HOLD_WEAKEN,0,Squeezing,1.991668701171875,0.5776409423828125,0.0,0.0,0.0,neutral,450.0,,0.2782,0.4782,True,,0,0,0,NO_SKEW_DATA,OTM strike distance too large: otm_call_dist=27.82%>10%; otm_put_dist=47.82%>10%
+AON,HOLD_WEAKEN,0,Squeezing,2.1383260091145835,0.33005430694580074,0.01651,0.0,0.01651,neutral,11.0,1.0611,0.0311,0.188,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=11<50; spread=106.1%>25%
+AOS,SELL,0,Squeezing,-0.886667251586914,0.3327703442382813,0.0,0.002441,-0.002441,neutral,13.0,0.4406,0.1565,0.0388,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=13<50; spread=44.1%>25%
+APD,HOLD_WEAKEN,0,Squeezing,4.926676432291666,0.32520206054687495,-0.011413,-0.029113,0.0177,neutral,102.0,0.1523,0.033,0.033,True,False,0,0.0,0.0,NO_TRADE,No clear skew signal
+ATO,SELL,0,Squeezing,-4.393333435058594,,,,,neutral,0.0,,,,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+AVY,SELL,0,Squeezing,-4.615000406901041,,,,,neutral,0.0,,,,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+BDX,SELL,0,Squeezing,-2.0816675821940103,0.33289241333007813,0.0,0.029175,-0.029175,bearish,19.0,0.5245,0.1338,0.1032,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=19<50; spread=52.4%>25%
+BG,STRONG_SELL,0,Fired,-0.9383328755696614,0.40820904296875,0.0,0.09912,-0.09912,bearish,14.0,2.875,0.0079,0.3166,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=14<50; spread=287.5%>25%
+BSX,STRONG_SELL,0,Fired,-0.391665776570638,0.34570966796874997,-0.00293,0.006836,-0.009766,neutral,32.0,0.1606,0.0171,0.0855,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=32<50
+CHD,HOLD_WEAKEN,0,Squeezing,0.64666748046875,,,,,neutral,0.0,,,,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+D,SELL,0,Squeezing,-1.1150004069010417,0.2436599072265625,-0.004394,0.018799,-0.023193,bearish,46.0,0.3381,0.0398,0.0398,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=46<50; spread=33.8%>25%
+DAL,HOLD_WEAKEN,0,Squeezing,1.329999287923177,0.485356708984375,0.0,-0.022949,0.022949,bullish,9.0,0.1982,0.0298,0.0298,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=9<50
+DD,SELL,0,Squeezing,-0.2816658020019531,0.6533237792968751,-0.259519,-0.181883,-0.077636,bearish,23.0,1.3068,0.0552,0.0552,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=23<50; spread=130.7%>25%
+DOC,STRONG_SELL,0,Fired,-0.2825361887613932,0.37500625,-0.071288,0.000977,-0.072265,bearish,63.0,1.0181,0.1558,0.0346,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: spread=101.8%>25%
+DRI,HOLD_WEAKEN,0,Squeezing,5.805460611979165,0.3062813513183594,-0.006775,-0.033447,0.026672,bullish,5.0,0.1288,0.0254,0.0254,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=5<50
+DTE,STRONG_SELL,0,Fired,-2.8366622924804688,0.23828886718749998,0.041748,0.0,0.041748,bullish,1.0,3.0,0.0337,0.1769,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=1<50; spread=300.0%>25%
+DXCM,SELL,0,Squeezing,-2.1716670989990234,0.6560092993164064,0.0,-0.012939,0.012939,neutral,974.0,0.3654,0.0843,0.1115,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: spread=36.5%>25%
+ECL,HOLD_WEAKEN,0,Squeezing,0.45166015625000044,,,,,neutral,0.0,,,,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+ES,SELL,0,Squeezing,-1.7183329264322915,0.249030947265625,0.0,0.0,0.0,neutral,4.0,0.6957,0.0793,0.1207,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=4<50; spread=69.6%>25%
+EXPD,HOLD_WEAKEN,0,Squeezing,3.648335774739583,,,,,neutral,0.0,,,,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+FANG,STRONG_BUY,3,Fired,4.314994812011719,0.374456939086914,-0.00531,0.011658,-0.016968,neutral,425.0,0.0731,0.05,0.05,True,False,-10,0.0,-10.0,DOWNGRADED,Put skew contradicts bullish setup
+FSLR,SELL,0,Squeezing,-4.348335266113281,0.6438023901367188,0.0,0.003418,-0.003418,neutral,45.0,0.0963,0.0766,0.0511,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=45<50
+IDXX,SELL,0,Squeezing,-7.318339029947916,,,,,neutral,0.0,,,,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
