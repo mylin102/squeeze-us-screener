@@ -1,9 +1,12 @@
+# Updated with BCC email privacy and MIMEApplication fallback for non-image attachments from Taiwan screener
 import os
 import logging
 import smtplib
+import mimetypes
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
+from email.mime.application import MIMEApplication
 from typing import Optional, List
 from pathlib import Path
 
@@ -77,7 +80,7 @@ class EmailNotifier:
         self.username = username or os.environ.get('SMTP_USERNAME')
         self.password = password or os.environ.get('SMTP_PASSWORD')
         # recipient can be "mail1@example.com, mail2@example.com"
-        self.recipient_str = recipient or os.environ.get('SMTP_RECIPIENT', 'mylin102@gmail.com')
+        self.recipient_str = recipient if recipient is not None else os.environ.get('SMTP_RECIPIENT', 'mylin102@gmail.com')
 
     def _get_recipient_list(self) -> List[str]:
         if not self.recipient_str:
@@ -96,7 +99,12 @@ class EmailNotifier:
         try:
             msg = MIMEMultipart()
             msg['From'] = self.username
-            msg['To'] = ", ".join(recipients)
+            
+            # COMMENT ADDED FOR MODIFICATION:
+            # Change visible To header to "undisclosed-recipients:;" to protect recipient privacy (BCC).
+            # The actual delivery is determined by the recipients list in sendmail(), so setting
+            # To to "undisclosed-recipients:;" hides the emails of other recipients from each other.
+            msg['To'] = "undisclosed-recipients:;"
             msg['Subject'] = subject
 
             # Attach body
@@ -107,9 +115,14 @@ class EmailNotifier:
                 for path in attachments:
                     if path.exists():
                         with open(path, 'rb') as f:
-                            img_data = f.read()
-                            image = MIMEImage(img_data, name=path.name)
-                            msg.attach(image)
+                            data = f.read()
+                        mime_type, _ = mimetypes.guess_type(str(path))
+                        if mime_type and mime_type.startswith('image/'):
+                            part = MIMEImage(data, name=path.name)
+                        else:
+                            part = MIMEApplication(data, name=path.name)
+                            part.add_header('Content-Disposition', 'attachment', filename=path.name)
+                        msg.attach(part)
 
             server = smtplib.SMTP(self.smtp_server, self.smtp_port)
             server.starttls()

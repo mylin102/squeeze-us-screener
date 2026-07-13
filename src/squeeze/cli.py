@@ -1,46 +1,37 @@
+# Updated to support RS/MA20 indicators, score versions, data-quality, and nightly commands from Taiwan screener
 import typer
 import pandas as pd
 from rich.console import Console
 from rich.table import Table
 from pathlib import Path
-from datetime import datetime
-
-from typing import Optional
+from datetime import datetime, timezone, timedelta
+from typing import Optional, List, Dict, Any
 
 from squeeze.data.tickers import fetch_tickers_with_names
 from squeeze.report.exporter import ReportExporter
 from squeeze.report.notifier import LineNotifier, EmailNotifier
 from squeeze.report.performance import PerformanceTracker
 from squeeze.report.tracking_analysis import build_tracking_report, format_tracking_report, load_tracking_frame
+from squeeze.engine.ranker import enrich_with_scores
+from squeeze.engine.scanner import MarketScanner, SPY_TICKER
 
 app = typer.Typer(help="Squeeze Stock Screener for US Market")
 console = Console()
 
 
-def _signal_score(signal: str) -> int:
-    if signal == "強烈買入 (爆發)":
-        return 3
-    if signal == "買入 (動能增強)":
-        return 2
-    if signal == "觀察 (跌勢收斂)":
-        return 1
-    return 0
-
-
 def _attach_pattern_flags(results, houyi_results, whale_results):
+    """Cross-reference houyi/whale matches and call ranker for final scores."""
     houyi_map = {r["ticker"]: r for r in houyi_results if r.get("is_houyi")}
     whale_map = {r["ticker"]: r for r in whale_results if r.get("is_whale")}
     enriched = []
     for result in results:
         ticker = result.get("ticker")
-        has_houyi = ticker in houyi_map
-        has_whale = ticker in whale_map
-        enriched_result = dict(result)
-        enriched_result["has_houyi"] = has_houyi
-        enriched_result["has_whale"] = has_whale
-        enriched_result["composite_score"] = _signal_score(result.get("Signal", "")) + (1 if has_houyi else 0) + (2 if has_whale else 0)
-        enriched.append(enriched_result)
-    return enriched
+        row = dict(result)
+        row["has_houyi"] = ticker in houyi_map
+        row["has_whale"] = ticker in whale_map
+        enriched.append(row)
+    # Let ranker compute all scores (v1, v2) consistently
+    return enrich_with_scores(enriched)
 
 
 @app.command(name="analyze-tracking")
@@ -89,7 +80,12 @@ def analyze(
         with console.status(f"[bold green]Fetching fundamentals for {normalized_ticker}...[/bold green]"):
             scanner.fetch_fundamentals()
 
-    results = scanner.scan(pattern_fn)
+    # Fetch benchmark for RS
+    with console.status("[bold green]Fetching benchmark (SPY)...[/bold green]"):
+        scanner.fetch_benchmark(period=period)
+        bm_close = scanner.benchmark_close if not scanner.benchmark_close.empty else None
+
+    results = scanner.scan(pattern_fn, benchmark_close=bm_close)
     if not results:
         console.print(f"[red]No analysis result produced for {normalized_ticker}.[/red]")
         raise typer.Exit(code=1)
@@ -109,6 +105,8 @@ def analyze(
         ("Energy Level", str(result.get("energy_level", 0))),
         ("Momentum", f"{result.get('momentum', 0.0):.4f}"),
         ("Prev Momentum", f"{result.get('prev_momentum', 0.0):.4f}"),
+        ("MA20", f"{result.get('ma20', 0.0):.2f}" if result.get("ma20") is not None else "N/A"),
+        ("Close Above MA20", "Yes" if result.get("close_above_ma20") else "No"),
     ]
 
     if pattern == "houyi":
@@ -132,6 +130,15 @@ def analyze(
             ("Timestamp", result.get("timestamp", "N/A")),
         ])
 
+    # RS fields display if available
+    if "rs_index" in result and pd.notna(result["rs_index"]):
+        display_rows.extend([
+            ("RS Index (Base 100)", f"{result['rs_index']:.2f}"),
+            ("RS Slope (5D)", f"{result['rs_slope_5d']:.4f}%"),
+            ("RS New High (60D)", "Yes" if result['rs_new_high_60'] else "No"),
+            ("RS Signal", result.get("rs_signal", "Neutral")),
+        ])
+
     fundamentals_map = {
         "marketCap": "Market Cap",
         "averageVolume": "Average Volume",
@@ -139,6 +146,8 @@ def analyze(
         "priceToBook": "Price/Book",
         "dividendYield": "Dividend Yield",
         "value_score": "Value Score",
+        "ranking_score": "Ranking Score (v1)",
+        "experimental_score": "Experimental Score (v2)",
     }
     for key, label in fundamentals_map.items():
         if key in result and pd.notna(result[key]):
@@ -162,6 +171,7 @@ def plot(
     ticker: str = typer.Option(..., "--ticker", help="Single US ticker to plot."),
     period: str = typer.Option("2y", "--period", "-p", help="Data period (e.g., 2y, 1y, 6mo)"),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Output PNG path."),
+    rs: bool = typer.Option(True, "--rs/--no-rs", help="Include RS (Relative Strength) panel."),
 ):
     """Generate a chart for a single US ticker."""
     from squeeze.engine.scanner import MarketScanner
@@ -178,6 +188,12 @@ def plot(
         console.print(f"[red]No market data available for {normalized_ticker}.[/red]")
         raise typer.Exit(code=1)
 
+    bm_close = None
+    if rs:
+        with console.status("[bold green]Fetching benchmark (SPY) for RS...[/bold green]"):
+            scanner.fetch_benchmark(period=period)
+            bm_close = scanner.benchmark_close if not scanner.benchmark_close.empty else None
+
     if isinstance(scanner.data.columns, pd.MultiIndex):
         ticker_df = scanner.data[normalized_ticker].dropna(subset=["Close"])
     else:
@@ -188,8 +204,9 @@ def plot(
         raise typer.Exit(code=1)
 
     chart_path = output or Path("exports") / "single" / f"{normalized_ticker}.png"
-    plot_ticker(ticker_df, normalized_ticker, str(chart_path))
+    plot_ticker(ticker_df, normalized_ticker, str(chart_path), benchmark_close=bm_close)
     console.print(f"[green]Saved chart:[/green] {chart_path}")
+
 
 @app.command(name="scan")
 def scan(
@@ -211,6 +228,7 @@ def scan(
     tracking_stop_loss_ticks: int = typer.Option(0, "--tracking-stop-loss-ticks", help="Attach a tick offset below the moving average for tracked buy stop-loss alerts."),
     with_options_skew: bool = typer.Option(False, "--with-options-skew", help="Enable options skew confirmation for top squeeze candidates."),
     top_n_options: int = typer.Option(50, "--top-n-options", help="Number of top squeeze candidates to run options skew on (only when --with-options-skew)."),
+    score_version: str = typer.Option("v1", "--score-version", help="Ranking score version: v1 (Rank, production 0-6) or v2 (Exp, experimental +RS 0-9)"),
 ):
     """
     Scan all US stocks for specific technical patterns and fundamental filters.
@@ -266,22 +284,28 @@ def scan(
     with console.status("[bold green]Downloading market data...[/bold green]"):
         scanner.fetch_data(period=period)
         
+    with console.status("[bold green]Fetching benchmark (SPY)...[/bold green]"):
+        scanner.fetch_benchmark(period=period)
+        
     with console.status("[bold green]Analyzing patterns...[/bold green]"):
         mkt_cap_val = min_mkt_cap * 1e9 if min_mkt_cap else None
-        results = scanner.scan(config['fn'], min_mkt_cap=mkt_cap_val, min_avg_volume=min_volume, min_score=min_score)
+        bm_close = scanner.benchmark_close if not scanner.benchmark_close.empty else None
+        results = scanner.scan(config['fn'], min_mkt_cap=mkt_cap_val, min_avg_volume=min_volume, min_score=min_score, benchmark_close=bm_close)
 
     extra_sections = {}
     if pattern == "squeeze":
         with console.status("[bold green]Checking Houyi/Whale matches...[/bold green]"):
-            houyi_results = scanner.scan(detect_houyi_shooting_sun, min_mkt_cap=mkt_cap_val, min_avg_volume=min_volume, min_score=min_score)
-            whale_results = scanner.scan(detect_whale_trading, min_mkt_cap=mkt_cap_val, min_avg_volume=min_volume, min_score=min_score)
+            houyi_results = scanner.scan(detect_houyi_shooting_sun, min_mkt_cap=mkt_cap_val, min_avg_volume=min_volume, min_score=min_score, benchmark_close=bm_close)
+            whale_results = scanner.scan(detect_whale_trading, min_mkt_cap=mkt_cap_val, min_avg_volume=min_volume, min_score=min_score, benchmark_close=bm_close)
         matched = _attach_pattern_flags([r for r in results if config['filter'](r)], houyi_results, whale_results)
+        
+        score_key = "experimental_score" if score_version == "v2" else "ranking_score"
         extra_sections = {
             "houyi": sorted([r for r in houyi_results if r.get("is_houyi")], key=lambda x: x.get("rally_pct", 0), reverse=True),
             "whale": sorted([r for r in whale_results if r.get("is_whale")], key=lambda x: x.get("weekly_momentum", 0), reverse=True),
             "priority": sorted(
-                [r for r in matched if r.get("composite_score", 0) > 0],
-                key=lambda x: (x.get("composite_score", 0), x.get("momentum", 0)),
+                [r for r in matched if r.get(score_key, 0) > 0],
+                key=lambda x: (x.get(score_key, 0), x.get("momentum", 0)),
                 reverse=True,
             ),
         }
@@ -320,11 +344,8 @@ def scan(
 
             if skew_enriched:
                 console.print(f"  [green]✔[/green] Options skew computed for {len(skew_enriched)} tickers")
-
-                # Sort by final_score_v2 descending
                 skew_enriched.sort(key=lambda x: x.get("final_score_v2", 0), reverse=True)
 
-                # ── export CSV with all enrichment columns ─────────────
                 try:
                     skew_csv_dir = Path("exports") / "skew"
                     skew_csv_dir.mkdir(parents=True, exist_ok=True)
@@ -349,7 +370,6 @@ def scan(
                         w.writerows(skew_enriched)
                     console.print(f"  [green]✔[/green] Skew CSV exported: {skew_csv_path}")
 
-                    # ── print terminal summary table ───────────────────
                     table = Table(title=f"Options Skew Confirmation ({len(skew_enriched)} candidates)")
                     table.add_column("Ticker", style="cyan", no_wrap=True)
                     table.add_column("Base", style="bold")
@@ -359,7 +379,6 @@ def scan(
                     table.add_column("Final", style="bold")
                     table.add_column("Reason", style="white")
 
-                    # Group the three summary sections
                     confirmed_bullish = []
                     confirmed_bearish = []
                     downgraded = []
@@ -371,7 +390,6 @@ def scan(
                         base_sig = e.get("base_signal", "")
                         skew_bias = e.get("skew_bias", "")
 
-                        # Colorise delta
                         if delta > 0:
                             delta_str = f"[green]+{delta:.0f}[/green]"
                         elif delta < 0:
@@ -389,10 +407,7 @@ def scan(
                             reason,
                         )
 
-                        # Classify for summary
-                        if final_act == "HIGH_CONVICTION":
-                            confirmed_bullish.append(e)
-                        elif final_act == "BUY_CANDIDATE":
+                        if final_act in ("HIGH_CONVICTION", "BUY_CANDIDATE"):
                             confirmed_bullish.append(e)
                         elif final_act == "DOWNGRADED":
                             downgraded.append(e)
@@ -401,7 +416,6 @@ def scan(
 
                     console.print(table)
 
-                    # ── three-line summary ─────────────────────────────
                     def _tag_line(items, tag, emoji):
                         if not items:
                             return f"{emoji} {tag}: (none)"
@@ -427,12 +441,25 @@ def scan(
     if pattern == "squeeze":
         table.add_column("Energy", style="yellow")
         table.add_column("Momentum", style="green")
-        table.add_column("Score", style="blue")
+        table.add_column("RS", style="cyan")
+        table.add_column("Rank", style="blue")
+        table.add_column("Exp", style="magenta")
         for r in matched:
             energy_stars = "★" * r.get('energy_level', 0)
             momentum_color = "green" if r.get('momentum', 0) > 0 else "red"
-            val_score = f"{r.get('value_score', 0):.2f}" if 'value_score' in r else "N/A"
-            table.add_row(r['ticker'], r.get('name', 'Unknown'), r.get('Signal', '觀望'), f"{r['energy_level']} {energy_stars}", f"[{momentum_color}]{r['momentum']:.4f}[/{momentum_color}]", val_score)
+            ranking = r.get("ranking_score", r.get("composite_score", 0))
+            experimental = r.get("experimental_score", r.get("composite_score_v2", 0))
+            rs_signal = r.get("rs_signal", "")
+            rs_display = rs_signal if rs_signal else ("RS↑" if r.get("rs_slope_5d", 0) > 0 else ("RS↓" if r.get("rs_slope_5d", 0) < 0 else ""))
+            table.add_row(r['ticker'], r.get('name', 'Unknown'), r.get('Signal', '觀望'),
+                          f"{r['energy_level']} {energy_stars}",
+                          f"[{momentum_color}]{r['momentum']:.4f}[/{momentum_color}]",
+                          rs_display, str(ranking), str(experimental))
+    else:
+        table.add_column("Momentum", style="green")
+        for r in matched:
+            momentum_color = "green" if r.get('momentum', 0) > 0 else "red"
+            table.add_row(r['ticker'], r.get('name', 'Unknown'), r.get('Signal', '觀望'), f"[{momentum_color}]{r.get('momentum', 0.0):.4f}[/{momentum_color}]")
     
     console.print(table)
     
@@ -461,7 +488,7 @@ def scan(
                 try:
                     ticker_data = scanner.data[ticker].dropna(subset=['Close']) if isinstance(scanner.data.columns, pd.MultiIndex) else scanner.data.dropna(subset=['Close'])
                     chart_path = charts_dir / f"{ticker}.png"
-                    plot_ticker(ticker_data, ticker, str(chart_path))
+                    plot_ticker(ticker_data, ticker, str(chart_path), benchmark_close=bm_close)
                     chart_paths.append(chart_path)
                     console.print(f"  [green]✔[/green] Generated chart for {ticker}")
                 except Exception as e:
@@ -513,7 +540,6 @@ def scan(
 
         email_notifier = EmailNotifier()
         exporter = ReportExporter()
-        # Inject skew enriched data into extra_sections for the HTML template
         extra_sections = dict(extra_sections or {})
         if skew_enriched:
             extra_sections["skew"] = skew_enriched
@@ -524,6 +550,271 @@ def scan(
             console.print("[green]Email sent successfully with HTML and attachments.[/green]")
         else:
             console.print("[red]Failed to send email.[/red]")
+
+
+@app.command(name="data-quality")
+def data_quality(
+    csv_path: Path = typer.Option(Path("recommendations.csv"), "--csv", help="Tracking CSV to analyze."),
+):
+    """Produce a data quality report for the tracking database."""
+    from squeeze.report.performance import normalize_tracking_df
+
+    frame = normalize_tracking_df(pd.read_csv(csv_path)) if csv_path.exists() else pd.DataFrame()
+    lines: List[str] = []
+    lines.append("# Data Quality Report (US)")
+    lines.append(f"Generated: {pd.Timestamp.now(tz='America/New_York').strftime('%Y-%m-%d %H:%M:%S')} EST")
+    lines.append("")
+
+    if frame.empty:
+        lines.append("**No tracking data found.**")
+        report = "\n".join(lines)
+        console.print(report)
+        return report
+
+    total = len(frame)
+    completed = len(frame[frame["status"] == "completed"])
+    active = len(frame[frame["status"] == "tracking"])
+    lines.append(f"## Overview")
+    lines.append(f"- Total records: {total}")
+    lines.append(f"- Active: {active}")
+    lines.append(f"- Completed: {completed}")
+    lines.append(f"- Date range: {frame['date'].min()} to {frame['date'].max()}")
+
+    # Feature coverage
+    lines.append("")
+    lines.append("## Feature Coverage")
+    key_features = ["has_houyi", "has_whale", "close_above_ma20", "ma20_converging",
+                     "volume_expansion", "rs_new_high_60", "rs_ratio", "rs_slope_5d",
+                     "ranking_score", "experimental_score", "feature_schema_version",
+                     "scan_id", "benchmark_last_date"]
+    for col in key_features:
+        if col in frame.columns:
+            non_null = frame[col].notna().sum()
+            pct = non_null / total * 100
+            lines.append(f"- {col}: {non_null}/{total} ({pct:.1f}%)")
+        else:
+            lines.append(f"- {col}: column missing")
+
+    # Duplicate check
+    lines.append("")
+    lines.append("## Duplicate Check")
+    if "date" in frame.columns and "ticker" in frame.columns and "type" in frame.columns:
+        dups = frame.duplicated(subset=["date", "ticker", "type"]).sum()
+        lines.append(f"- Duplicates by (date, ticker, type): {dups}")
+
+    # Daily Trend
+    lines.append("")
+    lines.append("## Daily Trend")
+    if "date" in frame.columns:
+        trend = (
+            frame.groupby("date")
+            .agg(
+                tickers=("ticker", "nunique"),
+                records=("ticker", "count"),
+                rs_cov=("rs_ratio", lambda s: s.notna().mean()),
+                bm_fresh=("benchmark_last_date", lambda s: s.dropna().nunique()),
+            )
+            .reset_index()
+            .sort_values("date", ascending=False)
+            .head(7)
+        )
+        if not trend.empty:
+            lines.append(f"  {'Date':<12} {'Tickers':>8} {'Records':>8} {'RS%':>6} {'BM_src':>6}")
+            for _, row in trend.iterrows():
+                lines.append(
+                    f"  {str(row['date']):<12} {int(row['tickers']):>8} {int(row['records']):>8} "
+                    f"{float(row['rs_cov'])*100:>5.1f}% {int(row['bm_fresh']):>6}"
+                )
+
+    report = "\n".join(lines)
+    console.print(report)
+    return report
+
+
+@app.command(name="nightly")
+def nightly(
+    limit: Optional[int] = typer.Option(None, "--limit", "-l", help="Limit tickers (testing only)."),
+    period: str = typer.Option("2y", "--period", "-p", help="Data period."),
+    tracking_stop_loss_pct: Optional[float] = typer.Option(None, "--tracking-stop-loss-pct"),
+    tracking_stop_loss_ma_window: Optional[int] = typer.Option(None, "--tracking-stop-loss-ma-window"),
+    tracking_stop_loss_ticks: int = typer.Option(0, "--tracking-stop-loss-ticks"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Validate pipeline steps without calling external APIs."),
+    with_options_skew: bool = typer.Option(True, "--with-options-skew", help="Enable options skew confirmation."),
+    top_n_options: int = typer.Option(50, "--top-n-options", help="Number of top squeeze candidates to run options skew on."),
+    score_version: str = typer.Option("v1", "--score-version", help="Ranking score version: v1 or v2."),
+):
+    """
+    Nightly research pipeline: scan → tracking update → data quality → analysis → email.
+    """
+    tz_ny = timezone(timedelta(hours=-5))
+    now_ny = datetime.now(tz_ny)
+    date_str = now_ny.strftime("%Y-%m-%d")
+    time_str = now_ny.strftime("%H:%M:%S")
+
+    console.print(f"[bold cyan]=== Nightly Pipeline {date_str} {time_str} EST ===[/bold cyan]")
+
+    # ---- Step 1: Scan ----
+    console.print(f"\n[yellow]Step 1/4: Running squeeze scan...[/yellow]")
+    if dry_run:
+        console.print("  [grey](dry-run: skipping scan)[/grey]")
+        scan_ok = True
+        chart_paths = []
+    else:
+        from squeeze.engine.patterns import detect_squeeze, detect_houyi_shooting_sun, detect_whale_trading
+        from squeeze.engine.scanner import MarketScanner
+        from squeeze.report.visualizer import plot_ticker
+
+        ticker_map = fetch_tickers_with_names()
+        all_tickers = sorted(list(ticker_map.keys()))
+        if limit:
+            all_tickers = all_tickers[:limit]
+            console.print(f"  [yellow]Limited to {limit} tickers.[/yellow]")
+
+        scanner = MarketScanner(all_tickers, ticker_names=ticker_map)
+        with console.status("  Fetching fundamentals..."):
+            scanner.fetch_fundamentals()
+        with console.status("  Downloading market data..."):
+            scanner.fetch_data(period=period)
+        with console.status("  Fetching benchmark (SPY)..."):
+            scanner.fetch_benchmark(period=period)
+        with console.status("  Scanning for squeeze pattern..."):
+            bm_close = scanner.benchmark_close if not scanner.benchmark_close.empty else None
+            results = scanner.scan(detect_squeeze, benchmark_close=bm_close)
+        with console.status("  Checking Houyi/Whale matches..."):
+            houyi_results = scanner.scan(detect_houyi_shooting_sun, benchmark_close=bm_close)
+            whale_results = scanner.scan(detect_whale_trading, benchmark_close=bm_close)
+
+        matched = _attach_pattern_flags(
+            [r for r in results if r.get('is_squeezed') or r.get('fired')],
+            houyi_results, whale_results,
+        )
+        console.print(f"  [green]Done: {len(matched)} matches from {len(results)} scanned[/green]")
+
+        # ── Options Skew Confirmation (for nightly) ───────────────────────
+        skew_enriched = []
+        if with_options_skew and matched:
+            console.print(f"  Running options skew on top {min(top_n_options, len(matched))} candidates...")
+            try:
+                from squeeze.data.options_loader import get_expiry_chain
+                from squeeze.engine.options_skew import compute_skew
+                from squeeze.engine.skew_ranker import attach_skew_to_result
+
+                skew_candidates = matched[:top_n_options]
+                for r in skew_candidates:
+                    ticker = r["ticker"]
+                    spot = r.get("Close", 0)
+                    if not spot or spot <= 0:
+                        continue
+                    chain = get_expiry_chain(ticker)
+                    if chain is None:
+                        continue
+                    skew_data = compute_skew(chain["calls"], chain["puts"], spot)
+                    enriched = attach_skew_to_result(r, skew_data)
+                    skew_enriched.append(enriched)
+            except Exception as opt_err:
+                console.print(f"  [red]Options skew error in nightly: {opt_err}[/red]")
+
+        score_key = "experimental_score" if score_version == "v2" else "ranking_score"
+        extra_sections_data = {
+            "houyi": sorted([r for r in houyi_results if r.get("is_houyi")], key=lambda x: x.get("rally_pct", 0), reverse=True),
+            "whale": sorted([r for r in whale_results if r.get("is_whale")], key=lambda x: x.get("weekly_momentum", 0), reverse=True),
+            "priority": sorted(
+                [r for r in matched if r.get(score_key, 0) > 0],
+                key=lambda x: (x.get(score_key, 0), x.get("momentum", 0)), reverse=True,
+            ),
+        }
+        if skew_enriched:
+            extra_sections_data["skew"] = skew_enriched
+
+        # Export
+        exporter = ReportExporter()
+        base_dir = Path("exports")
+        paths = exporter.export(matched, base_dir, extra_sections=extra_sections_data)
+        console.print(f"  [green]Exported: {paths.get('markdown', 'N/A')}[/green]")
+
+        # Generate charts
+        top_priority = extra_sections_data["priority"][:10]
+        chart_paths = []
+        if top_priority:
+            charts_dir = base_dir / date_str / "charts"
+            charts_dir.mkdir(parents=True, exist_ok=True)
+            bm_close = scanner.benchmark_close if not scanner.benchmark_close.empty else None
+            for item in top_priority:
+                ticker = item["ticker"]
+                try:
+                    ticker_data = scanner.data[ticker].dropna(subset=['Close']) if isinstance(scanner.data.columns, pd.MultiIndex) else scanner.data.dropna(subset=['Close'])
+                    chart_path = charts_dir / f"{ticker}.png"
+                    plot_ticker(ticker_data, ticker, str(chart_path), benchmark_close=bm_close)
+                    chart_paths.append(chart_path)
+                except Exception as e:
+                    console.print(f"  [red]Chart error {ticker}: {e}[/red]")
+            console.print(f"  [green]Charts: {len(chart_paths)} generated[/green]")
+
+        # Tracking
+        tracker = PerformanceTracker(Path("recommendations.csv"))
+        tracker.update_daily_performance()
+        market_context = tracker._infer_market_context()
+        market_context['pattern'] = 'squeeze'
+        buy_signals = ["強烈買入 (爆發)", "買入 (動能增強)", "觀察 (跌勢收斂)"]
+        sell_signals = ["強烈賣出 (跌破)", "賣出 (動能轉弱)"]
+        today_buys = [r for r in matched if r.get('Signal') in buy_signals]
+        today_sells = [r for r in matched if r.get('Signal') in sell_signals]
+        tracker.record_recommendations(
+            today_buys, rec_type='buy', market_context=market_context,
+            stop_loss_pct=tracking_stop_loss_pct,
+            stop_loss_ma_window=tracking_stop_loss_ma_window,
+            stop_loss_ticks=tracking_stop_loss_ticks,
+        )
+        tracker.record_recommendations(today_sells, rec_type='sell', market_context=market_context)
+        tracking_buys = tracker.get_active_tracking_list(rec_type='buy')
+        tracking_sells = tracker.get_active_tracking_list(rec_type='sell')
+
+    # ---- Step 2: Data quality ----
+    console.print(f"\n[yellow]Step 2/4: Data quality report...[/yellow]")
+    dq_report = data_quality(csv_path=Path("recommendations.csv"))
+    dq_path = Path("exports") / date_str / f"data-quality_{time_str.replace(':','')}.md"
+    dq_path.parent.mkdir(parents=True, exist_ok=True)
+    dq_path.write_text(dq_report or "# Data Quality Report\nNo data.")
+    console.print(f"  [green]Saved: {dq_path}[/green]")
+
+    # ---- Step 3: Tracking analysis ----
+    console.print(f"\n[yellow]Step 3/4: Tracking analysis report...[/yellow]")
+    if Path("recommendations.csv").exists():
+        frame = load_tracking_frame("recommendations.csv")
+        report = build_tracking_report(frame)
+        text = format_tracking_report(report)
+        analysis_path = Path("exports") / date_str / f"tracking-analysis_{time_str.replace(':','')}.md"
+        analysis_path.parent.mkdir(parents=True, exist_ok=True)
+        analysis_path.write_text(text)
+        console.print(f"  [green]Saved: {analysis_path}[/green]")
+    else:
+        text = "No tracking data yet."
+        analysis_path = None
+        console.print("  [yellow]No recommendations.csv found, skipping analysis.[/yellow]")
+
+    # ---- Step 4: Notify ----
+    console.print(f"\n[yellow]Step 4/4: Sending email notification...[/yellow]")
+    if not dry_run:
+        email_notifier = EmailNotifier()
+        exporter = ReportExporter()
+        html = exporter.render_html_summary(
+            buy_results=today_buys if not dry_run else [],
+            sell_results=today_sells if not dry_run else [],
+            tracking_buys=tracking_buys if not dry_run else [],
+            tracking_sells=tracking_sells if not dry_run else [],
+            extra_sections=extra_sections_data,
+        )
+        attachments = [p for p in [dq_path, analysis_path] if p and p.exists()]
+        if not dry_run:
+            attachments += [p for p in chart_paths if p.exists()]
+        subject = f"Squeeze Nightly Report (US) {date_str}"
+        email_notifier.send_email(subject, html, is_html=True, attachments=attachments)
+        console.print("  [green]Email sent.[/green]")
+    else:
+        console.print("  [grey](dry-run: skipping notification)[/grey]")
+
+    console.print(f"\n[bold cyan]=== Nightly Pipeline Complete ({date_str}) ===[/bold cyan]")
+
 
 if __name__ == "__main__":
     app()
