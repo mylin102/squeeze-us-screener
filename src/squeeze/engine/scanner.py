@@ -73,6 +73,95 @@ class MarketScanner:
             logger.warning(f"Failed to fetch benchmark {ticker}: {e}")
         return self.benchmark_close
 
+    def fetch_regime_data(self) -> dict:
+        """
+        Fetch market/sector regime context using MARKET_ETFS + SECTOR_ETFS.
+
+        Downloads 1 year of daily OHLCV for all ETFs in get_etf_universe() and
+        computes per-ETF: 20-day MA, 50-day MA, 14-day RSI, and 20-day momentum.
+
+        Regime classification:
+          BULLISH  — price above both MAs AND 20d momentum > 0
+          BEARISH  — price below both MAs AND 20d momentum < 0
+          NEUTRAL  — anything in between
+
+        Returns:
+            Dict[ticker, {name, above_20ma, above_50ma, rsi_14, momentum_20d, regime}]
+            Returns {} on total download failure (fail-safe, no hard crash).
+        """
+        from squeeze.data.tickers import get_etf_universe
+        etf_universe = get_etf_universe()
+        etfs = list(etf_universe.keys())
+        logger.info(f"Fetching regime data for {len(etfs)} ETFs: {etfs}")
+
+        try:
+            # Download all ETFs in one batch for speed (~16 tickers)
+            raw = yf.download(etfs, period="1y", interval="1d", group_by="ticker",
+                              auto_adjust=True, progress=False, threads=True)
+        except Exception as exc:
+            logger.error(f"ETF regime batch download failed: {exc}")
+            return {}
+
+        regime_data: dict = {}
+        for ticker in etfs:
+            try:
+                # Handle MultiIndex (multiple tickers) vs flat (single ticker)
+                if isinstance(raw.columns, pd.MultiIndex):
+                    if ticker not in raw.columns.get_level_values(0):
+                        continue
+                    tdf = raw[ticker].dropna(subset=["Close"])
+                else:
+                    tdf = raw.dropna(subset=["Close"])
+
+                if tdf.empty or len(tdf) < 50:
+                    continue
+
+                close = tdf["Close"]
+                last  = float(close.iloc[-1])
+                ma20  = float(close.rolling(20).mean().iloc[-1])
+                ma50  = float(close.rolling(50).mean().iloc[-1])
+
+                above_20ma = last > ma20
+                above_50ma = last > ma50
+
+                # 20-day price momentum (% change)
+                momentum_20d = float((last / close.iloc[-21]) - 1) if len(close) > 20 else 0.0
+
+                # RSI-14
+                delta = close.diff()
+                gain  = delta.where(delta > 0, 0.0).rolling(14).mean()
+                loss  = (-delta.where(delta < 0, 0.0)).rolling(14).mean()
+                rs    = gain / loss.replace(0, float("nan"))
+                rsi_14 = float((100 - (100 / (1 + rs))).iloc[-1])
+
+                # Regime classification
+                if above_20ma and above_50ma and momentum_20d > 0:
+                    regime = "BULLISH"
+                elif not above_20ma and not above_50ma and momentum_20d < 0:
+                    regime = "BEARISH"
+                else:
+                    regime = "NEUTRAL"
+
+                regime_data[ticker] = {
+                    "name":        etf_universe.get(ticker, ticker),
+                    "above_20ma":  above_20ma,
+                    "above_50ma":  above_50ma,
+                    "rsi_14":      rsi_14,
+                    "momentum_20d": momentum_20d,
+                    "regime":      regime,
+                }
+            except Exception as exc:
+                logger.warning(f"Regime calc failed for {ticker}: {exc}")
+                continue
+
+        logger.info(
+            "Regime summary: %s",
+            {t: d["regime"] for t, d in regime_data.items()}
+        )
+        return regime_data
+
+
+
     def fetch_fundamentals(self):
         """
         Fetch fundamental data for all tickers and calculate Value Score.

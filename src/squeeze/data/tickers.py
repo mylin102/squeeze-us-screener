@@ -89,3 +89,78 @@ def fetch_tickers_with_names() -> Dict[str, str]:
         ticker_map[symbol] = name
                     
     return ticker_map
+
+
+# ---------------------------------------------------------------------------
+# ETF Universe — dual-role architecture (NOT mixed into stock rankings)
+#
+# Role 1 – Market/Sector benchmark: regime detection and stock confirmation.
+# Role 2 – Independent ETF scanner: same squeeze pattern scan, separate output.
+# ---------------------------------------------------------------------------
+
+# Broad market ETFs — used for overall regime (bull/neutral/bear) detection
+MARKET_ETFS: Dict[str, str] = {
+    "SPY": "S&P 500",
+    "QQQ": "Nasdaq 100",
+    "IWM": "Russell 2000",
+    "DIA": "Dow Jones",
+}
+
+# SPDR Sector ETFs — used for sector-level regime and RS context
+SECTOR_ETFS: Dict[str, str] = {
+    "XLK":  "Technology",
+    "SMH":  "Semiconductors",
+    "XLF":  "Financials",
+    "XLI":  "Industrials",
+    "XLE":  "Energy",
+    "XLV":  "Healthcare",
+    "XLY":  "Consumer Discretionary",
+    "XLP":  "Consumer Staples",
+    "XLU":  "Utilities",
+    "XLB":  "Materials",
+    "XLRE": "Real Estate",
+    "XLC":  "Communication Services",
+}
+
+# Stock → primary sector ETF mapping
+# Used (Phase 2+) for relative strength and breakout confirmation context.
+# Defined here so it's co-located with the ETF lists for easy maintenance.
+STOCK_SECTOR_MAP: Dict[str, str] = {
+    # Semiconductors → SMH
+    **{t: "SMH" for t in ["NVDA", "AMD", "INTC", "AVGO", "QCOM", "AMAT", "LRCX",
+                           "KLAC", "MU", "NXPI", "ON", "TXN", "ADI", "MCHP", "MRVL",
+                           "ENTG", "GFS", "MPWR", "RMBS", "SLAB", "STM", "TER",
+                           "WOLF", "ARM", "ASML", "TSM"]},
+    # Broad Technology → XLK
+    **{t: "XLK" for t in ["AAPL", "MSFT", "ORCL", "CRM", "ACN", "IBM", "ADBE",
+                           "NOW", "INTU", "CSCO"]},
+    # Financials → XLF
+    **{t: "XLF" for t in ["JPM", "BAC", "WFC", "GS", "MS", "AXP", "BLK",
+                           "SCHW", "C", "USB"]},
+    # Healthcare → XLV
+    **{t: "XLV" for t in ["JNJ", "UNH", "PFE", "ABBV", "MRK", "TMO", "ABT",
+                           "LLY", "BMY", "AMGN"]},
+    # Energy → XLE
+    **{t: "XLE" for t in ["XOM", "CVX", "COP", "SLB", "EOG", "MPC", "PSX",
+                           "VLO", "OXY", "HAL"]},
+    # Consumer Discretionary → XLY
+    **{t: "XLY" for t in ["AMZN", "TSLA", "HD", "MCD", "NKE", "LOW", "SBUX",
+                           "TJX", "BKNG", "GM"]},
+    # Communication Services → XLC
+    **{t: "XLC" for t in ["META", "GOOGL", "GOOG", "NFLX", "DIS", "CMCSA",
+                           "TMUS", "T", "VZ"]},
+    # Industrials → XLI
+    **{t: "XLI" for t in ["HON", "UPS", "RTX", "CAT", "DE", "LMT", "BA",
+                           "GE", "MMM", "FDX"]},
+}
+
+
+def get_etf_universe() -> Dict[str, str]:
+    """
+    Return the combined ETF universe (market + sector ETFs).
+
+    These ETFs are scanned independently and their results appear in a
+    dedicated section of the report — NOT mixed with the stock rankings.
+    """
+    return {**MARKET_ETFS, **SECTOR_ETFS}
+

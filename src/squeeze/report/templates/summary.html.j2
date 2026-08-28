@@ -38,7 +38,48 @@
         <p><strong>Houyi</strong>: strong stocks pulling back into key zones, looking for a renewed move.</p>
         <p><strong>Whale</strong>: daily and weekly momentum turning up together, better for swing-style setups.</p>
 
+        {% if regime_data %}
+        <h2>📊 Market Regime</h2>
+        <p style="color:#555;font-size:13px;">Based on 20MA / 50MA position and 20-day price momentum.</p>
+        <div style="margin-bottom:16px;">
+            {% for ticker, data in regime_data.items() %}
+            <span class="summary-badge {% if data.regime == 'BULLISH' %}badge-confirmed{% elif data.regime == 'BEARISH' %}badge-avoid{% else %}badge-downgraded{% endif %}"
+                  title="{{ data.name }} | RSI {{ '%.1f'|format(data.rsi_14) }} | 20d mom {{ '%+.1f'|format(data.momentum_20d * 100) }}%"
+                  style="margin:3px;">
+                <strong>{{ ticker }}</strong> {{ data.regime }}
+                <span style="font-size:11px;opacity:0.8;">{{ '%+.1f'|format(data.momentum_20d * 100) }}%</span>
+            </span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if etf_results %}
+        <h2>🏦 ETF Opportunities</h2>
+        <p style="color:#555;font-size:13px;">ETFs with active Squeeze signals — ranked independently, not mixed with stocks.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>ETF</th>
+                    <th>Name</th>
+                    <th>Signal</th>
+                    <th>Momentum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in etf_results %}
+                <tr>
+                    <td><strong>{{ item.ticker }}</strong></td>
+                    <td>{{ item.name }}</td>
+                    <td class="{% if '買入' in item.signal or 'Buy' in item.signal %}buy{% else %}sell{% endif %}">{{ item.signal }}</td>
+                    <td>{{ "%.4f"|format(item.momentum) if item.momentum else 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
         {% if priority_count > 0 %}
+
         <h2>Priority Watchlist (Top 10)</h2>
         <table>
             <thead>

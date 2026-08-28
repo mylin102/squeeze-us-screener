@@ -138,6 +138,9 @@ class ReportExporter:
             "houyi_count": len(extra_sections.get("houyi", [])),
             "whale_results": [self._format_result(r) for r in top_whale],
             "whale_count": len(extra_sections.get("whale", [])),
+            # ETF dual-role data — displayed in separate sections, not mixed with stocks
+            "regime_data": extra_sections.get("regime_data", {}),
+            "etf_results": [self._format_result(r) for r in extra_sections.get("etf_results", [])],
         }
 
         return template.render(**render_data)
@@ -189,6 +192,9 @@ class ReportExporter:
             "skew_confirmed": [r for r in skew_results if r.get("score_delta", 0) > 0],
             "skew_downgraded": [r for r in skew_results if r.get("final_action") == "DOWNGRADED"],
             "skew_avoid": [r for r in skew_results if r.get("final_action") == "AVOID_OVERHEATED_IV"],
+            # ETF dual-role data — displayed in separate sections, not mixed with stocks
+            "regime_data": extra_sections.get("regime_data", {}),
+            "etf_results": [self._format_result(r) for r in extra_sections.get("etf_results", [])],
         }
 
         return template.render(**render_data)

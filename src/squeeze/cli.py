@@ -298,7 +298,7 @@ def scan(
             houyi_results = scanner.scan(detect_houyi_shooting_sun, min_mkt_cap=mkt_cap_val, min_avg_volume=min_volume, min_score=min_score, benchmark_close=bm_close)
             whale_results = scanner.scan(detect_whale_trading, min_mkt_cap=mkt_cap_val, min_avg_volume=min_volume, min_score=min_score, benchmark_close=bm_close)
         matched = _attach_pattern_flags([r for r in results if config['filter'](r)], houyi_results, whale_results)
-        
+
         score_key = "experimental_score" if score_version == "v2" else "ranking_score"
         extra_sections = {
             "houyi": sorted([r for r in houyi_results if r.get("is_houyi")], key=lambda x: x.get("rally_pct", 0), reverse=True),
@@ -309,6 +309,30 @@ def scan(
                 reverse=True,
             ),
         }
+
+    # --- ETF dual-role: independent scan + regime detection ---
+    # ETF results are stored separately and NEVER mixed into stock rankings.
+    try:
+        from squeeze.data.tickers import get_etf_universe
+        etf_universe = get_etf_universe()
+        with console.status("[bold green]Scanning ETFs & computing regime...[/bold green]"):
+            # Use the same scanner instance: it already has benchmark data.
+            # Create a dedicated scanner for the small ETF universe (~16 tickers).
+            etf_scanner = MarketScanner(list(etf_universe.keys()), ticker_names=etf_universe)
+            etf_scanner.fetch_data(period=period)
+            etf_scanner.fetch_benchmark(period=period)
+            etf_bm = etf_scanner.benchmark_close if not etf_scanner.benchmark_close.empty else None
+            # Regime data (BULLISH/NEUTRAL/BEARISH per ETF)
+            regime_data = etf_scanner.fetch_regime_data()
+            # Squeeze pattern scan on ETFs (no volume/mktcap filters for ETFs)
+            etf_squeeze = etf_scanner.scan(config['fn'], benchmark_close=etf_bm)
+            extra_sections["regime_data"] = regime_data
+            # Only include ETFs that have an active signal (fired/building/etc.)
+            extra_sections["etf_results"] = [r for r in etf_squeeze if config['filter'](r)]
+    except Exception as _etf_exc:
+        console.print(f"[yellow]Warning: ETF scan skipped: {_etf_exc}[/yellow]")
+    # ----------------------------------------------------------
+
 
     if min_price is not None:
         results = [r for r in results if r.get('Close', 0) >= min_price]
