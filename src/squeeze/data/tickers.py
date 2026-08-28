@@ -67,18 +67,23 @@ def fetch_tickers_with_names() -> Dict[str, str]:
         print(f"Error fetching DJI: {e}")
 
     # 4. Add PHLX Semiconductor Sector (SOX) components
-    # As Wikipedia page doesn't have a clean table, we include the 30 major components
+    # As Wikipedia page doesn't have a clean table, we include the 30 major components.
+    # Note: use exact NASDAQ/NYSE ticker symbols only — avoid company abbreviations.
     sox_constituents = {
-        'AMD': 'Advanced Micro Devices', 'ADI': 'Analog Devices', 'AMAT': 'Applied Materials',
-        'ASML': 'ASML Holding', 'AVGO': 'Broadcom', 'KLAC': 'KLA Corporation',
-        'LRCX': 'Lam Research', 'MRVL': 'Marvell Technology', 'MCHP': 'Microchip Technology',
-        'MU': 'Micron Technology', 'NVDA': 'NVIDIA', 'NXP': 'NXP Semiconductors',
-        'ON': 'ON Semiconductor', 'QCOM': 'Qualcomm', 'TER': 'Teradyne',
-        'TXN': 'Texas Instruments', 'TSM': 'Taiwan Semiconductor', 'INTC': 'Intel',
-        'WOLF': 'Wolfspeed', 'ARM': 'Arm Holdings', 'ENTG': 'Entegris',
-        'LSTK': 'GlobalFoundries', 'MPWR': 'Monolithic Power Systems', 'NXPI': 'NXP Semiconductors',
-        'RMBS': 'Rambus', 'SLAB': 'Silicon Laboratories', 'STMicro': 'STMicroelectronics',
-        'TSMC': 'Taiwan Semiconductor', 'VRTX': 'Vertex Pharmaceuticals', 'GFS': 'GlobalFoundries'
+        'AMD':  'Advanced Micro Devices',   'ADI':  'Analog Devices',
+        'AMAT': 'Applied Materials',        'ASML': 'ASML Holding',
+        'AVGO': 'Broadcom',                 'KLAC': 'KLA Corporation',
+        'LRCX': 'Lam Research',             'MRVL': 'Marvell Technology',
+        'MCHP': 'Microchip Technology',     'MU':   'Micron Technology',
+        'NVDA': 'NVIDIA',                   'NXPI': 'NXP Semiconductors',   # NXP is not a valid ticker
+        'ON':   'ON Semiconductor',         'QCOM': 'Qualcomm',
+        'TER':  'Teradyne',                 'TXN':  'Texas Instruments',
+        'TSM':  'Taiwan Semiconductor',     'INTC': 'Intel',                # TSMC is not a valid US ticker
+        'WOLF': 'Wolfspeed',                'ARM':  'Arm Holdings',
+        'ENTG': 'Entegris',                 'GFS':  'GlobalFoundries',      # LSTK is not a valid ticker
+        'MPWR': 'Monolithic Power Systems', 'RMBS': 'Rambus',
+        'SLAB': 'Silicon Laboratories',     'STM':  'STMicroelectronics',   # STMicro is not a valid ticker
+        'VRTX': 'Vertex Pharmaceuticals',
     }
     for symbol, name in sox_constituents.items():
         ticker_map[symbol] = name
