@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Squeeze US — Daily Momentum Screener</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.prod.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:#f0f2f5; color:#1a1a2e; font-size:15px; }
+.font-mono { font-family:'JetBrains Mono',monospace; }
+[v-cloak] { display:none !important; }
+.max-w-7xl { max-width:1280px; margin:0 auto; padding:24px 16px; }
+.header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%); color:white; padding:20px 0; }
+.header-inner { max-width:1280px; margin:0 auto; padding:0 16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.header h1 { font-size:22px; font-weight:900; letter-spacing:-0.5px; }
+.header h1 span { color:#60a5fa; }
+.header-meta { font-size:12px; color:#94a3b8; text-align:right; }
+.card { background:white; border-radius:16px; padding:24px; box-shadow:0 1px 8px rgba(0,0,0,0.06); margin-bottom:16px; }
+.stat-bar { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+.stat-item { background:white; border-radius:12px; padding:14px 20px; box-shadow:0 1px 6px rgba(0,0,0,0.05); flex:1; min-width:110px; text-align:center; }
+.stat-item .val { font-size:26px; font-weight:900; }
+.stat-item .lbl { font-size:11px; color:#666; margin-top:2px; }
+.stat-squeeze{color:#e94560;} .stat-fired{color:#f59e0b;} .stat-bull{color:#10b981;} .stat-bear{color:#e94560;} .stat-etf{color:#6366f1;}
+.regime-bar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
+.regime-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:50px; font-weight:700; font-size:13px; font-family:'JetBrains Mono',monospace; }
+.regime-bull{background:#d1fae5;color:#065f46;} .regime-bear{background:#fee2e2;color:#7f1d1d;} .regime-neut{background:#fef9c3;color:#713f12;}
+.regime-dot { width:8px; height:8px; border-radius:50%; }
+.dot-bull{background:#10b981;} .dot-bear{background:#e94560;} .dot-neut{background:#f59e0b;}
+.regime-mom { font-size:11px; opacity:0.7; font-weight:500; }
+.etf-table { width:100%; border-collapse:collapse; font-size:13px; }
+.etf-table th { padding:8px 10px; text-align:left; color:#666; font-size:11px; border-bottom:2px solid #f0f0f0; }
+.etf-table td { padding:8px 10px; border-bottom:1px solid #f8f8f8; }
+.etf-table tr:hover td { background:#fafafa; }
+table { width:100%; border-collapse:collapse; }
+th { text-align:left; padding:12px 8px; font-size:12px; color:#666; border-bottom:2px solid #eee; cursor:pointer; user-select:none; white-space:nowrap; }
+th:hover{color:#1a73e8;} td { padding:10px 8px; border-bottom:1px solid #f0f0f0; font-size:14px; }
+tr:hover td{background:#f8f9ff;} tr.selected td{background:#eff6ff;}
+.sqz-on{color:#e94560;font-weight:700;} .sqz-off{color:#10b981;font-weight:700;} .sqz-fired{color:#f59e0b;font-weight:700;}
+.score-badge{padding:2px 10px;border-radius:20px;font-weight:700;font-size:13px;}
+.score-high{background:#e94560;color:white;} .score-mid{background:#f59e0b;color:white;} .score-low{background:#6b7280;color:white;}
+.sig-buy{color:#10b981;font-weight:700;font-size:12px;} .sig-sell{color:#e94560;font-weight:700;font-size:12px;} .sig-watch{color:#f59e0b;font-weight:700;font-size:12px;}
+.btn { display:inline-flex; align-items:center; gap:6px; padding:10px 20px; border-radius:50px; font-weight:700; font-size:14px; cursor:pointer; border:none; transition:all 0.2s; }
+.btn-primary{background:#1a73e8;color:white;} .btn-primary:hover{background:#1557b0;} .btn-sm{padding:6px 14px;font-size:12px;}
+.search-box{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.search-box input{flex:1;min-width:200px;padding:12px 16px;border:2px solid #e0e0e0;border-radius:12px;font-size:15px;outline:none;}
+.search-box input:focus{border-color:#1a73e8;}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.filter-chip{padding:6px 16px;border-radius:50px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid #ddd;background:white;transition:all 0.2s;}
+.filter-chip.active{background:#1a73e8;color:white;border-color:#1a73e8;} .filter-chip:hover{border-color:#1a73e8;}
+.detail-panel{background:white;border-radius:16px;padding:24px;box-shadow:0 1px 8px rgba(0,0,0,0.06);margin-bottom:16px;}
+.detail-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.detail-ticker{font-size:32px;font-weight:900;font-family:'JetBrains Mono',monospace;}
+.detail-name{font-size:15px;color:#666;margin-top:4px;}
+.detail-signal{font-size:14px;font-weight:700;padding:4px 14px;border-radius:20px;margin-top:8px;display:inline-block;}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-bottom:20px;}
+.stat-card{background:#f8f9fa;border-radius:12px;padding:12px;text-align:center;}
+.stat-card .label{font-size:11px;color:#888;margin-bottom:4px;} .stat-card .value{font-size:20px;font-weight:700;}
+.chart-placeholder{text-align:center;margin-top:16px;}
+.chart-placeholder img{max-width:100%;border-radius:12px;border:1px solid #eee;}
+.hint{color:#999;padding:32px;font-size:14px;}
+.section-label{font-size:14px;font-weight:700;color:#1a73e8;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.tab-bar{display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid #eee;}
+.tab{padding:10px 20px;font-weight:600;font-size:14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:#666;transition:all 0.2s;}
+.tab.active{color:#1a73e8;border-bottom-color:#1a73e8;} .tab:hover{color:#1a73e8;}
+.loading{text-align:center;padding:80px;color:#666;}
+.spinner{width:40px;height:40px;border:4px solid #eee;border-top-color:#1a73e8;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>🚀 Squeeze <span>US</span> — Daily Momentum Screener</h1>
+    <div id="app-meta" v-cloak style="font-size:12px;color:#94a3b8;text-align:right;">
+      Updated: {{ metadata.scan_date || '—' }}<br>Universe: {{ results.length }} stocks
+    </div>
+  </div>
+</div>
+
+<div id="app" v-cloak>
+<div class="max-w-7xl">
+
+  <div v-if="isLoading" class="loading">
+    <div class="spinner"></div><div>Loading scan data…</div>
+  </div>
+  <div v-else-if="errorMsg" class="card" style="color:#e94560;text-align:center;padding:48px;">
+    ⚠️ {{ errorMsg }}<br><br>
+    <button class="btn btn-primary" @click="fetchData">Retry</button>
+  </div>
+
+  <template v-else>
+    <!-- Stat bar -->
+    <div class="stat-bar" style="margin-top:20px;">
+      <div class="stat-item"><div class="val stat-squeeze">{{ squeezeOnCount }}</div><div class="lbl">🔒 Squeeze On</div></div>
+      <div class="stat-item"><div class="val stat-fired">{{ squeezeFiredCount }}</div><div class="lbl">🔥 Fired</div></div>
+      <div class="stat-item"><div class="val stat-bull">{{ bullishCount }}</div><div class="lbl">📈 Bullish Mom</div></div>
+      <div class="stat-item"><div class="val stat-bear">{{ bearishCount }}</div><div class="lbl">📉 Bearish Mom</div></div>
+      <div class="stat-item"><div class="val stat-etf">{{ etfCount }}</div><div class="lbl">🏦 ETF Signals</div></div>
+    </div>
+
+    <!-- Market Regime -->
+    <div class="card" v-if="regime && Object.keys(regime).length">
+      <div class="section-label">📊 Market Regime</div>
+      <p style="font-size:12px;color:#888;margin-bottom:12px;">Based on 20MA / 50MA position &amp; 20-day momentum. Hover badge for RSI details.</p>
+      <div class="regime-bar">
+        <span v-for="(data, ticker) in regime" :key="ticker"
+          class="regime-badge"
+          :class="data.regime==='BULLISH'?'regime-bull':data.regime==='BEARISH'?'regime-bear':'regime-neut'"
+          :title="`${data.name} | RSI ${data.rsi_14!=null?data.rsi_14.toFixed(1):'?'} | 20d: ${data.momentum_20d!=null?(data.momentum_20d*100).toFixed(1):'?'}%`">
+          <span class="regime-dot" :class="data.regime==='BULLISH'?'dot-bull':data.regime==='BEARISH'?'dot-bear':'dot-neut'"></span>
+          {{ ticker }}
+          <span class="regime-mom">{{ data.momentum_20d!=null?(data.momentum_20d*100).toFixed(1)+'%':'' }}</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- ETF Opportunities -->
+    <div class="card" v-if="etfResults && etfResults.length">
+      <div class="section-label">🏦 ETF Opportunities</div>
+      <p style="font-size:12px;color:#888;margin-bottom:12px;">ETFs with active Squeeze signals — ranked independently, not mixed with stocks.</p>
+      <table class="etf-table">
+        <thead><tr><th>ETF</th><th>Name</th><th>Signal</th><th>Momentum</th><th>Score</th></tr></thead>
+        <tbody>
+          <tr v-for="e in etfResults" :key="e.ticker">
+            <td class="font-mono" style="font-weight:700;">{{ e.ticker }}</td>
+            <td>{{ e.name||'—' }}</td>
+            <td><span :class="signalClass(e.Signal)">{{ e.Signal||'—' }}</span></td>
+            <td :style="{color:e.momentum>0?'#10b981':'#e94560',fontWeight:700}">{{ e.momentum>0?'📈':'📉' }} {{ e.momentum!=null?e.momentum.toFixed(4):'—' }}</td>
+            <td><span class="score-badge" :class="scoreClass(e.composite_score||e.ranking_score||0)">{{ (e.composite_score||e.ranking_score||0).toFixed(1) }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tabs -->
+    <div class="card" style="padding-bottom:0;">
+      <div class="tab-bar">
+        <div class="tab" :class="{active:tab==='all'}" @click="tab='all'">All Results ({{ results.length }})</div>
+        <div class="tab" :class="{active:tab==='priority'}" @click="tab='priority'" v-if="priority.length">⭐ Priority ({{ priority.length }})</div>
+      </div>
+      <div class="search-box" style="margin-bottom:16px;">
+        <input v-model="search" @input="onSearch" placeholder="Search ticker or company name…" />
+        <button class="btn btn-primary btn-sm" @click="clearFilters">Clear</button>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-chip" :class="{active:filter==='all'}" @click="filter='all'">All</span>
+        <span class="filter-chip" :class="{active:filter==='squeeze_on'}" @click="filter='squeeze_on'">🔒 Squeeze On</span>
+        <span class="filter-chip" :class="{active:filter==='squeeze_fired'}" @click="filter='squeeze_fired'">🔥 Fired</span>
+        <span class="filter-chip" :class="{active:filter==='bullish'}" @click="filter='bullish'">📈 Bullish</span>
+        <span class="filter-chip" :class="{active:filter==='bearish'}" @click="filter='bearish'">📉 Bearish</span>
+        <span class="filter-chip" :class="{active:filter==='top_score'}" @click="filter='top_score'">🏆 Score≥4</span>
+      </div>
+    </div>
+
+    <!-- Detail Panel -->
+    <div class="detail-panel" v-if="selected">
+      <div class="detail-header">
+        <div>
+          <div class="detail-ticker">{{ selected.ticker }}</div>
+          <div class="detail-name">{{ selected.name }}</div>
+          <span class="detail-signal" :style="{background:selected.momentum>0?'#d1fae5':'#fee2e2',color:selected.momentum>0?'#065f46':'#7f1d1d'}">
+            {{ selected.Signal || (selected.momentum>0?'Bullish Momentum':'Bearish') }}
+          </span>
+        </div>
+        <button class="btn btn-primary btn-sm" @click="selected=null">✕ Close</button>
+      </div>
+      <div class="detail-grid">
+        <div class="stat-card"><div class="label">Score</div><div class="value">{{ (selected.composite_score||selected.ranking_score||0).toFixed(1) }}</div></div>
+        <div class="stat-card"><div class="label">Momentum</div><div class="value" :style="{color:selected.momentum>0?'#10b981':'#e94560'}">{{ selected.momentum!=null?selected.momentum.toFixed(4):'—' }}</div></div>
+        <div class="stat-card"><div class="label">Energy</div><div class="value">{{ selected.energy_level!=null?selected.energy_level.toFixed(3):'—' }}</div></div>
+        <div class="stat-card"><div class="label">RS Index</div><div class="value">{{ selected.rs_index!=null?selected.rs_index.toFixed(1):'—' }}</div></div>
+        <div class="stat-card"><div class="label">Close</div><div class="value">${{ selected.Close!=null?selected.Close.toFixed(2):'—' }}</div></div>
+        <div class="stat-card"><div class="label">RS Pct</div><div class="value">{{ selected.ranking_percentile!=null?selected.ranking_percentile.toFixed(0)+'%':'—' }}</div></div>
+      </div>
+      <div class="chart-placeholder" v-if="chartUrl && !chartError">
+        <img :src="chartUrl" alt="Chart" @error="chartError=true">
+      </div>
+      <div class="chart-placeholder" v-else>
+        <p class="hint">📊 Chart not available for this ticker (generated for top priority picks only)</p>
+      </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="card" style="padding:0;overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th @click="setSort('rank')">#</th>
+            <th @click="setSort('ticker')">Ticker ↕</th>
+            <th @click="setSort('name')">Name ↕</th>
+            <th @click="setSort('composite_score')">Score ↕</th>
+            <th @click="setSort('squeeze_on')">Squeeze ↕</th>
+            <th @click="setSort('Signal')">Signal ↕</th>
+            <th @click="setSort('momentum')">Momentum ↕</th>
+            <th @click="setSort('energy_level')">Energy ↕</th>
+            <th @click="setSort('rs_index')">RS ↕</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(s,i) in sortedResults" :key="s.ticker"
+              :class="{selected:selected?.ticker===s.ticker}"
+              @click="selectStock(s)">
+            <td style="color:#aaa;font-size:12px;">{{ i+1 }}</td>
+            <td class="font-mono" style="font-weight:700;">{{ s.ticker }}</td>
+            <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ s.name||'—' }}</td>
+            <td><span class="score-badge" :class="scoreClass(s.composite_score||s.ranking_score||0)">{{ (s.composite_score||s.ranking_score||0).toFixed(1) }}</span></td>
+            <td>
+              <span v-if="s.squeeze_fired" class="sqz-fired">🔥 Fired</span>
+              <span v-else-if="s.squeeze_on" class="sqz-on">🔒 On</span>
+              <span v-else class="sqz-off">🔓 Off</span>
+            </td>
+            <td><span :class="signalClass(s.Signal)">{{ s.Signal||'—' }}</span></td>
+            <td :style="{color:s.momentum>0?'#10b981':'#e94560',fontWeight:700}">{{ s.momentum>0?'📈':'📉' }} {{ s.momentum!=null?s.momentum.toFixed(3):'—' }}</td>
+            <td class="font-mono">{{ s.energy_level!=null?s.energy_level.toFixed(3):'—' }}</td>
+            <td class="font-mono">{{ s.rs_index!=null?s.rs_index.toFixed(1):'—' }}</td>
+            <td><button class="btn btn-primary btn-sm" @click.stop="selectStock(s)">📊</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="sortedResults.length===0" style="text-align:center;padding:48px;color:#999;">No matching results</div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align:center;padding:24px 0;color:#999;font-size:12px;">
+      Squeeze US Screener — Auto-generated daily · Data from yfinance ·
+      <a href="https://github.com/mylin102/squeeze-us-screener" style="color:#1a73e8;">GitHub</a>
+    </div>
+
+  </template>
+</div>
+</div>
+
+<script>
+const DATA_URL = 'data/latest.json';
+const { createApp, ref, computed } = Vue;
+
+createApp({
+  setup() {
+    const results=ref([]); const etfResults=ref([]); const regime=ref({});
+    const priority=ref([]); const metadata=ref({});
+    const isLoading=ref(true); const errorMsg=ref('');
+    const search=ref(''); const filter=ref('all');
+    const sortBy=ref('composite_score'); const sortDir=ref(-1);
+    const selected=ref(null); const chartError=ref(false); const tab=ref('all');
+
+    const chartUrl = computed(() => {
+      if (!selected.value) return '';
+      return `charts/${selected.value.ticker}_chart.png`;
+    });
+
+    async function fetchData() {
+      isLoading.value=true; errorMsg.value='';
+      try {
+        const r = await fetch(DATA_URL+'?t='+Date.now());
+        if (!r.ok) throw new Error(`HTTP ${r.status} — scan data not yet available`);
+        const d = await r.json();
+        metadata.value = d.metadata||{};
+        // Normalise and separate ETF results from stocks
+        const etfSet = new Set((d.etf_results||[]).map(e=>e.ticker));
+        results.value = (d.results||[]).filter(s=>!etfSet.has(s.ticker)).map(s=>({
+          ...s,
+          ticker: s.ticker||'?',
+          name: s.name||'',
+          composite_score: s.composite_score||s.ranking_score||0,
+          momentum: s.momentum||0,
+          rs_index: s.rs_index||0,
+          energy_level: s.energy_level||0,
+          squeeze_on: !!s.squeeze_on,
+          squeeze_fired: s.fired!==undefined ? !!s.fired : !!s.squeeze_fired,
+        }));
+        etfResults.value = d.etf_results||[];
+        regime.value = d.regime_data||{};
+        priority.value = d.priority||[];
+        // Deep-link ?s=AAPL
+        const sym = new URLSearchParams(window.location.search).get('s');
+        if (sym) { const m=results.value.find(x=>x.ticker===sym); if(m) selected.value=m; }
+      } catch(e) { errorMsg.value=String(e); }
+      finally { isLoading.value=false; }
+    }
+    fetchData();
+
+    function onSearch() { filter.value='all'; }
+    function clearFilters() { search.value=''; filter.value='all'; }
+    function selectStock(s) {
+      selected.value=s; chartError.value=false;
+      const url=new URL(window.location); url.searchParams.set('s',s.ticker);
+      window.history.replaceState({},'',url);
+      Vue.nextTick(()=>{ const el=document.querySelector('.detail-panel'); if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'}); });
+    }
+    function setSort(f) { if(sortBy.value===f) sortDir.value*=-1; else{sortBy.value=f;sortDir.value=-1;} }
+
+    const filteredResults = computed(() => {
+      let list = tab.value==='priority' && priority.value.length ? priority.value : results.value;
+      if (search.value) { const q=search.value.toUpperCase(); list=list.filter(s=>s.ticker.includes(q)||(s.name||'').toUpperCase().includes(q)); }
+      switch(filter.value) {
+        case 'squeeze_on':    list=list.filter(s=>s.squeeze_on&&!s.squeeze_fired); break;
+        case 'squeeze_fired': list=list.filter(s=>s.squeeze_fired); break;
+        case 'bullish':       list=list.filter(s=>s.momentum>0); break;
+        case 'bearish':       list=list.filter(s=>s.momentum<0); break;
+        case 'top_score':     list=list.filter(s=>(s.composite_score||0)>=4); break;
+      }
+      return list;
+    });
+
+    const sortedResults = computed(() => {
+      const list=[...filteredResults.value];
+      list.sort((a,b)=>{ let va=a[sortBy.value]??0,vb=b[sortBy.value]??0; if(typeof va==='string') return sortDir.value*va.localeCompare(vb); return sortDir.value*(va-vb); });
+      return list;
+    });
+
+    const squeezeOnCount  = computed(()=>results.value.filter(s=>s.squeeze_on&&!s.squeeze_fired).length);
+    const squeezeFiredCount=computed(()=>results.value.filter(s=>s.squeeze_fired).length);
+    const bullishCount    = computed(()=>results.value.filter(s=>s.momentum>0).length);
+    const bearishCount    = computed(()=>results.value.filter(s=>s.momentum<0).length);
+    const etfCount        = computed(()=>etfResults.value.length);
+
+    function scoreClass(s) { if(s>=4)return'score-high'; if(s>=2)return'score-mid'; return'score-low'; }
+    function signalClass(sig) {
+      if(!sig) return'';
+      if(sig.includes('強烈買入')||sig.includes('爆發')||sig.includes('Strong Buy')) return'sig-buy';
+      if(sig.includes('買入')||sig.includes('動能增強')||sig.includes('Buy'))         return'sig-buy';
+      if(sig.includes('觀察')||sig.includes('Watch'))   return'sig-watch';
+      if(sig.includes('賣出')||sig.includes('Sell'))    return'sig-sell';
+      return'';
+    }
+
+    return { results,etfResults,regime,priority,metadata,isLoading,errorMsg,
+             search,filter,sortBy,sortDir,selected,chartUrl,chartError,tab,
+             fetchData,onSearch,clearFilters,selectStock,setSort,
+             filteredResults,sortedResults,
+             squeezeOnCount,squeezeFiredCount,bullishCount,bearishCount,etfCount,
+             scoreClass,signalClass };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>

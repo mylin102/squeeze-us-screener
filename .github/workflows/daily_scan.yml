@@ -2,14 +2,22 @@ name: US Daily Stock Scan
 
 on:
   schedule:
+    # US market closes 16:00 ET = 21:00 UTC (weekdays)
     - cron: '0 21 * * 1-5'
   workflow_dispatch:
+
+# Prevent concurrent runs
+concurrency:
+  group: us-daily-scan
+  cancel-in-progress: false
 
 jobs:
   scan:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write    # push scan results & docs/
+      pages: write       # deploy GitHub Pages
+      id-token: write    # required by actions/deploy-pages
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,17 +43,45 @@ jobs:
         run: |
           squeeze-us scan --export --plot --notify --with-options-skew --top-n-options 50
 
+      - name: Publish to docs/ (GitHub Pages source)
+        run: |
+          # Copy the latest scan JSON to fixed path — the web dashboard fetches from here
+          _latest_json=$(ls -t exports/*/scan_results_*.json 2>/dev/null | head -1)
+          if [ -n "$_latest_json" ]; then
+            mkdir -p docs/data docs/charts
+            cp "$_latest_json" docs/data/latest.json
+            echo "Copied $_latest_json → docs/data/latest.json"
+          else
+            echo "WARNING: No scan JSON found, skipping docs/data update"
+          fi
+          # Copy charts so the detail panel can render them
+          _chart_dir=$(ls -dt exports/*/charts 2>/dev/null | head -1)
+          if [ -n "$_chart_dir" ]; then
+            cp -r "$_chart_dir"/. docs/charts/
+            echo "Copied charts → docs/charts/"
+          fi
+
       - name: Commit and push results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add exports recommendations.csv
+          git add exports recommendations.csv docs/data/latest.json docs/charts/
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "chore: auto-update US scan results [skip ci]"
+          git commit -m "chore: auto-update US scan results + web dashboard [skip ci]"
           git pull --rebase origin main
           git push origin HEAD:main
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+

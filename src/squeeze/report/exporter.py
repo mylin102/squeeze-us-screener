@@ -54,9 +54,9 @@ class ReportExporter:
         json_path = export_dir / f"scan_results_{timestamp}.json"
         md_path = export_dir / f"scan_summary_{timestamp}.md"
         
-        # Execute exports
+        # Execute exports — pass extra_sections so JSON includes ETF/regime data for the web dashboard
         self.to_csv(results, csv_path)
-        self.to_json(results, json_path)
+        self.to_json(results, json_path, extra_sections=extra_sections)
         self.to_markdown(results, md_path, extra_sections=extra_sections)
         
         return {
@@ -77,18 +77,34 @@ class ReportExporter:
             writer.writeheader()
             writer.writerows(results)
 
-    def to_json(self, results: List[Dict[str, Any]], path: Path) -> None:
-        """Saves results to JSON with metadata (timestamp, patterns)."""
+    def to_json(self, results: List[Dict[str, Any]], path: Path,
+                extra_sections: Optional[Dict[str, Any]] = None) -> None:
+        """Saves results to JSON with metadata, ETF opportunities, and regime data.
+
+        The web dashboard (docs/index.html) reads from docs/data/latest.json which
+        is a copy of this file, so all extra sections must be present here.
+        """
+        extra_sections = extra_sections or {}
+        now = self._get_market_now()
         data = {
             "metadata": {
-                "timestamp": self._get_market_now().isoformat(),
-                "count": len(results),
+                "timestamp":  now.isoformat(),
+                "scan_date":  now.strftime("%Y-%m-%d %H:%M (ET)"),
+                "count":      len(results),
+                "app_version": self._get_app_version(),
             },
-            "results": results
+            # Stock results (main universe — ETFs excluded)
+            "results": results,
+            # ETF dual-role data — displayed in separate dashboard sections
+            "regime_data":  extra_sections.get("regime_data", {}),
+            "etf_results":  extra_sections.get("etf_results", []),
+            "priority":     extra_sections.get("priority", []),
         }
         
         with open(path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+            json.dump(data, f, indent=2, ensure_ascii=False, default=str)
+
+
 
     def to_markdown(self, results: List[Dict[str, Any]], path: Path, extra_sections: Optional[Dict[str, List[Dict[str, Any]]]] = None) -> None:
         """Renders the Markdown summary using Jinja2."""
