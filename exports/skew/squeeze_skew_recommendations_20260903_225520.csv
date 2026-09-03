@@ -1,0 +1,50 @@
+ticker,base_signal,base_score,squeeze_state,momentum,atm_iv,call_skew,put_skew,risk_reversal,skew_bias,total_volume,avg_spread_pct,otm_call_distance,otm_put_distance,liquidity_ok,iv_overheated,skew_score_v2,final_score_v2,score_delta,final_action,reason
+AIG,BUY,4,Squeezing,0.12333297729492188,0.56836369140625,0.0,0.104979,-0.104979,bearish,97.0,0.3182,0.1561,0.0781,False,,0,4,0,NO_SKEW_DATA,Option liquidity too low: spread=31.8%>25%
+CVNA,BUY,4,Squeezing,2.0833346048990884,0.5351608984375,-0.012695,-0.005371,-0.007324,neutral,19.0,0.1271,0.0272,0.0409,False,,0,4,0,NO_SKEW_DATA,Option liquidity too low: volume=19<50
+APP,STRONG_BUY,3,Fired,2.8383229573567705,0.5628095477294923,-0.008423,-0.049133,0.04071,bullish,67.0,0.3704,0.0159,0.0159,False,,0,3,0,NO_SKEW_DATA,Option liquidity too low: spread=37.0%>25%
+CAH,STRONG_BUY,3,Fired,4.380002339680989,0.2691723474121094,0.0,0.0,0.0,neutral,7.0,36.0,0.1547,0.0453,False,,0,3,0,NO_SKEW_DATA,Option liquidity too low: volume=7<50; spread=3600.0%>25%
+WAT,BUY,2,Squeezing,2.7266693115234375,0.33667655517578127,0.0,0.0,0.0,neutral,0.0,1.4737,0.0361,0.1639,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50; spread=147.4%>25%
+AES,BUY,2,Squeezing,0.03333346048990885,0.05762661132812501,0.0,0.018555,-0.018555,neutral,2513.0,1.725,0.0851,0.1353,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: spread=172.5%>25%
+APD,BUY,2,Squeezing,1.6750030517578123,0.2357254162597656,0.022522,0.0,0.022522,bullish,54.0,0.3045,0.0329,0.119,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: spread=30.4%>25%
+CCI,BUY,2,Squeezing,1.3333307902018228,0.2629468237304688,0.005127,0.070556,-0.065429,bearish,259.0,0.2754,0.0324,0.0324,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: spread=27.5%>25%
+MSCI,BUY,2,Squeezing,5.4063720703125,0.291175301208496,0.0,-0.003601,0.003601,neutral,14.0,0.1944,0.0174,0.0696,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=14<50
+AIZ,BUY,2,Squeezing,3.651301066080729,0.24250025085449217,0.0,0.0,0.0,neutral,1.0,0.5926,0.092,0.108,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=1<50; spread=59.3%>25%
+ALL,BUY,2,Squeezing,0.2374165852864582,0.26963010650634767,-0.008026,-0.027069,0.019043,neutral,113.0,0.2091,0.038,0.038,True,False,0,2,0.0,NO_TRADE,No clear skew signal
+AWK,BUY,2,Squeezing,2.7899983723958335,0.2540968145751954,-0.034362,-0.043151,0.008789,neutral,5.0,0.1828,0.0355,0.0355,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=5<50
+BRO,BUY,2,Squeezing,1.8008321126302083,,,,,neutral,0.0,,,,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+CEG,BUY,2,Squeezing,4.710540771484375,0.4561211614990235,0.02301,-0.001526,0.024536,bullish,25.0,1.0391,0.0351,0.0702,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=25<50; spread=103.9%>25%
+CI,BUY,2,Squeezing,3.1883392333984375,,,,,neutral,0.0,,,,False,,0,2,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+CHTR,WATCH_CONVERGE,1,Squeezing,-0.04000091552734364,0.6001016552734376,0.0,0.07495,-0.07495,bearish,102.0,1.381,0.0165,0.0165,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: spread=138.1%>25%
+DVA,WATCH_CONVERGE,1,Squeezing,-0.153333028157552,0.32923034057617184,0.016235,-0.034423,0.050659,bullish,28.0,0.2456,0.0275,0.055,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=28<50
+ADSK,HOLD_WEAKEN,1,Squeezing,2.926668802897135,0.5114794946289063,0.0,0.660888,-0.660888,bearish,67.0,1.4545,0.0896,0.3158,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: spread=145.4%>25%
+AMP,WATCH_CONVERGE,1,Squeezing,-10.708323160807291,0.2664868273925781,-0.00177,0.0,-0.00177,neutral,76.0,0.7763,0.0177,0.1264,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: spread=77.6%>25%
+AVY,SELL,1,Squeezing,-3.52795664469401,0.33399103515625,-0.010681,0.151854,-0.162535,bearish,7.0,0.8256,0.0289,0.1445,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=7<50; spread=82.6%>25%
+BKR,WATCH_CONVERGE,1,Squeezing,-1.1150004069010415,0.37476211181640623,-0.010498,-0.033935,0.023437,bullish,49.0,0.3208,0.0786,0.0786,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=49<50; spread=32.1%>25%
+CB,WATCH_CONVERGE,1,Squeezing,-3.5749969482421866,0.1974567559814453,0.016693,-0.009277,0.02597,bullish,36.0,0.1598,0.0144,0.0144,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=36<50
+CNC,WATCH_CONVERGE,1,Squeezing,-0.01333491007486981,0.397466962890625,0.0,0.0,0.0,neutral,2.0,0.7292,0.1738,0.0262,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=2<50; spread=72.9%>25%
+CPAY,WATCH_CONVERGE,1,Squeezing,-2.730000813802083,,,,,neutral,0.0,,,,False,,0,1,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+ATO,SELL,0,Squeezing,-1.4136962890625,0.2647778601074219,0.0,-0.076537,0.076537,bullish,3.0,2.4339,0.0296,0.0296,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=3<50; spread=243.4%>25%
+DLTR,HOLD_WEAKEN,0,Squeezing,0.15000152587890622,0.42090422851562503,0.0,0.035034,-0.035034,bearish,13.0,1.7285,0.1003,0.0076,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=13<50; spread=172.8%>25%
+ED,SELL,0,Squeezing,-0.0012194315592447824,0.17347017944335938,0.0,-0.005249,0.005249,neutral,106.0,4.8906,0.0885,0.046,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: spread=489.1%>25%
+ETR,SELL,0,Squeezing,-0.7329330444335938,0.26270268554687504,-0.032348,0.0,-0.032348,bearish,39.0,2.0833,0.0464,0.1206,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=39<50; spread=208.3%>25%
+FRT,SELL,0,Squeezing,-0.8166656494140625,,,,,neutral,0.0,,,,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+GWW,SELL,0,Squeezing,-6.478352864583333,0.25391371093750004,-0.004555,0.015335,-0.01989,neutral,21.0,0.808,0.0152,0.0762,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=21<50; spread=80.8%>25%
+HSIC,HOLD_WEAKEN,0,Squeezing,0.13499959309895831,0.35596347167968745,0.049194,0.048828,0.000366,neutral,6.0,2.5,0.055,0.055,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=6<50; spread=250.0%>25%
+IBM,WATCH_CONVERGE,1,Squeezing,-0.22000376383463544,0.31018756225585936,0.001038,0.002075,-0.001038,neutral,134.0,0.2063,0.0213,0.0213,True,False,-10,0.0,-10.0,DOWNGRADED,Put skew contradicts bullish setup
+KMB,SELL,0,Squeezing,-0.40333302815755206,0.3142158422851562,0.0,0.090941,-0.090941,bearish,3.0,25.7727,0.0278,0.0912,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=3<50; spread=2577.3%>25%
+TECH,HOLD_WEAKEN,0,Squeezing,0.16326522827148438,0.6264685791015626,-0.547358,-0.4165,-0.130858,bearish,37.0,1.0,0.069,0.069,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=37<50; spread=100.0%>25%
+ZBH,HOLD_WEAKEN,0,Squeezing,0.9266675313313801,,,,,neutral,0.0,,,,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+ABNB,HOLD_WEAKEN,0,Squeezing,1.883331298828125,0.3763490100097656,-0.008057,0.027343,-0.0354,bearish,28.0,0.7725,0.027,0.027,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=28<50; spread=77.2%>25%
+ACGL,HOLD_WEAKEN,0,Squeezing,0.551666259765625,0.26709717285156254,0.0,-0.025146,0.025146,bullish,15.0,17.5,0.1002,0.0516,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=15<50; spread=1750.0%>25%
+ALB,HOLD_WEAKEN,0,Squeezing,3.7533340454101554,0.4989063781738281,0.0,0.136107,-0.136107,bearish,34.0,107.12,0.0028,0.227,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=34<50; spread=10712.0%>25%
+AMT,HOLD_WEAKEN,0,Squeezing,3.0783335367838536,0.25275405456542965,-0.007568,0.029358,-0.036926,bearish,117.0,0.2049,0.0281,0.0281,True,False,0,0.0,0.0,NO_TRADE,No clear skew signal
+ARES,SELL,0,Squeezing,-2.300000508626302,,,,,neutral,0.0,,,,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+AZO,SELL,0,Squeezing,-82.07832845052081,,,,,neutral,0.0,,,,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=0<50
+BBY,SELL,0,Squeezing,-1.2483329772949219,0.36597313720703123,0.0,0.050537,-0.050537,bearish,228.0,2.1806,0.0713,0.1143,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: spread=218.1%>25%
+CBRE,SELL,0,Squeezing,-2.6266657511393228,0.3633486517333985,-0.036438,-0.048706,0.012268,neutral,116.0,0.2119,0.0672,0.0336,True,False,-10,0.0,-10.0,DOWNGRADED,Call skew contradicts bearish setup
+CHRW,HOLD_WEAKEN,0,Squeezing,1.9641647338867188,0.3629214099121094,-0.022095,-0.016846,-0.005249,neutral,25.0,0.5508,0.1363,0.0682,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=25<50; spread=55.1%>25%
+CL,SELL,0,Squeezing,-1.6383336385091143,0.3107979077148437,0.0,0.0,0.0,neutral,8.0,,0.0344,0.1656,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=8<50
+CNP,SELL,0,Squeezing,-0.7758846282958983,0.2546461254882813,-0.043212,0.0,-0.043212,bearish,8.0,1.2778,0.05,0.1005,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=8<50; spread=127.8%>25%
+COST,SELL,0,Squeezing,-18.971669514973954,0.2746349392700196,-0.01062,-0.039764,0.029144,bullish,406.0,0.0927,0.0054,0.0054,True,False,-10,0.0,-10.0,DOWNGRADED,Call skew contradicts bearish setup
+CSGP,HOLD_WEAKEN,0,Squeezing,0.12833340962727868,0.6035195898437502,-0.08203,-0.068359,-0.013672,neutral,19.0,0.5171,0.1578,0.1578,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: volume=19<50; spread=51.7%>25%
+CTAS,HOLD_WEAKEN,0,Squeezing,0.8581899007161458,0.33423517333984376,0.0,0.014282,-0.014282,neutral,129.0,0.7372,0.0804,0.0497,False,,0,0,0,NO_SKEW_DATA,Option liquidity too low: spread=73.7%>25%
